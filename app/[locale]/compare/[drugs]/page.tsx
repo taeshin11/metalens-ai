@@ -56,10 +56,6 @@ const comparisons: Record<string, ComparisonData> = {
   },
 };
 
-export async function generateStaticParams() {
-  return Object.keys(comparisons).map((drugs) => ({ drugs }));
-}
-
 export async function generateMetadata({
   params,
 }: {

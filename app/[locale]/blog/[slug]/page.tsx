@@ -113,10 +113,6 @@ const blogPosts: Record<string, BlogContent> = {
   },
 };
 
-export async function generateStaticParams() {
-  return Object.keys(blogPosts).map((slug) => ({ slug }));
-}
-
 export async function generateMetadata({
   params,
 }: {
