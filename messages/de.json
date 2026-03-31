@@ -35,7 +35,10 @@
     "newSearch": "Neue Suche",
     "analyzing": "Forschungsartikel werden analysiert...",
     "searchingPubMed": "PubMed-Datenbank wird durchsucht...",
-    "synthesizing": "Erkenntnisse werden mit KI zusammengeführt..."
+    "synthesizing": "Erkenntnisse werden mit KI zusammengeführt...",
+    "tipLargeQuery": "Millionen von Artikeln werden durchsucht — bitte einen Moment Geduld.",
+    "tipAISynthesis": "KI liest und analysiert die Abstracts.",
+    "tipAlmostDone": "Fast fertig — Ihre strukturierte Zusammenfassung wird erstellt."
   },
   "nav": {
     "home": "Startseite",

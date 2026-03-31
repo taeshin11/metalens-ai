@@ -35,7 +35,10 @@
     "newSearch": "Nueva Búsqueda",
     "analyzing": "Analizando artículos de investigación...",
     "searchingPubMed": "Buscando en la base de datos de PubMed...",
-    "synthesizing": "Sintetizando hallazgos con IA..."
+    "synthesizing": "Sintetizando hallazgos con IA...",
+    "tipLargeQuery": "Buscando entre millones de artículos — esto puede tardar un momento.",
+    "tipAISynthesis": "La IA está leyendo y analizando los resúmenes.",
+    "tipAlmostDone": "Casi listo — generando tu resumen estructurado."
   },
   "nav": {
     "home": "Inicio",

@@ -35,7 +35,10 @@
     "newSearch": "新搜索",
     "analyzing": "正在分析研究论文...",
     "searchingPubMed": "正在搜索PubMed数据库...",
-    "synthesizing": "正在用AI综合研究结果..."
+    "synthesizing": "正在用AI综合研究结果...",
+    "tipLargeQuery": "正在搜索数百万篇论文 — 请稍候。",
+    "tipAISynthesis": "AI正在阅读和分析摘要。",
+    "tipAlmostDone": "即将完成 — 正在生成结构化摘要。"
   },
   "nav": {
     "home": "首页",

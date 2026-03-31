@@ -20,6 +20,12 @@
     { "id": 18, "name": "How It Works Page", "priority": "P1", "status": "complete" },
     { "id": 19, "name": "FAQ Page with Schema", "priority": "P1", "status": "complete" },
     { "id": 20, "name": "Custom 404 Page", "priority": "P2", "status": "complete" },
-    { "id": 21, "name": "Floating Feedback Button", "priority": "P1", "status": "complete" }
+    { "id": 21, "name": "Floating Feedback Button", "priority": "P1", "status": "complete" },
+    { "id": 22, "name": "Blog Pages (3 SEO posts)", "priority": "P1", "status": "complete" },
+    { "id": 23, "name": "Use Cases Page", "priority": "P1", "status": "complete" },
+    { "id": 24, "name": "Programmatic Drug Comparison Pages (6)", "priority": "P1", "status": "complete" },
+    { "id": 25, "name": "Homepage Below-the-Fold Sections", "priority": "P1", "status": "complete" },
+    { "id": 26, "name": "Blog RSS Feed", "priority": "P2", "status": "complete" },
+    { "id": 27, "name": "Next.js 16 Proxy Migration", "priority": "P2", "status": "complete" }
   ]
 }

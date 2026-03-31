@@ -35,7 +35,10 @@
     "newSearch": "새 검색",
     "analyzing": "연구 논문 분석 중...",
     "searchingPubMed": "PubMed 데이터베이스 검색 중...",
-    "synthesizing": "AI로 연구 결과 종합 중..."
+    "synthesizing": "AI로 연구 결과 종합 중...",
+    "tipLargeQuery": "수백만 건의 논문을 검색 중입니다 — 잠시만 기다려 주세요.",
+    "tipAISynthesis": "AI가 초록을 읽고 분석하고 있습니다.",
+    "tipAlmostDone": "거의 완료 — 구조화된 요약을 생성하고 있습니다."
   },
   "nav": {
     "home": "홈",

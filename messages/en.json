@@ -35,7 +35,10 @@
     "newSearch": "New Search",
     "analyzing": "Analyzing research papers...",
     "searchingPubMed": "Searching PubMed database...",
-    "synthesizing": "Synthesizing findings with AI..."
+    "synthesizing": "Synthesizing findings with AI...",
+    "tipLargeQuery": "Searching millions of papers — this may take a moment.",
+    "tipAISynthesis": "AI is reading and analyzing the abstracts now.",
+    "tipAlmostDone": "Almost there — generating your structured summary."
   },
   "nav": {
     "home": "Home",

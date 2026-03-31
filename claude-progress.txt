@@ -26,3 +26,18 @@ Session 1 — 2026-03-31
 - Created GitHub repo: https://github.com/taeshin11/metalens-ai
 - Deployed to Vercel: https://metalens-ai.vercel.app
 - All 15 MVP features + 6 bonus features complete
+
+Session 2 — 2026-03-31
+-----------------------
+- Added 3 SEO blog posts: what-is-meta-analysis, ai-in-medical-research, how-to-compare-drug-efficacy
+- Created blog index page with card layout
+- Built Use Cases page (6 user personas: students, pharmacists, researchers, clinicians, orgs, non-English)
+- Built 6 programmatic drug comparison pages (pranlukast-vs-montelukast, metformin-vs-insulin, etc.)
+- Added JSON-LD structured data on blog posts (BlogPosting) and compare pages (MedicalWebPage)
+- Added below-the-fold homepage sections: How It Works, Popular Drug Comparisons, Built For section
+- Translated all new homepage content across 8 languages
+- Added Blog link to header navigation
+- Created RSS feed at /feed.xml
+- Migrated middleware.ts to proxy.ts for Next.js 16 compatibility
+- Updated sitemap with blog, compare, and use-cases pages
+- All SEO content pages from PRD Section 6 complete

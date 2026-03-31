@@ -35,7 +35,10 @@
     "newSearch": "Nouvelle Recherche",
     "analyzing": "Analyse des articles de recherche...",
     "searchingPubMed": "Recherche dans la base de données PubMed...",
-    "synthesizing": "Synthèse des résultats avec l'IA..."
+    "synthesizing": "Synthèse des résultats avec l'IA...",
+    "tipLargeQuery": "Recherche parmi des millions d'articles — veuillez patienter.",
+    "tipAISynthesis": "L'IA lit et analyse les résumés.",
+    "tipAlmostDone": "Presque terminé — génération de votre synthèse structurée."
   },
   "nav": {
     "home": "Accueil",

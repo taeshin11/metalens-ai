@@ -35,7 +35,10 @@
     "newSearch": "新しい検索",
     "analyzing": "研究論文を分析中...",
     "searchingPubMed": "PubMedデータベースを検索中...",
-    "synthesizing": "AIで知見を統合中..."
+    "synthesizing": "AIで知見を統合中...",
+    "tipLargeQuery": "数百万の論文を検索中です — 少々お待ちください。",
+    "tipAISynthesis": "AIが抄録を読み取り、分析しています。",
+    "tipAlmostDone": "もうすぐ完了 — 構造化された要約を生成中です。"
   },
   "nav": {
     "home": "ホーム",

@@ -49,7 +49,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
           <span className="text-[var(--color-success)]">✦</span>
           {t('keyFindings')}
         </h3>
-        <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap">
+        <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
           {result}
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
         >
           📚 {t('sources')}
         </h3>
-        <div className="space-y-3">
+        <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
           {articles.slice(0, 10).map((article) => (
             <div
               key={article.pmid}
