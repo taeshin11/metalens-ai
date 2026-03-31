@@ -4,10 +4,10 @@ MetaLens AI — Development Progress Log
 Session 1 — 2026-03-31
 -----------------------
 - Initialized Next.js 14+ project with TypeScript, Tailwind CSS, App Router
-- Installed deps: next-intl, framer-motion, next-sitemap, @heyputer/puter.js
+- Installed deps: next-intl, framer-motion, next-sitemap
 - Created design system with soft color palette (warm teal, cream, coral accents)
 - Built PubMed API client (esearch + efetch with XML parsing)
-- Built AI synthesis engine using Puter.js (client-side, zero API keys)
+- Built AI synthesis engine using Pollinations.ai (free, no API key, no login)
 - Created landing page with hero section, keyword input, gradient mesh background
 - Built results display with key findings, source links, paper citations
 - Implemented loading skeletons and error handling
@@ -16,6 +16,13 @@ Session 1 — 2026-03-31
 - Built content pages: About, How It Works, FAQ, Privacy, Terms
 - Configured next-intl with 8 languages (en, ko, ja, zh, es, pt, de, fr)
 - Added SEO: meta tags, Open Graph, Twitter cards, sitemap, robots.txt
-- Added FAQ structured data (JSON-LD)
+- Added FAQ structured data (JSON-LD) and WebApplication JSON-LD
 - Set up silent analytics data collection (Google Sheets webhook)
-- Pending: translation files, GitHub repo, Vercel deployment
+- Added auto-translation for non-English keywords (Korean → English for PubMed)
+- Replaced Puter.js with Pollinations.ai (Puter.js required login popup)
+- Translated all hardcoded English strings across 8 languages
+- Expanded privacy policy and terms of service (7 clauses each)
+- Added custom 404 page
+- Created GitHub repo: https://github.com/taeshin11/metalens-ai
+- Deployed to Vercel: https://metalens-ai.vercel.app
+- All 15 MVP features + 6 bonus features complete

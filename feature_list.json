@@ -3,17 +3,23 @@
     { "id": 1, "name": "Project Setup & Scaffold", "priority": "P0", "status": "complete" },
     { "id": 2, "name": "Landing Page & Hero", "priority": "P0", "status": "complete" },
     { "id": 3, "name": "PubMed API Integration", "priority": "P0", "status": "complete" },
-    { "id": 4, "name": "AI Synthesis Engine (Puter.js)", "priority": "P0", "status": "complete" },
+    { "id": 4, "name": "AI Synthesis Engine (Pollinations.ai)", "priority": "P0", "status": "complete" },
     { "id": 5, "name": "Results Display", "priority": "P0", "status": "complete" },
     { "id": 6, "name": "Responsive Design", "priority": "P0", "status": "complete" },
     { "id": 7, "name": "Soft Color Theme", "priority": "P0", "status": "complete" },
     { "id": 8, "name": "Google Sheets Silent Data Collection", "priority": "P0", "status": "complete" },
     { "id": 9, "name": "Feedback mailto Link", "priority": "P1", "status": "complete" },
     { "id": 10, "name": "SEO Optimization", "priority": "P0", "status": "complete" },
-    { "id": 11, "name": "i18n Auto-Detection", "priority": "P1", "status": "in-progress" },
+    { "id": 11, "name": "i18n Auto-Detection (8 languages)", "priority": "P1", "status": "complete" },
     { "id": 12, "name": "About/Privacy/Terms Pages", "priority": "P1", "status": "complete" },
     { "id": 13, "name": "Loading States & Error Handling", "priority": "P1", "status": "complete" },
-    { "id": 14, "name": "Vercel Deployment", "priority": "P0", "status": "pending" },
-    { "id": 15, "name": "GitHub Repo Setup", "priority": "P0", "status": "pending" }
+    { "id": 14, "name": "Vercel Deployment", "priority": "P0", "status": "complete" },
+    { "id": 15, "name": "GitHub Repo Setup", "priority": "P0", "status": "complete" },
+    { "id": 16, "name": "Non-English Keyword Translation", "priority": "P0", "status": "complete" },
+    { "id": 17, "name": "JSON-LD Structured Data", "priority": "P0", "status": "complete" },
+    { "id": 18, "name": "How It Works Page", "priority": "P1", "status": "complete" },
+    { "id": 19, "name": "FAQ Page with Schema", "priority": "P1", "status": "complete" },
+    { "id": 20, "name": "Custom 404 Page", "priority": "P2", "status": "complete" },
+    { "id": 21, "name": "Floating Feedback Button", "priority": "P1", "status": "complete" }
   ]
 }
