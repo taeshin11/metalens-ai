@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
-const POLLINATIONS_URL = 'https://text.pollinations.ai/';
+const POLLINATIONS_URL = 'https://text.pollinations.ai/openai/chat/completions';
 
 export async function POST(request: NextRequest) {
   try {
@@ -82,7 +82,8 @@ async function translate(text: string, systemPrompt: string): Promise<string | n
     });
     clearTimeout(timeout);
     if (!response.ok) return null;
-    const raw = await response.text();
+    const data = await response.json();
+    const raw = data?.choices?.[0]?.message?.content || '';
     // Strip Pollinations ads
     return raw.trim().replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '').trim() || null;
   } catch {

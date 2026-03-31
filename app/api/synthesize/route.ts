@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export const maxDuration = 60;
 
 const SYSTEM_MSG = 'You are a medical research analyst. Output ONLY your final structured answer. No thinking, planning, or reasoning text.';
-const POLLINATIONS_URL = 'https://text.pollinations.ai/';
+const POLLINATIONS_URL = 'https://text.pollinations.ai/openai/chat/completions';
 
 export async function POST(request: NextRequest) {
   try {

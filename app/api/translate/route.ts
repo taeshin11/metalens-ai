@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
-const POLLINATIONS_URL = 'https://text.pollinations.ai/';
+const POLLINATIONS_URL = 'https://text.pollinations.ai/openai/chat/completions';
 
 export async function POST(request: NextRequest) {
   let keywords = '';
@@ -49,7 +49,8 @@ export async function POST(request: NextRequest) {
     clearTimeout(timeout);
 
     if (!response.ok) return NextResponse.json({ translated: keywords });
-    const translated = await response.text();
+    const data = await response.json();
+    const translated = data?.choices?.[0]?.message?.content || '';
     const cleaned = translated.trim().replace(/^["']|["']$/g, '');
     return NextResponse.json({ translated: cleaned || keywords });
   } catch {
