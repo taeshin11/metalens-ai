@@ -49,40 +49,25 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
   }
 }
 
-const POLLINATIONS_URL = 'https://text.pollinations.ai/openai/chat/completions';
-const SYSTEM_MSG = 'You are a medical research analyst. Output ONLY your final structured answer. No thinking, planning, or reasoning text.';
-
 /**
- * Client-side fallback: call Pollinations directly from browser
+ * Client-side fallback: call Pollinations GET API directly from browser
+ * GET endpoint avoids 301 redirect issues that POST has in browsers
  */
 async function callPollinationsClient(prompt: string): Promise<string> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
 
   try {
-    const response = await fetch(POLLINATIONS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      signal: controller.signal,
-      body: JSON.stringify({
-        messages: [
-          { role: 'system', content: SYSTEM_MSG },
-          { role: 'user', content: prompt },
-        ],
-        model: 'openai',
-        temperature: 0.2,
-        seed: Math.floor(Math.random() * 100000),
-      }),
-    });
+    const encoded = encodeURIComponent(prompt);
+    const seed = Math.floor(Math.random() * 100000);
+    const url = `https://text.pollinations.ai/${encoded}?model=openai&seed=${seed}`;
+
+    const response = await fetch(url, { signal: controller.signal });
 
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
+    let text = await response.text();
 
-    // Extract content from OpenAI-compatible response
-    let text = data?.choices?.[0]?.message?.content || '';
-    if (!text && typeof data?.content === 'string') text = data.content;
-
-    // Strip reasoning content and Pollinations ads
+    // Strip Pollinations ads
     text = text.replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '');
     return text.trim();
   } finally {
