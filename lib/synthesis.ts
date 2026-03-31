@@ -49,7 +49,7 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
   }
 }
 
-const POLLINATIONS_URL = 'https://text.pollinations.ai/';
+const POLLINATIONS_URL = 'https://text.pollinations.ai/openai/chat/completions';
 const SYSTEM_MSG = 'You are a medical research analyst. Output ONLY your final structured answer. No thinking, planning, or reasoning text.';
 
 /**
@@ -76,17 +76,13 @@ async function callPollinationsClient(prompt: string): Promise<string> {
     });
 
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const raw = await response.text();
+    const data = await response.json();
 
-    // Clean: strip JSON wrapper if present
-    let text = raw;
-    try {
-      const parsed = JSON.parse(text);
-      if (typeof parsed?.content === 'string') text = parsed.content;
-      else if (parsed?.choices?.[0]?.message?.content) text = parsed.choices[0].message.content;
-    } catch { /* not JSON */ }
+    // Extract content from OpenAI-compatible response
+    let text = data?.choices?.[0]?.message?.content || '';
+    if (!text && typeof data?.content === 'string') text = data.content;
 
-    // Strip Pollinations ads
+    // Strip reasoning content and Pollinations ads
     text = text.replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '');
     return text.trim();
   } finally {
