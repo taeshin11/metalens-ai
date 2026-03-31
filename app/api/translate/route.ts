@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const maxDuration = 60;
+
 const POLLINATIONS_URL = 'https://text.pollinations.ai/';
 
 export async function POST(request: NextRequest) {

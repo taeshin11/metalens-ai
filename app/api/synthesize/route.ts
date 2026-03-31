@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Allow up to 60s for AI synthesis on Vercel
+export const maxDuration = 60;
+
 const SYSTEM_MSG = 'You are a medical research analyst. Output ONLY your final structured answer. No thinking, planning, or reasoning text.';
 const POLLINATIONS_URL = 'https://text.pollinations.ai/';
 
@@ -11,7 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing prompt' }, { status: 400 });
     }
 
-    // Try Gemini first (if API key is set), then fall back to Pollinations
+    // Try Gemini first, then Pollinations fallback
     const result = await synthesize(prompt);
 
     if (!result) {
@@ -28,23 +31,22 @@ async function synthesize(prompt: string): Promise<string | null> {
   // Strategy 1: Gemini API (if key is configured)
   const geminiKey = process.env.GEMINI_API_KEY;
   if (geminiKey) {
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        const result = await callGemini(prompt, geminiKey);
-        if (result && result.trim()) return result;
-      } catch {
-        if (attempt < 1) await new Promise(r => setTimeout(r, 1000));
-      }
+    try {
+      const result = await callGemini(prompt, geminiKey);
+      if (result && result.trim()) return result;
+    } catch {
+      // Gemini failed (likely 429 rate limit) — fall through to Pollinations
     }
   }
 
-  // Strategy 2: Pollinations (free, no key needed — fallback)
-  for (let attempt = 0; attempt < 2; attempt++) {
+  // Strategy 2: Pollinations with multiple models
+  const pollinationModels = ['openai', 'mistral', 'llama'];
+  for (const model of pollinationModels) {
     try {
-      const result = await callPollinations(prompt);
+      const result = await callPollinations(prompt, model);
       if (result && result.trim()) return result;
     } catch {
-      if (attempt < 1) await new Promise(r => setTimeout(r, 1500));
+      // Try next model
     }
   }
 
@@ -68,9 +70,9 @@ async function callGemini(prompt: string, apiKey: string): Promise<string> {
   return cleanResponse(response.text ?? '');
 }
 
-async function callPollinations(prompt: string): Promise<string> {
+async function callPollinations(prompt: string, model = 'openai'): Promise<string> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
+  const timeout = setTimeout(() => controller.abort(), 45000);
 
   try {
     const response = await fetch(POLLINATIONS_URL, {
@@ -82,7 +84,7 @@ async function callPollinations(prompt: string): Promise<string> {
           { role: 'system', content: SYSTEM_MSG },
           { role: 'user', content: prompt },
         ],
-        model: 'openai',
+        model,
         temperature: 0.2,
         seed: Math.floor(Math.random() * 100000),
       }),
