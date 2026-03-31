@@ -60,11 +60,12 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="h-full antialiased">
       <head>
+        <meta name="google-adsense-account" content="ca-pub-7098271335538021" />
         <script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7098271335538021"
           crossOrigin="anonymous"
-        />
+        ></script>
         <link rel="alternate" type="application/rss+xml" title="MetaLens AI Blog" href="/feed.xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
