@@ -1,0 +1,79 @@
+{
+  "hero": {
+    "title": "AI驱动的医学荟萃分析",
+    "subtitle": "输入医学关键词，即可从4000万篇以上的PubMed论文中获得AI驱动的荟萃分析摘要。",
+    "placeholder": "例如：哮喘、普仑司特、孟鲁司特、疗效",
+    "analyze": "开始分析",
+    "poweredBy": "由 PubMed 和 AI 提供支持"
+  },
+  "results": {
+    "title": "分析结果",
+    "papersFound": "篇论文",
+    "keyFindings": "主要发现",
+    "sources": "来源",
+    "viewOnPubMed": "在PubMed上查看",
+    "disclaimer": "这是仅供参考的AI生成摘要，不构成医疗建议。请务必咨询医疗专业人员。",
+    "newSearch": "新搜索",
+    "analyzing": "正在分析研究论文...",
+    "searchingPubMed": "正在搜索PubMed数据库...",
+    "synthesizing": "正在用AI综合研究结果..."
+  },
+  "nav": {
+    "home": "首页",
+    "about": "关于",
+    "howItWorks": "使用方法",
+    "faq": "常见问题",
+    "blog": "博客"
+  },
+  "footer": {
+    "builtBy": "开发者",
+    "feedback": "有建议？请告诉我们",
+    "privacy": "隐私政策",
+    "terms": "服务条款"
+  },
+  "about": {
+    "title": "关于 MetaLens AI",
+    "mission": "我们的使命",
+    "missionText": "MetaLens AI由SPINAI创建，旨在让更多人能够获取医学研究见解。我们相信每位医疗专业人员、学生和研究人员都应该能够快速综合来自数千篇论文的证据。",
+    "howWeWork": "我们的工作方式",
+    "howWeWorkText": "我们利用PubMed超过4000万篇论文的数据库和先进AI，在数秒内（而非数小时）提供结构化的荟萃分析摘要。"
+  },
+  "howItWorks": {
+    "title": "使用方法",
+    "step1Title": "输入关键词",
+    "step1Text": "输入您想要研究的医学术语、药物名称、疾病状况或任何研究关键词。",
+    "step2Title": "搜索PubMed",
+    "step2Text": "我们的系统搜索PubMed超过4000万篇论文，找出与您查询最相关的研究。",
+    "step3Title": "AI综合分析",
+    "step3Text": "先进AI读取摘要并综合生成包含主要发现的结构化荟萃分析摘要。",
+    "step4Title": "获取结果",
+    "step4Text": "收到简洁的摘要，附带来源引用和原始论文链接。"
+  },
+  "faq": {
+    "title": "常见问题",
+    "q1": "MetaLens AI是免费的吗？",
+    "a1": "是的！MetaLens AI提供每天5次分析的免费套餐。还有适合高级用户的Pro和Team套餐。",
+    "q2": "数据来自哪里？",
+    "a2": "所有研究数据均来自PubMed，这是由美国国家医学图书馆维护的全球最大生物医学文献数据库。",
+    "q3": "这是医疗建议吗？",
+    "a3": "不是。MetaLens AI仅提供用于参考目的的AI生成研究摘要。医疗决策请务必咨询具备资质的医疗专业人员。",
+    "q4": "结果的准确性如何？",
+    "a4": "我们的AI直接从经同行评审的摘要中综合研究结果。虽然我们力求准确，但AI可能会出错。请始终通过原始来源核实研究结果。",
+    "q5": "支持哪些语言？",
+    "a5": "MetaLens AI自动检测您的浏览器语言，支持英语、韩语、日语、中文、西班牙语、葡萄牙语、德语和法语。"
+  },
+  "privacy": {
+    "title": "隐私政策",
+    "content": "SPINAI的MetaLens AI尊重您的隐私。我们仅收集最少量的匿名使用数据以改善我们的服务。不存储任何个人信息。搜索查询实时处理，不予保留。如有疑问，请联系taeshinkim11@gmail.com。"
+  },
+  "terms": {
+    "title": "服务条款",
+    "content": "使用MetaLens AI即表示您同意所有结果均为仅供参考的AI生成摘要，不构成医疗建议。SPINAI对基于这些摘要所做的决定不承担任何责任。请自行斟酌使用，并始终咨询医疗专业人员。"
+  },
+  "errors": {
+    "noResults": "未找到与这些关键词相关的论文。请尝试不同或更宽泛的搜索词。",
+    "apiError": "出现错误，请重试。",
+    "rateLimit": "您已达到每日限额。升级至Pro版可享无限次分析。",
+    "networkError": "网络错误，请检查您的连接后重试。"
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "hero": {
+    "title": "AI-Powered Medical Meta-Analysis",
+    "subtitle": "Enter medical keywords and get instant AI-powered meta-analysis summaries from 40M+ PubMed papers.",
+    "placeholder": "e.g., asthma, pranlukast, montelukast, efficacy",
+    "analyze": "Analyze",
+    "poweredBy": "Powered by PubMed & AI"
+  },
+  "results": {
+    "title": "Analysis Results",
+    "papersFound": "papers found",
+    "keyFindings": "Key Findings",
+    "sources": "Sources",
+    "viewOnPubMed": "View on PubMed",
+    "disclaimer": "This is an AI-generated summary for informational purposes only. It is NOT medical advice. Always consult a healthcare professional.",
+    "newSearch": "New Search",
+    "analyzing": "Analyzing research papers...",
+    "searchingPubMed": "Searching PubMed database...",
+    "synthesizing": "Synthesizing findings with AI..."
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "faq": "FAQ",
+    "blog": "Blog"
+  },
+  "footer": {
+    "builtBy": "Built by",
+    "feedback": "Have a suggestion? Let us know",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "about": {
+    "title": "About MetaLens AI",
+    "mission": "Our Mission",
+    "missionText": "MetaLens AI was created by SPINAI to democratize access to medical research insights. We believe every healthcare professional, student, and researcher should be able to quickly synthesize evidence from thousands of papers.",
+    "howWeWork": "How We Work",
+    "howWeWorkText": "We leverage PubMed's database of 40M+ papers and advanced AI to deliver structured meta-analysis summaries in seconds — not hours."
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "step1Title": "Enter Keywords",
+    "step1Text": "Type in medical terms, drug names, conditions, or any research keywords you want to investigate.",
+    "step2Title": "We Search PubMed",
+    "step2Text": "Our system searches PubMed's 40M+ papers to find the most relevant studies for your query.",
+    "step3Title": "AI Synthesizes",
+    "step3Text": "Advanced AI reads the abstracts and synthesizes a structured meta-analysis summary with key findings.",
+    "step4Title": "Get Results",
+    "step4Text": "Receive a concise summary with source citations and links to the original papers."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": "Is MetaLens AI free?",
+    "a1": "Yes! MetaLens AI offers a free tier with 5 analyses per day. Pro and Team plans are available for power users.",
+    "q2": "Where does the data come from?",
+    "a2": "All research data comes from PubMed, the world's largest biomedical literature database maintained by the National Library of Medicine.",
+    "q3": "Is this medical advice?",
+    "a3": "No. MetaLens AI provides AI-generated research summaries for informational purposes only. Always consult a qualified healthcare professional for medical decisions.",
+    "q4": "How accurate are the results?",
+    "a4": "Our AI synthesizes findings directly from peer-reviewed abstracts. While we strive for accuracy, AI can make mistakes. Always verify findings with the original sources.",
+    "q5": "What languages are supported?",
+    "a5": "MetaLens AI automatically detects your browser language and supports English, Korean, Japanese, Chinese, Spanish, Portuguese, German, and French."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "content": "MetaLens AI by SPINAI respects your privacy. We collect minimal anonymous usage data to improve our service. No personal information is stored. Search queries are processed in real-time and not retained. For questions, contact taeshinkim11@gmail.com."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "content": "By using MetaLens AI, you agree that all results are AI-generated summaries for informational purposes only and do not constitute medical advice. SPINAI is not liable for decisions made based on these summaries. Use at your own discretion and always consult healthcare professionals."
+  },
+  "errors": {
+    "noResults": "No papers found for these keywords. Try different or broader terms.",
+    "apiError": "Something went wrong. Please try again.",
+    "rateLimit": "You've reached the daily limit. Upgrade to Pro for unlimited analyses.",
+    "networkError": "Network error. Please check your connection and try again."
+  }
+}

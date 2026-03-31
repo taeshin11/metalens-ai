@@ -1,0 +1,80 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import Link from 'next/link';
+import { useState } from 'react';
+
+export default function Header() {
+  const t = useTranslations('nav');
+  const params = useParams();
+  const locale = params.locale as string;
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const links = [
+    { href: `/${locale}`, label: t('home') },
+    { href: `/${locale}/how-it-works`, label: t('howItWorks') },
+    { href: `/${locale}/about`, label: t('about') },
+    { href: `/${locale}/faq`, label: t('faq') },
+  ];
+
+  return (
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[var(--color-border)]">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+        <Link href={`/${locale}`} className="flex items-center gap-2 group">
+          <span className="text-2xl">🔬</span>
+          <span
+            className="text-xl font-bold text-[var(--color-primary-dark)] group-hover:text-[var(--color-primary)] transition-colors"
+            style={{ fontFamily: 'Outfit, sans-serif' }}
+          >
+            MetaLens AI
+          </span>
+        </Link>
+
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-6">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Mobile menu button */}
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden p-2 text-[var(--color-text-secondary)]"
+          aria-label="Toggle menu"
+        >
+          <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
+            {menuOpen ? (
+              <path d="M6 6l12 12M6 18L18 6" />
+            ) : (
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            )}
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile nav */}
+      {menuOpen && (
+        <nav className="md:hidden bg-white border-b border-[var(--color-border)] px-4 pb-4">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMenuOpen(false)}
+              className="block py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)]"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      )}
+    </header>
+  );
+}

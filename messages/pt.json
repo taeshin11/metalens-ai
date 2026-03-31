@@ -1,0 +1,79 @@
+{
+  "hero": {
+    "title": "Meta-análise Médica Impulsionada por IA",
+    "subtitle": "Insira palavras-chave médicas e obtenha resumos instantâneos de meta-análise com IA a partir de mais de 40 milhões de artigos do PubMed.",
+    "placeholder": "ex.: asma, pranlucaste, montelucaste, eficácia",
+    "analyze": "Analisar",
+    "poweredBy": "Desenvolvido com PubMed e IA"
+  },
+  "results": {
+    "title": "Resultados da Análise",
+    "papersFound": "artigos encontrados",
+    "keyFindings": "Principais Descobertas",
+    "sources": "Fontes",
+    "viewOnPubMed": "Ver no PubMed",
+    "disclaimer": "Este é um resumo gerado por IA apenas para fins informativos. NÃO é um conselho médico. Consulte sempre um profissional de saúde.",
+    "newSearch": "Nova Pesquisa",
+    "analyzing": "Analisando artigos de pesquisa...",
+    "searchingPubMed": "Pesquisando na base de dados do PubMed...",
+    "synthesizing": "Sintetizando descobertas com IA..."
+  },
+  "nav": {
+    "home": "Início",
+    "about": "Sobre",
+    "howItWorks": "Como Funciona",
+    "faq": "Perguntas Frequentes",
+    "blog": "Blog"
+  },
+  "footer": {
+    "builtBy": "Desenvolvido por",
+    "feedback": "Tem uma sugestão? Fale conosco",
+    "privacy": "Privacidade",
+    "terms": "Termos"
+  },
+  "about": {
+    "title": "Sobre o MetaLens AI",
+    "mission": "Nossa Missão",
+    "missionText": "O MetaLens AI foi criado pela SPINAI para democratizar o acesso a insights de pesquisa médica. Acreditamos que todo profissional de saúde, estudante e pesquisador deve ser capaz de sintetizar rapidamente evidências de milhares de artigos.",
+    "howWeWork": "Como Trabalhamos",
+    "howWeWorkText": "Utilizamos a base de dados do PubMed com mais de 40 milhões de artigos e IA avançada para fornecer resumos estruturados de meta-análise em segundos — não em horas."
+  },
+  "howItWorks": {
+    "title": "Como Funciona",
+    "step1Title": "Insira Palavras-chave",
+    "step1Text": "Digite termos médicos, nomes de medicamentos, condições ou quaisquer palavras-chave de pesquisa que deseja investigar.",
+    "step2Title": "Pesquisamos no PubMed",
+    "step2Text": "Nosso sistema pesquisa mais de 40 milhões de artigos do PubMed para encontrar os estudos mais relevantes para sua consulta.",
+    "step3Title": "A IA Sintetiza",
+    "step3Text": "A IA avançada lê os resumos e sintetiza um sumário estruturado de meta-análise com as principais descobertas.",
+    "step4Title": "Obtenha Resultados",
+    "step4Text": "Receba um resumo conciso com citações de fontes e links para os artigos originais."
+  },
+  "faq": {
+    "title": "Perguntas Frequentes",
+    "q1": "O MetaLens AI é gratuito?",
+    "a1": "Sim! O MetaLens AI oferece um plano gratuito com 5 análises por dia. Planos Pro e Team estão disponíveis para usuários avançados.",
+    "q2": "De onde vêm os dados?",
+    "a2": "Todos os dados de pesquisa vêm do PubMed, a maior base de dados de literatura biomédica do mundo, mantida pela Biblioteca Nacional de Medicina.",
+    "q3": "Isso é um conselho médico?",
+    "a3": "Não. O MetaLens AI fornece resumos de pesquisa gerados por IA apenas para fins informativos. Consulte sempre um profissional de saúde qualificado para decisões médicas.",
+    "q4": "Qual é a precisão dos resultados?",
+    "a4": "Nossa IA sintetiza descobertas diretamente a partir de resumos revisados por pares. Embora nos esforcemos pela precisão, a IA pode cometer erros. Sempre verifique as descobertas com as fontes originais.",
+    "q5": "Quais idiomas são suportados?",
+    "a5": "O MetaLens AI detecta automaticamente o idioma do seu navegador e suporta inglês, coreano, japonês, chinês, espanhol, português, alemão e francês."
+  },
+  "privacy": {
+    "title": "Política de Privacidade",
+    "content": "O MetaLens AI da SPINAI respeita sua privacidade. Coletamos dados de uso anônimos mínimos para melhorar nosso serviço. Nenhuma informação pessoal é armazenada. As consultas de pesquisa são processadas em tempo real e não são retidas. Para dúvidas, entre em contato com taeshinkim11@gmail.com."
+  },
+  "terms": {
+    "title": "Termos de Serviço",
+    "content": "Ao usar o MetaLens AI, você concorda que todos os resultados são resumos gerados por IA apenas para fins informativos e não constituem aconselhamento médico. A SPINAI não se responsabiliza por decisões tomadas com base nesses resumos. Use com discrição e sempre consulte profissionais de saúde."
+  },
+  "errors": {
+    "noResults": "Nenhum artigo encontrado para estas palavras-chave. Tente termos diferentes ou mais abrangentes.",
+    "apiError": "Algo deu errado. Por favor, tente novamente.",
+    "rateLimit": "Você atingiu o limite diário. Atualize para Pro para análises ilimitadas.",
+    "networkError": "Erro de rede. Verifique sua conexão e tente novamente."
+  }
+}
