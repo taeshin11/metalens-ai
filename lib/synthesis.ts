@@ -49,31 +49,95 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
   }
 }
 
+const POLLINATIONS_URL = 'https://text.pollinations.ai/';
+const SYSTEM_MSG = 'You are a medical research analyst. Output ONLY your final structured answer. No thinking, planning, or reasoning text.';
+
 /**
- * Server-side synthesis via Gemini API
- * Step 1: Synthesize in English
- * Step 2: If non-English, translate via Gemini
+ * Client-side fallback: call Pollinations directly from browser
+ */
+async function callPollinationsClient(prompt: string): Promise<string> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 60000);
+
+  try {
+    const response = await fetch(POLLINATIONS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
+      body: JSON.stringify({
+        messages: [
+          { role: 'system', content: SYSTEM_MSG },
+          { role: 'user', content: prompt },
+        ],
+        model: 'openai',
+        temperature: 0.2,
+        seed: Math.floor(Math.random() * 100000),
+      }),
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const raw = await response.text();
+
+    // Clean: strip JSON wrapper if present
+    let text = raw;
+    try {
+      const parsed = JSON.parse(text);
+      if (typeof parsed?.content === 'string') text = parsed.content;
+      else if (parsed?.choices?.[0]?.message?.content) text = parsed.choices[0].message.content;
+    } catch { /* not JSON */ }
+
+    // Strip Pollinations ads
+    text = text.replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '');
+    return text.trim();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+/**
+ * Hybrid synthesis: try server (Gemini) first, fall back to client-side Pollinations
  */
 export async function synthesizeWithAI(
   articles: PubMedArticle[],
   language: string,
 ): Promise<SynthesisResult> {
   const prompt = buildPrompt(articles);
+  let englishResult = '';
 
-  const synthesisResponse = await fetchWithTimeout('/api/synthesize', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt }),
-  }, 30000);
+  // Strategy 1: Server-side (Gemini API)
+  try {
+    const synthesisResponse = await fetchWithTimeout('/api/synthesize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    }, 30000);
 
-  if (!synthesisResponse.ok) {
-    throw new Error('AI synthesis failed');
+    if (synthesisResponse.ok) {
+      const { result } = await synthesisResponse.json();
+      if (result && result.trim()) englishResult = result;
+    }
+  } catch {
+    // Server failed — will try client-side
   }
 
-  const { result: englishResult } = await synthesisResponse.json();
+  // Strategy 2: Client-side Pollinations (bypasses Vercel IP restrictions)
+  if (!englishResult) {
+    const models = ['openai', 'mistral'];
+    for (const model of models) {
+      try {
+        const result = await callPollinationsClient(prompt);
+        if (result && result.trim().length > 50) {
+          englishResult = result;
+          break;
+        }
+      } catch {
+        // Try next model
+      }
+    }
+  }
 
-  if (!englishResult || !englishResult.trim()) {
-    throw new Error('AI returned empty result');
+  if (!englishResult) {
+    throw new Error('AI synthesis failed after all attempts');
   }
 
   // Translate if not English
@@ -92,7 +156,18 @@ export async function synthesizeWithAI(
         }
       }
     } catch {
-      // Translation failed — return English only
+      // Translation failed — try client-side
+    }
+
+    // Client-side translation fallback
+    try {
+      const translatePrompt = `Translate the following medical analysis into ${language}. Keep the numbered format and all PMID references. Output ONLY the translation:\n\n${englishResult}`;
+      const translated = await callPollinationsClient(translatePrompt);
+      if (translated && translated.trim().length > 50) {
+        return { english: englishResult, translated, language };
+      }
+    } catch {
+      // Return English only
     }
   }
 
