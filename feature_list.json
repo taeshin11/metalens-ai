@@ -26,6 +26,12 @@
     { "id": 24, "name": "Programmatic Drug Comparison Pages (6)", "priority": "P1", "status": "complete" },
     { "id": 25, "name": "Homepage Below-the-Fold Sections", "priority": "P1", "status": "complete" },
     { "id": 26, "name": "Blog RSS Feed", "priority": "P2", "status": "complete" },
-    { "id": 27, "name": "Next.js 16 Proxy Migration", "priority": "P2", "status": "complete" }
+    { "id": 27, "name": "Next.js 16 Proxy Migration", "priority": "P2", "status": "complete" },
+    { "id": 28, "name": "Translated Summary Section", "priority": "P1", "status": "complete" },
+    { "id": 29, "name": "Client-Side AI Synthesis (Rate Limit Fix)", "priority": "P0", "status": "complete" },
+    { "id": 30, "name": "Enhanced Privacy Policy (10 sections, GDPR/HIPAA)", "priority": "P1", "status": "complete" },
+    { "id": 31, "name": "Enhanced About Page (5 sections)", "priority": "P1", "status": "complete" },
+    { "id": 32, "name": "AI Failure Detection & Model Fallback", "priority": "P0", "status": "complete" },
+    { "id": 33, "name": "PubMed API Retry Logic", "priority": "P1", "status": "complete" }
   ]
 }

@@ -1,0 +1,272 @@
+[
+  {
+    "query": "aspirin, cardiovascular, prevention",
+    "index": 1,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "16.7",
+    "findings": "**1. Aspirin’s Established Efficacy in Secondary Prevention versus Uncertain Primary Prevention** — Evidence from multiple reviews (PMID 32580960, 348",
+    "error": ""
+  },
+  {
+    "query": "metformin, weight loss, obesity",
+    "index": 2,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "33.1",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "COVID-19, vaccine, efficacy",
+    "index": 3,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "32.7",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "depression, SSRI, therapy",
+    "index": 4,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "20.8",
+    "findings": "**1. Esketamine nasal spray outperforms quetiapine for remission in treatment‑resistant depression** — In a randomized trial of adults with treatment‑",
+    "error": ""
+  },
+  {
+    "query": "hypertension, ACE inhibitors",
+    "index": 5,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "8.3",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "diabetes, insulin, HbA1c",
+    "index": 6,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "32.4",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "cancer, immunotherapy, PD-1",
+    "index": 7,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "33.1",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "alzheimer, donepezil, memantine",
+    "index": 8,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "12.3",
+    "findings": "**1. Combination memantine + donepezil offers only modest incremental benefit over donepezil alone in moderate‑to‑severe Alzheimer’s disease** — Rando",
+    "error": ""
+  },
+  {
+    "query": "asthma, inhaled corticosteroids",
+    "index": 9,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "32.8",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "migraine, triptans, prevention",
+    "index": 10,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "8.9",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "osteoporosis, bisphosphonates",
+    "index": 11,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "16.9",
+    "findings": "**1. Bisphosphonates reduce fracture risk but carry long‑term adverse outcomes** — Evidence from a 2023 review indicates that bisphosphonates (BPs) ef",
+    "error": ""
+  },
+  {
+    "query": "ADHD, methylphenidate",
+    "index": 12,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "32.5",
+    "findings": "**1. Stimulants as First‑Line Therapy Across the Lifespan** — Evidence from multiple reviews and guideline summaries suggests that methylphenidate and",
+    "error": ""
+  },
+  {
+    "query": "pregnancy, folic acid",
+    "index": 13,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "20.4",
+    "findings": "**1. Folic acid supplementation markedly reduces the risk of neural‑tube defects (NTDs) in the general population** — Evidence from a 2023 systematic ",
+    "error": ""
+  },
+  {
+    "query": "cholesterol, statins",
+    "index": 14,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "19.1",
+    "findings": "**1. Statins may paradoxically stimulate atherosclerosis and heart failure** — Evidence from a 2015 review suggests that statins could promote coronar",
+    "error": ""
+  },
+  {
+    "query": "sleep apnea, CPAP",
+    "index": 15,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "32.6",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "obesity, GLP-1, semaglutide",
+    "index": 16,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "32.6",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "heart failure, beta blockers",
+    "index": 17,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "8.2",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "stroke, thrombolysis",
+    "index": 18,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "8.3",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "arthritis, methotrexate",
+    "index": 19,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "21.1",
+    "findings": "**1. Methotrexate remains the first‑line pharmacologic option for rheumatoid arthritis, but its clinical benefit varies widely among patients** — Evid",
+    "error": ""
+  },
+  {
+    "query": "anxiety, benzodiazepines",
+    "index": 20,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "13.7",
+    "findings": "**1. High comorbidity of depression and anxiety in primary‑care patients** — Evidence from a 2014 Australian primary‑care cohort indicates that up to ",
+    "error": ""
+  },
+  {
+    "query": "epilepsy, valproate, levetiracetam",
+    "index": 21,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "50.2",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "prostate cancer, PSA",
+    "index": 22,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "32.6",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "sepsis, antibiotics",
+    "index": 23,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "33.2",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "chronic pain, opioids",
+    "index": 24,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "32.6",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "vitamin D, bone health",
+    "index": 25,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "17.2",
+    "findings": "**1. Vitamin D deficiency is a global pandemic with serious skeletal consequences** — Evidence from multiple reviews (PMIDs 18400738, 38777417, 333058",
+    "error": ""
+  },
+  {
+    "query": "hepatitis C, sofosbuvir",
+    "index": 26,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "44.4",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "anemia, iron supplementation",
+    "index": 27,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "20.0",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "COPD, tiotropium",
+    "index": 28,
+    "status": "SUCCESS",
+    "papers": 0,
+    "time": "17.4",
+    "findings": "**1. Tiotropium reduces the frequency of COPD exacerbations** — Evidence from randomized trials (PMID 19617284; 26050985) suggests that long‑acting an",
+    "error": ""
+  },
+  {
+    "query": "autism, early intervention",
+    "index": 29,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "44.0",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  },
+  {
+    "query": "malaria, artemisinin",
+    "index": 30,
+    "status": "ERROR",
+    "papers": 0,
+    "time": "27.0",
+    "findings": "",
+    "error": "Something went wrong. Please try again."
+  }
+]

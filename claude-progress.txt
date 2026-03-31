@@ -52,3 +52,23 @@ Session 2 — 2026-03-31
 - Added quick comparison buttons below search input
 - Popular comparisons now directly trigger analysis on click
 - All PRD features complete, site fully functional
+
+Session 3 — 2026-03-31
+-----------------------
+- Fixed lint errors: LoadingSkeleton setState-in-effect (useSyncExternalStore), unused Link import
+- Added translated summary section: non-English users see both local language translation + English original
+- Fixed AI failure detection: synthesis now detects error messages ("analysis could not be completed") and retries
+- Improved AI prompt for more reliable structured 5-point output
+- Enhanced About page: added Why, Transparency, Open & Free sections with icons
+- Upgraded Privacy Policy: 10 structured sections (GDPR, CCPA, HIPAA, data retention, security, user rights)
+- Updated all 8 language files with new privacy + about translations
+- Improved translate-result API with retry logic
+- Added PubMed API retry logic (handles 429/5xx errors)
+- MAJOR FIX: Moved AI synthesis to client-side to eliminate Vercel server rate limiting
+  - Pollinations.ai was rate-limiting Vercel's server IPs (~60% failure rate)
+  - Now all AI calls happen directly from user's browser
+  - Added model fallback (openai → mistral)
+  - Added random seed to prevent caching
+- Puppeteer tested 30 diverse medical queries
+- Deployed multiple updates to Vercel (hit 100/day deploy limit)
+- Code pushed to GitHub for auto-deploy
