@@ -41,3 +41,14 @@ Session 2 — 2026-03-31
 - Migrated middleware.ts to proxy.ts for Next.js 16 compatibility
 - Updated sitemap with blog, compare, and use-cases pages
 - All SEO content pages from PRD Section 6 complete
+- Fixed text overflow in results (PMID numbers wrapping)
+- Added scrollable sources section (max-height 400px)
+- Improved loading UX: progress steps, timer, rotating tips
+- Added dynamic OG image for social media previews (KakaoTalk, etc.)
+- Fixed compare page: Analyze button now auto-triggers analysis via ?q= param
+- Translated compare page UI across 8 languages
+- Translated 404 page, About "Contact" section, Footer copyright
+- Upgraded AI prompt to 5-point structured meta-analysis format
+- Added quick comparison buttons below search input
+- Popular comparisons now directly trigger analysis on click
+- All PRD features complete, site fully functional
