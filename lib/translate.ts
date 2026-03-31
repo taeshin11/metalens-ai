@@ -7,7 +7,7 @@ function hasNonLatinChars(text: string): boolean {
 
 /**
  * Translate non-English keywords to English medical terms for PubMed search.
- * Uses Pollinations.ai — free, no API key, no login.
+ * Calls our server-side API route to avoid CORS issues.
  */
 export async function translateForPubMed(keywords: string): Promise<string> {
   if (!hasNonLatinChars(keywords)) {
@@ -15,26 +15,16 @@ export async function translateForPubMed(keywords: string): Promise<string> {
   }
 
   try {
-    const response = await fetch('https://text.pollinations.ai/', {
+    const response = await fetch('/api/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [
-          {
-            role: 'user',
-            content: `Translate the following medical/scientific keywords to English. Return ONLY the English medical terms separated by commas, nothing else. No explanations.\n\nKeywords: ${keywords}`,
-          },
-        ],
-        model: 'openai',
-        temperature: 0,
-      }),
+      body: JSON.stringify({ keywords }),
     });
 
     if (!response.ok) return keywords;
 
-    const translated = await response.text();
-    const cleaned = translated.trim().replace(/^["']|["']$/g, '');
-    return cleaned || keywords;
+    const data = await response.json();
+    return data.translated || keywords;
   } catch {
     return keywords;
   }

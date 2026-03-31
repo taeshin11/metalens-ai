@@ -14,8 +14,8 @@ export function buildPrompt(articles: PubMedArticle[], language: string, pointCo
 }
 
 /**
- * Synthesize using Pollinations.ai — completely free, no API key, no login.
- * https://text.pollinations.ai/
+ * Synthesize via our server-side API route (which calls Pollinations.ai).
+ * This avoids CORS issues from client-side calls.
  */
 export async function synthesizeWithAI(
   articles: PubMedArticle[],
@@ -23,22 +23,16 @@ export async function synthesizeWithAI(
 ): Promise<string> {
   const prompt = buildPrompt(articles, language);
 
-  const response = await fetch('https://text.pollinations.ai/', {
+  const response = await fetch('/api/synthesize', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messages: [
-        { role: 'user', content: prompt },
-      ],
-      model: 'openai',
-      temperature: 0.3,
-    }),
+    body: JSON.stringify({ prompt }),
   });
 
   if (!response.ok) {
     throw new Error('AI synthesis failed');
   }
 
-  const text = await response.text();
-  return text;
+  const data = await response.json();
+  return data.result;
 }
