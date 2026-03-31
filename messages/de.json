@@ -4,7 +4,10 @@
     "subtitle": "Geben Sie medizinische Schlüsselwörter ein und erhalten Sie sofortige KI-gestützte Metaanalyse-Zusammenfassungen aus über 40 Millionen PubMed-Artikeln.",
     "placeholder": "z. B. Asthma, Pranlukast, Montelukast, Wirksamkeit",
     "analyze": "Analysieren",
-    "poweredBy": "Unterstützt von PubMed & KI"
+    "poweredBy": "Unterstützt von PubMed & KI",
+    "stat1": "40M+ Artikel",
+    "stat2": "KI-gestützt",
+    "stat3": "Kostenlos"
   },
   "results": {
     "title": "Analyseergebnisse",
@@ -64,16 +67,17 @@
   },
   "privacy": {
     "title": "Datenschutzerklärung",
-    "content": "MetaLens AI von SPINAI respektiert Ihre Privatsphäre. Wir erheben minimale anonyme Nutzungsdaten, um unseren Service zu verbessern. Es werden keine persönlichen Informationen gespeichert. Suchanfragen werden in Echtzeit verarbeitet und nicht gespeichert. Bei Fragen wenden Sie sich an taeshinkim11@gmail.com."
+    "content": "Zuletzt aktualisiert: März 2026\n\nMetaLens AI von SPINAI respektiert Ihre Privatsphäre.\n\n1. Datenerhebung: Wir erheben minimale anonyme Nutzungsdaten (Suchbegriffe, Browsersprache, Artikelanzahl), um unseren Service zu verbessern. Es werden keine personenbezogenen Daten (PII) erhoben oder gespeichert.\n\n2. Suchanfragen: Ihre Suchbegriffe werden zur Verarbeitung an PubMed (NIH) und unseren KI-Anbieter übermittelt. Anfragen werden nach der Verarbeitung nicht auf unseren Servern gespeichert.\n\n3. Cookies: Wir verwenden keine Tracking-Cookies. Pro Besuch wird ausschließlich zu Analysezwecken eine zufällige Sitzungs-ID generiert.\n\n4. Drittanbieter-Dienste: Wir verwenden PubMed (NCBI/NIH) für Forschungsdaten und Pollinations.ai für die KI-Synthese. Diese Dienste haben ihre eigenen Datenschutzrichtlinien.\n\n5. Datenspeicherung: Wir können anonyme, aggregierte Nutzungsstatistiken über Google Sheets zur Produktverbesserung erfassen.\n\n6. Kinder: Dieser Dienst richtet sich nicht an Kinder unter 13 Jahren.\n\n7. Änderungen: Wir können diese Richtlinie aktualisieren. Änderungen werden auf dieser Seite veröffentlicht.\n\nKontakt: taeshinkim11@gmail.com"
   },
   "terms": {
     "title": "Nutzungsbedingungen",
-    "content": "Durch die Nutzung von MetaLens AI stimmen Sie zu, dass alle Ergebnisse von KI generierte Zusammenfassungen ausschließlich zu Informationszwecken sind und keine medizinische Beratung darstellen. SPINAI haftet nicht für Entscheidungen, die auf der Grundlage dieser Zusammenfassungen getroffen werden. Verwenden Sie den Dienst nach eigenem Ermessen und konsultieren Sie stets medizinische Fachleute."
+    "content": "Zuletzt aktualisiert: März 2026\n\nDurch die Nutzung von MetaLens AI stimmen Sie den folgenden Bedingungen zu:\n\n1. Art des Dienstes: MetaLens AI stellt von KI generierte Zusammenfassungen öffentlich zugänglicher PubMed-Forschungsabstracts bereit. Die Ergebnisse dienen ausschließlich Informations- und Bildungszwecken.\n\n2. Kein medizinischer Rat: Nichts auf dieser Website stellt medizinischen Rat, Diagnose oder Behandlungsempfehlungen dar. Konsultieren Sie vor medizinischen Entscheidungen stets einen qualifizierten Arzt.\n\n3. Genauigkeit: Obwohl wir uns um Genauigkeit bemühen, kann KI Fehler, Halluzinationen oder Fehlinterpretationen produzieren. Überprüfen Sie Erkenntnisse stets anhand der Originalartikel.\n\n4. Haftungsbeschränkung: SPINAI haftet nicht für Entscheidungen, Handlungen oder Ergebnisse, die auf den von MetaLens AI bereitgestellten Informationen basieren.\n\n5. Faire Nutzung: Nutzer des kostenlosen Tarifs können täglich bis zu 5 Analysen durchführen. Automatisiertes Scraping oder Missbrauch des Dienstes ist untersagt.\n\n6. Geistiges Eigentum: Name, Logo und Design von MetaLens AI sind Eigentum von SPINAI. Forschungsabstracts stammen aus PubMed/NCBI und unterliegen deren Nutzungsbedingungen.\n\n7. Änderungen: Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern.\n\nKontakt: taeshinkim11@gmail.com"
   },
   "errors": {
     "noResults": "Für diese Schlüsselwörter wurden keine Artikel gefunden. Versuchen Sie andere oder allgemeinere Begriffe.",
     "apiError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "rateLimit": "Sie haben das Tageslimit erreicht. Wechseln Sie zu Pro für unbegrenzte Analysen.",
-    "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "tryAgain": "Erneut versuchen"
   }
 }

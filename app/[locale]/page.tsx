@@ -130,13 +130,13 @@ export default function HomePage() {
                 className="flex justify-center gap-8 pt-8 text-sm text-[var(--color-text-muted)]"
               >
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[var(--color-success)]">●</span> 40M+ Papers
+                  <span className="text-[var(--color-success)]">●</span> {t('stat1')}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[var(--color-info)]">●</span> AI-Powered
+                  <span className="text-[var(--color-info)]">●</span> {t('stat2')}
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[var(--color-warning)]">●</span> Free to Use
+                  <span className="text-[var(--color-warning)]">●</span> {t('stat3')}
                 </div>
               </motion.div>
             </div>
@@ -165,7 +165,7 @@ export default function HomePage() {
                 onClick={handleNewSearch}
                 className="px-6 py-2.5 text-sm font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-full hover:bg-[var(--color-primary)]/20 transition-colors"
               >
-                ← Try Again
+                ← {tErr('tryAgain')}
               </button>
             </div>
           </motion.div>

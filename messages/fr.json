@@ -4,7 +4,10 @@
     "subtitle": "Saisissez des mots-clés médicaux et obtenez des résumés instantanés de méta-analyse propulsés par l'IA à partir de plus de 40 millions d'articles PubMed.",
     "placeholder": "ex. : asthme, pranlukast, montélukast, efficacité",
     "analyze": "Analyser",
-    "poweredBy": "Propulsé par PubMed & IA"
+    "poweredBy": "Propulsé par PubMed & IA",
+    "stat1": "40M+ articles",
+    "stat2": "Propulsé par l'IA",
+    "stat3": "Gratuit"
   },
   "results": {
     "title": "Résultats de l'Analyse",
@@ -64,16 +67,17 @@
   },
   "privacy": {
     "title": "Politique de Confidentialité",
-    "content": "MetaLens AI de SPINAI respecte votre vie privée. Nous collectons un minimum de données d'utilisation anonymes pour améliorer notre service. Aucune information personnelle n'est stockée. Les requêtes de recherche sont traitées en temps réel et ne sont pas conservées. Pour toute question, contactez taeshinkim11@gmail.com."
+    "content": "Dernière mise à jour : mars 2026\n\nMetaLens AI de SPINAI respecte votre vie privée.\n\n1. Collecte de données : Nous collectons un minimum de données d'utilisation anonymes (mots-clés de recherche, langue du navigateur, nombre d'articles) pour améliorer notre service. Aucune information personnellement identifiable (PII) n'est collectée ou stockée.\n\n2. Requêtes de recherche : Vos mots-clés de recherche sont envoyés à PubMed (NIH) et à notre fournisseur d'IA pour traitement. Les requêtes ne sont pas stockées sur nos serveurs après traitement.\n\n3. Cookies : Nous n'utilisons pas de cookies de suivi. Un identifiant de session aléatoire est généré par visite uniquement à des fins analytiques.\n\n4. Services tiers : Nous utilisons PubMed (NCBI/NIH) pour les données de recherche et Pollinations.ai pour la synthèse par IA. Ces services ont leurs propres politiques de confidentialité.\n\n5. Stockage des données : Nous pouvons enregistrer des statistiques d'utilisation anonymes et agrégées via Google Sheets pour l'amélioration du produit.\n\n6. Enfants : Ce service n'est pas destiné aux enfants de moins de 13 ans.\n\n7. Modifications : Nous pouvons mettre à jour cette politique. Les modifications seront publiées sur cette page.\n\nContact : taeshinkim11@gmail.com"
   },
   "terms": {
     "title": "Conditions d'Utilisation",
-    "content": "En utilisant MetaLens AI, vous acceptez que tous les résultats sont des résumés générés par l'IA à des fins d'information uniquement et ne constituent pas un avis médical. SPINAI décline toute responsabilité quant aux décisions prises sur la base de ces résumés. Utilisez-le à votre discrétion et consultez toujours des professionnels de santé."
+    "content": "Dernière mise à jour : mars 2026\n\nEn utilisant MetaLens AI, vous acceptez les conditions suivantes :\n\n1. Nature du service : MetaLens AI fournit des résumés générés par l'IA à partir de résumés de recherche PubMed accessibles au public. Les résultats sont uniquement à des fins d'information et d'éducation.\n\n2. Pas un avis médical : Rien sur ce site ne constitue un avis médical, un diagnostic ou des recommandations de traitement. Consultez toujours un professionnel de santé qualifié avant de prendre des décisions médicales.\n\n3. Exactitude : Bien que nous nous efforcions d'être précis, l'IA peut produire des erreurs, des hallucinations ou des interprétations erronées. Vérifiez toujours les résultats auprès des articles originaux.\n\n4. Limitation de responsabilité : SPINAI n'est pas responsable des décisions, actions ou résultats basés sur les informations fournies par MetaLens AI.\n\n5. Utilisation équitable : Les utilisateurs du plan gratuit peuvent effectuer jusqu'à 5 analyses par jour. Le scraping automatisé ou l'abus du service est interdit.\n\n6. Propriété intellectuelle : Le nom, le logo et le design de MetaLens AI sont la propriété de SPINAI. Les résumés de recherche proviennent de PubMed/NCBI et sont soumis à leurs conditions.\n\n7. Modifications : Nous nous réservons le droit de modifier ces conditions à tout moment.\n\nContact : taeshinkim11@gmail.com"
   },
   "errors": {
     "noResults": "Aucun article trouvé pour ces mots-clés. Essayez des termes différents ou plus généraux.",
     "apiError": "Une erreur s'est produite. Veuillez réessayer.",
     "rateLimit": "Vous avez atteint la limite quotidienne. Passez à Pro pour des analyses illimitées.",
-    "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer."
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+    "tryAgain": "Réessayer"
   }
 }

@@ -4,7 +4,10 @@
     "subtitle": "Introduce palabras clave médicas y obtén resúmenes instantáneos de metaanálisis impulsados por IA a partir de más de 40 millones de artículos de PubMed.",
     "placeholder": "p. ej., asma, pranlukast, montelukast, eficacia",
     "analyze": "Analizar",
-    "poweredBy": "Desarrollado con PubMed e IA"
+    "poweredBy": "Desarrollado con PubMed e IA",
+    "stat1": "40M+ artículos",
+    "stat2": "Con IA",
+    "stat3": "Uso gratuito"
   },
   "results": {
     "title": "Resultados del Análisis",
@@ -64,16 +67,17 @@
   },
   "privacy": {
     "title": "Política de Privacidad",
-    "content": "MetaLens AI de SPINAI respeta tu privacidad. Recopilamos datos de uso anónimos mínimos para mejorar nuestro servicio. No se almacena información personal. Las consultas de búsqueda se procesan en tiempo real y no se conservan. Para preguntas, contacta a taeshinkim11@gmail.com."
+    "content": "Última actualización: marzo de 2026\n\nMetaLens AI de SPINAI respeta tu privacidad.\n\n1. Recopilación de datos: Recopilamos datos de uso anónimos mínimos (palabras clave de búsqueda, idioma del navegador, recuento de artículos) para mejorar nuestro servicio. No se recopila ni almacena información de identificación personal (PII).\n\n2. Consultas de búsqueda: Tus palabras clave de búsqueda se envían a PubMed (NIH) y a nuestro proveedor de IA para su procesamiento. Las consultas no se almacenan en nuestros servidores tras el procesamiento.\n\n3. Cookies: No utilizamos cookies de seguimiento. Se genera un ID de sesión aleatorio por visita únicamente con fines analíticos.\n\n4. Servicios de terceros: Utilizamos PubMed (NCBI/NIH) para datos de investigación y Pollinations.ai para la síntesis de IA. Estos servicios tienen sus propias políticas de privacidad.\n\n5. Almacenamiento de datos: Podemos registrar estadísticas de uso anónimas y agregadas a través de Google Sheets para mejorar el producto.\n\n6. Menores: Este servicio no está destinado a menores de 13 años.\n\n7. Cambios: Podemos actualizar esta política. Los cambios se publicarán en esta página.\n\nContacto: taeshinkim11@gmail.com"
   },
   "terms": {
     "title": "Términos de Servicio",
-    "content": "Al usar MetaLens AI, aceptas que todos los resultados son resúmenes generados por IA solo con fines informativos y no constituyen asesoramiento médico. SPINAI no es responsable de las decisiones tomadas en base a estos resúmenes. Úsalo con discreción y consulta siempre a profesionales de la salud."
+    "content": "Última actualización: marzo de 2026\n\nAl usar MetaLens AI, aceptas los siguientes términos:\n\n1. Naturaleza del servicio: MetaLens AI proporciona resúmenes generados por IA de resúmenes de investigación de PubMed disponibles públicamente. Los resultados son únicamente para fines informativos y educativos.\n\n2. No es consejo médico: Nada en este sitio constituye consejo médico, diagnóstico ni recomendaciones de tratamiento. Consulta siempre a un profesional de la salud cualificado antes de tomar decisiones médicas.\n\n3. Precisión: Aunque nos esforzamos por ser precisos, la IA puede producir errores, alucinaciones o malinterpretaciones. Verifica siempre los hallazgos con los artículos originales.\n\n4. Limitación de responsabilidad: SPINAI no es responsable de ninguna decisión, acción o resultado basado en la información proporcionada por MetaLens AI.\n\n5. Uso justo: Los usuarios del plan gratuito pueden realizar hasta 5 análisis por día. Se prohíbe el scraping automatizado o el abuso del servicio.\n\n6. Propiedad intelectual: El nombre, logotipo y diseño de MetaLens AI son propiedad de SPINAI. Los resúmenes de investigación provienen de PubMed/NCBI y están sujetos a sus términos.\n\n7. Cambios: Nos reservamos el derecho de modificar estos términos en cualquier momento.\n\nContacto: taeshinkim11@gmail.com"
   },
   "errors": {
     "noResults": "No se encontraron artículos para estas palabras clave. Prueba con términos diferentes o más amplios.",
     "apiError": "Algo salió mal. Por favor, inténtalo de nuevo.",
     "rateLimit": "Has alcanzado el límite diario. Actualiza a Pro para análisis ilimitados.",
-    "networkError": "Error de red. Por favor, verifica tu conexión e inténtalo de nuevo."
+    "networkError": "Error de red. Por favor, verifica tu conexión e inténtalo de nuevo.",
+    "tryAgain": "Intentar de nuevo"
   }
 }

@@ -4,7 +4,10 @@
     "subtitle": "Enter medical keywords and get instant AI-powered meta-analysis summaries from 40M+ PubMed papers.",
     "placeholder": "e.g., asthma, pranlukast, montelukast, efficacy",
     "analyze": "Analyze",
-    "poweredBy": "Powered by PubMed & AI"
+    "poweredBy": "Powered by PubMed & AI",
+    "stat1": "40M+ Papers",
+    "stat2": "AI-Powered",
+    "stat3": "Free to Use"
   },
   "results": {
     "title": "Analysis Results",
@@ -64,16 +67,17 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "content": "MetaLens AI by SPINAI respects your privacy. We collect minimal anonymous usage data to improve our service. No personal information is stored. Search queries are processed in real-time and not retained. For questions, contact taeshinkim11@gmail.com."
+    "content": "Last updated: March 2026\n\nMetaLens AI by SPINAI respects your privacy.\n\n1. Data Collection: We collect minimal anonymous usage data (search keywords, browser language, paper count) to improve our service. No personally identifiable information (PII) is collected or stored.\n\n2. Search Queries: Your search keywords are sent to PubMed (NIH) and our AI provider for processing. Queries are not stored on our servers after processing.\n\n3. Cookies: We do not use tracking cookies. A random session ID is generated per visit for analytics only.\n\n4. Third-Party Services: We use PubMed (NCBI/NIH) for research data and Pollinations.ai for AI synthesis. These services have their own privacy policies.\n\n5. Data Storage: We may log anonymous, aggregated usage statistics via Google Sheets for product improvement.\n\n6. Children: This service is not intended for children under 13.\n\n7. Changes: We may update this policy. Changes will be posted on this page.\n\nContact: taeshinkim11@gmail.com"
   },
   "terms": {
     "title": "Terms of Service",
-    "content": "By using MetaLens AI, you agree that all results are AI-generated summaries for informational purposes only and do not constitute medical advice. SPINAI is not liable for decisions made based on these summaries. Use at your own discretion and always consult healthcare professionals."
+    "content": "Last updated: March 2026\n\nBy using MetaLens AI, you agree to the following terms:\n\n1. Nature of Service: MetaLens AI provides AI-generated summaries of publicly available PubMed research abstracts. Results are for informational and educational purposes only.\n\n2. Not Medical Advice: Nothing on this site constitutes medical advice, diagnosis, or treatment recommendations. Always consult a qualified healthcare professional before making medical decisions.\n\n3. Accuracy: While we strive for accuracy, AI can produce errors, hallucinations, or misinterpretations. Always verify findings with the original source papers.\n\n4. Limitation of Liability: SPINAI is not liable for any decisions, actions, or outcomes based on the information provided by MetaLens AI.\n\n5. Fair Use: Free tier users may perform up to 5 analyses per day. Automated scraping or abuse of the service is prohibited.\n\n6. Intellectual Property: The MetaLens AI name, logo, and design are property of SPINAI. Research abstracts are sourced from PubMed/NCBI and are subject to their terms.\n\n7. Changes: We reserve the right to modify these terms at any time.\n\nContact: taeshinkim11@gmail.com"
   },
   "errors": {
     "noResults": "No papers found for these keywords. Try different or broader terms.",
     "apiError": "Something went wrong. Please try again.",
     "rateLimit": "You've reached the daily limit. Upgrade to Pro for unlimited analyses.",
-    "networkError": "Network error. Please check your connection and try again."
+    "networkError": "Network error. Please check your connection and try again.",
+    "tryAgain": "Try Again"
   }
 }

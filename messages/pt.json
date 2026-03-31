@@ -4,7 +4,10 @@
     "subtitle": "Insira palavras-chave médicas e obtenha resumos instantâneos de meta-análise com IA a partir de mais de 40 milhões de artigos do PubMed.",
     "placeholder": "ex.: asma, pranlucaste, montelucaste, eficácia",
     "analyze": "Analisar",
-    "poweredBy": "Desenvolvido com PubMed e IA"
+    "poweredBy": "Desenvolvido com PubMed e IA",
+    "stat1": "40M+ artigos",
+    "stat2": "IA integrada",
+    "stat3": "Uso gratuito"
   },
   "results": {
     "title": "Resultados da Análise",
@@ -64,16 +67,17 @@
   },
   "privacy": {
     "title": "Política de Privacidade",
-    "content": "O MetaLens AI da SPINAI respeita sua privacidade. Coletamos dados de uso anônimos mínimos para melhorar nosso serviço. Nenhuma informação pessoal é armazenada. As consultas de pesquisa são processadas em tempo real e não são retidas. Para dúvidas, entre em contato com taeshinkim11@gmail.com."
+    "content": "Última atualização: março de 2026\n\nO MetaLens AI da SPINAI respeita sua privacidade.\n\n1. Coleta de dados: Coletamos dados de uso anônimos mínimos (palavras-chave de pesquisa, idioma do navegador, contagem de artigos) para melhorar nosso serviço. Nenhuma informação de identificação pessoal (PII) é coletada ou armazenada.\n\n2. Consultas de pesquisa: Suas palavras-chave de pesquisa são enviadas ao PubMed (NIH) e ao nosso provedor de IA para processamento. As consultas não são armazenadas em nossos servidores após o processamento.\n\n3. Cookies: Não utilizamos cookies de rastreamento. Um ID de sessão aleatório é gerado por visita apenas para fins analíticos.\n\n4. Serviços de terceiros: Utilizamos o PubMed (NCBI/NIH) para dados de pesquisa e o Pollinations.ai para síntese de IA. Esses serviços têm suas próprias políticas de privacidade.\n\n5. Armazenamento de dados: Podemos registrar estatísticas de uso anônimas e agregadas via Google Sheets para melhoria do produto.\n\n6. Crianças: Este serviço não é destinado a crianças menores de 13 anos.\n\n7. Alterações: Podemos atualizar esta política. As alterações serão publicadas nesta página.\n\nContato: taeshinkim11@gmail.com"
   },
   "terms": {
     "title": "Termos de Serviço",
-    "content": "Ao usar o MetaLens AI, você concorda que todos os resultados são resumos gerados por IA apenas para fins informativos e não constituem aconselhamento médico. A SPINAI não se responsabiliza por decisões tomadas com base nesses resumos. Use com discrição e sempre consulte profissionais de saúde."
+    "content": "Última atualização: março de 2026\n\nAo usar o MetaLens AI, você concorda com os seguintes termos:\n\n1. Natureza do serviço: O MetaLens AI fornece resumos gerados por IA de resumos de pesquisa do PubMed disponíveis publicamente. Os resultados são apenas para fins informativos e educacionais.\n\n2. Não é conselho médico: Nada neste site constitui conselho médico, diagnóstico ou recomendações de tratamento. Consulte sempre um profissional de saúde qualificado antes de tomar decisões médicas.\n\n3. Precisão: Embora nos esforcemos pela precisão, a IA pode produzir erros, alucinações ou interpretações equivocadas. Sempre verifique os resultados com os artigos originais.\n\n4. Limitação de responsabilidade: A SPINAI não é responsável por quaisquer decisões, ações ou resultados com base nas informações fornecidas pelo MetaLens AI.\n\n5. Uso justo: Usuários do plano gratuito podem realizar até 5 análises por dia. É proibido o scraping automatizado ou abuso do serviço.\n\n6. Propriedade intelectual: O nome, logotipo e design do MetaLens AI são propriedade da SPINAI. Os resumos de pesquisa são provenientes do PubMed/NCBI e estão sujeitos aos seus termos.\n\n7. Alterações: Reservamo-nos o direito de modificar estes termos a qualquer momento.\n\nContato: taeshinkim11@gmail.com"
   },
   "errors": {
     "noResults": "Nenhum artigo encontrado para estas palavras-chave. Tente termos diferentes ou mais abrangentes.",
     "apiError": "Algo deu errado. Por favor, tente novamente.",
     "rateLimit": "Você atingiu o limite diário. Atualize para Pro para análises ilimitadas.",
-    "networkError": "Erro de rede. Verifique sua conexão e tente novamente."
+    "networkError": "Erro de rede. Verifique sua conexão e tente novamente.",
+    "tryAgain": "Tentar novamente"
   }
 }
