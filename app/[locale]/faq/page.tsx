@@ -2,11 +2,12 @@ import { useTranslations } from 'next-intl';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'FAQ',
-  description: 'Frequently asked questions about MetaLens AI — accuracy, pricing, languages, and more.',
+  title: 'FAQ — Frequently Asked Questions',
+  description: 'Frequently asked questions about MetaLens AI — accuracy, pricing, languages, data sources, privacy, and how our AI meta-analysis works.',
+  keywords: 'MetaLens AI FAQ, medical meta-analysis questions, PubMed AI tool help, free research tool',
 };
 
-const faqs = ['1', '2', '3', '4', '5'] as const;
+const faqs = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] as const;
 
 export default function FAQPage() {
   const t = useTranslations('faq');
@@ -32,11 +33,14 @@ export default function FAQPage() {
       />
 
       <h1
-        className="text-4xl font-bold text-[var(--color-text-primary)] mb-12 text-center"
+        className="text-4xl font-bold text-[var(--color-text-primary)] mb-4 text-center"
         style={{ fontFamily: 'Outfit, sans-serif' }}
       >
         {t('title')}
       </h1>
+      <p className="text-center text-[var(--color-text-muted)] mb-12 max-w-xl mx-auto">
+        {t('subtitle')}
+      </p>
 
       <div className="space-y-4">
         {faqs.map((n) => (

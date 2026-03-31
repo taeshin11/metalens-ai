@@ -3,11 +3,12 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'MetaLens AI privacy policy — how we handle your data, your rights, and our security practices.',
+  description: 'MetaLens AI privacy policy — data collection, cookies, Google AdSense, GDPR/CCPA compliance, and your rights.',
+  keywords: 'MetaLens AI privacy, privacy policy, data collection, GDPR, CCPA, Google AdSense cookies',
 };
 
 const sections = [
-  's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10',
+  's1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10', 's11', 's12',
 ] as const;
 
 export default function PrivacyPage() {

@@ -170,36 +170,59 @@ npm test 2>/dev/null || echo "No tests yet"
   - `esearch.fcgi` — search for paper IDs by keywords
   - `efetch.fcgi` — fetch abstracts and metadata
   - Rate: 3 req/sec without key, 10/sec with free key (just email registration)
-- **AI Synthesis — NO API KEY NEEDED (Puter.js)**:
+- **AI Synthesis — Gemini 2.5 Flash + Pollinations Fallback**:
 
-  We use **Puter.js**, an open-source library that provides access to 500+ LLMs (GPT, Claude, Gemini, DeepSeek, Llama, etc.) with ZERO API keys, ZERO backend, ZERO cost to the developer. It uses a "User-Pays" model where Puter handles all routing and billing — developers pay nothing.
+  We use **Google Gemini 2.5 Flash** as the primary AI provider (via the `@google/genai` npm package), with **Pollinations.ai** as a free fallback that requires no API key. This gives us high-quality server-side AI synthesis with a resilient fallback if the Gemini API is unavailable.
 
   | Tier | Method | Model | API Key? | Cost to Dev |
   |------|--------|-------|----------|-------------|
-  | **Free users** | Puter.js (client-side) | `gpt-4.1-nano` or `gpt-5-nano` | **NO KEY NEEDED** | **$0** |
-  | **Free alt** | Puter.js (client-side) | `mistralai/mistral-large-2512` | **NO KEY NEEDED** | **$0** |
+  | **Free users** | Gemini API (server-side) | `gemini-2.5-flash` | `GEMINI_API_KEY` (free tier available) | **$0** (within free tier limits) |
+  | **Fallback** | Pollinations.ai (server-side) | `openai` (routed by Pollinations) | **NO KEY NEEDED** | **$0** |
   | **Pro users** | Anthropic Claude API (server-side) | `claude-sonnet-4-20250514` | Server-side key | Funded by subscriptions |
 
-  **How Puter.js works**:
-  - Include `<script src="https://js.puter.com/v2/"></script>` — that's it
-  - Call `puter.ai.chat(prompt, { model: "gpt-4.1-nano" })` from frontend
-  - No API key, no sign-up, no backend needed
-  - Supports streaming, function calling, multi-turn conversations
-  - 500+ models: GPT-5, Claude, Gemini, Grok, DeepSeek, Mistral, Llama, etc.
+  **How the AI pipeline works**:
+  - Server-side API route receives abstracts and language
+  - Tries Gemini 2.5 Flash first (fast, high quality, generous free tier)
+  - If Gemini fails or key is missing, falls through to Pollinations.ai (free, no key)
+  - Pollinations response is cleaned of any appended ads/watermarks
 
-  **Implementation (Free tier — runs entirely in browser)**:
+  **Implementation (Free tier — Gemini primary, Pollinations fallback)**:
   ```typescript
-  // No API key. No backend. No env vars. Just works.
-  import puter from '@heyputer/puter.js';
+  // Server-side: tries Gemini first, then Pollinations
+  import { GoogleGenAI } from '@google/genai';
 
-  async function synthesizeFree(abstracts: string[], language: string) {
+  async function synthesize(abstracts: string[], language: string): Promise<string | null> {
+    const geminiKey = process.env.GEMINI_API_KEY;
     const prompt = buildMetaAnalysisPrompt(abstracts, language);
-    const response = await puter.ai.chat(prompt, {
-      model: 'gpt-4.1-nano',  // Fast, free, good quality
-      temperature: 0.3,        // Low temp for factual accuracy
-      stream: true
+
+    // Primary: Gemini 2.5 Flash
+    if (geminiKey) {
+      try {
+        const ai = new GoogleGenAI({ apiKey: geminiKey });
+        const response = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          config: { temperature: 0.1, maxOutputTokens: 2000 },
+        });
+        const result = response.text?.trim();
+        if (result) return result;
+      } catch { /* fall through to Pollinations */ }
+    }
+
+    // Fallback: Pollinations.ai (no key needed)
+    const response = await fetch('https://text.pollinations.ai/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [
+          { role: 'system', content: prompt },
+          { role: 'user', content: abstracts.join('\n\n') },
+        ],
+        model: 'openai',
+        temperature: 0.1,
+      }),
     });
-    return response;
+    return response.ok ? (await response.text()).trim() : null;
   }
   ```
 
@@ -221,36 +244,36 @@ npm test 2>/dev/null || echo "No tests yet"
   ```
 
   **Key advantages of this approach**:
-  - Developer manages ZERO API keys for free tier
-  - No server-side AI calls for free users = no serverless function limits
-  - AI runs client-side via Puter.js = Vercel free tier stays well within limits
+  - Gemini 2.5 Flash free tier is generous (sufficient for MVP traffic)
+  - Pollinations fallback ensures AI always works even if Gemini is down or key is missing
+  - Server-side calls keep prompts and logic private
   - Pro users use server-side Claude = better quality justifies subscription
 
-  **Puter.js NPM installation**:
+  **NPM installation**:
   ```bash
-  npm install @heyputer/puter.js
-  ```
-  **Or CDN (for SSR/HTML)**:
-  ```html
-  <script src="https://js.puter.com/v2/"></script>
+  npm install @google/genai
   ```
 
 - **Data Collection**: Google Sheets via Google Apps Script webhook (POST)
 
-### Infrastructure (TRULY Zero Cost — No API Keys for Free Tier)
+### Infrastructure (Near-Zero Cost)
 - Vercel free tier for hosting & serverless functions — **$0**
 - PubMed E-utilities API (free, no key needed) — **$0**
-- Puter.js for AI (free, NO API key, client-side) — **$0**
+- Gemini 2.5 Flash API (generous free tier: 500 req/day) — **$0** (within free tier)
+- Pollinations.ai fallback (free, no key needed) — **$0**
 - Google Sheets + Apps Script (free) — **$0**
 - GitHub (free public or private repo) — **$0**
-- **Total monthly operating cost: $0** (free tier runs 100% client-side AI)
+- **Total monthly operating cost: $0** (within Gemini free tier limits)
 - Claude API only activated when Pro users are paying (self-funding)
-- **No API keys to manage, rotate, or leak for free tier**
+- **Only one API key to manage for free tier: `GEMINI_API_KEY`**
 
 ### Environment Variables
 
 ```env
-# ONLY needed for Pro tier (NOT for free tier — Puter.js handles free AI)
+# AI Synthesis — Primary (Gemini 2.5 Flash, free tier available at https://aistudio.google.com/)
+GEMINI_API_KEY=AIzaSy...xxxxx
+
+# AI Synthesis — Pro tier only (future feature)
 ANTHROPIC_API_KEY=sk-ant-xxxxx
 
 # Data Collection
@@ -617,6 +640,7 @@ vercel --prod
 ### Environment Variables on Vercel
 
 ```bash
+vercel env add GEMINI_API_KEY
 vercel env add ANTHROPIC_API_KEY
 vercel env add GOOGLE_SHEETS_WEBHOOK_URL
 vercel env add NEXT_PUBLIC_SITE_URL
@@ -678,7 +702,7 @@ git push origin main
 
 These constraints MUST be followed throughout development:
 
-1. **Zero cost infrastructure**: Vercel free tier, PubMed free API, Google Sheets free webhook, GitHub free repo
+1. **Near-zero cost infrastructure**: Vercel free tier, PubMed free API, Gemini free tier, Pollinations free fallback, Google Sheets free webhook, GitHub free repo
 2. **CLI-first automation**: If it can be done via CLI, do it via CLI. No manual GUI steps.
 3. **Responsive mobile-first**: Every component designed for 375px minimum
 4. **Soft color palette**: Warm, calming tones — NO stark white backgrounds

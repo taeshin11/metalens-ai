@@ -16,6 +16,11 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
+  keywords: [
+    'meta-analysis', 'medical research', 'PubMed', 'AI', 'drug comparison',
+    'systematic review', 'medical literature', 'research synthesis',
+    'evidence-based medicine', 'free medical tool', 'MetaLens AI',
+  ],
   openGraph: {
     title: `${SITE_NAME} — Free AI-Powered Medical Meta-Analysis Tool`,
     description: SITE_DESCRIPTION,
@@ -31,6 +36,13 @@ export const metadata: Metadata = {
     images: [`${SITE_URL}/opengraph-image`],
   },
   robots: { index: true, follow: true },
+  verification: {
+    google: 'WddgcbVJsL2BGHNAje5m6DK56IcR0Mw5UOqozI2Xtrc',
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
+  category: 'Health & Medical Research Tool',
 };
 
 export default async function LocaleLayout({
@@ -48,6 +60,11 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="h-full antialiased">
       <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7098271335538021"
+          crossOrigin="anonymous"
+        />
         <link rel="alternate" type="application/rss+xml" title="MetaLens AI Blog" href="/feed.xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

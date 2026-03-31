@@ -7,6 +7,7 @@ import { CONTACT_EMAIL, BRAND_NAME } from '@/lib/constants';
 
 export default function Footer() {
   const t = useTranslations('footer');
+  const nav = useTranslations('nav');
   const params = useParams();
   const locale = params.locale as string;
 
@@ -20,6 +21,33 @@ export default function Footer() {
               {t('builtBy')}{' '}
               <span className="font-semibold text-[var(--color-primary-dark)]">{BRAND_NAME}</span>
             </span>
+          </div>
+
+          <div className="flex items-center gap-6 text-sm">
+            <Link
+              href={`/${locale}/about`}
+              className="text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+            >
+              {nav('about')}
+            </Link>
+            <Link
+              href={`/${locale}/how-it-works`}
+              className="text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+            >
+              {nav('howItWorks')}
+            </Link>
+            <Link
+              href={`/${locale}/faq`}
+              className="text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+            >
+              {nav('faq')}
+            </Link>
+            <Link
+              href={`/${locale}/blog`}
+              className="text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors"
+            >
+              {nav('blog')}
+            </Link>
           </div>
 
           <div className="flex items-center gap-6 text-sm">
@@ -45,7 +73,7 @@ export default function Footer() {
         </div>
 
         <p className="text-center text-xs text-[var(--color-text-muted)] mt-6">
-          &copy; {new Date().getFullYear()} {BRAND_NAME}. {t('rights')}
+          &copy; 2025-2026 {BRAND_NAME}. {t('rights')}
         </p>
       </div>
     </footer>

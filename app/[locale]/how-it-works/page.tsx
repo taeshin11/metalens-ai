@@ -2,8 +2,9 @@ import { useTranslations } from 'next-intl';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'How It Works',
-  description: 'Learn how MetaLens AI searches PubMed and uses AI to synthesize medical research into structured summaries.',
+  title: 'How It Works — AI Medical Meta-Analysis',
+  description: 'Learn how MetaLens AI searches 40M+ PubMed papers and uses Google Gemini AI to synthesize medical research into structured meta-analysis summaries in seconds.',
+  keywords: 'how MetaLens AI works, AI meta-analysis process, PubMed search AI, medical research synthesis',
 };
 
 const steps = [

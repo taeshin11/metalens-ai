@@ -3,12 +3,14 @@
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function Header() {
   const t = useTranslations('nav');
   const params = useParams();
   const locale = params.locale as string;
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const links = [
@@ -22,7 +24,15 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[var(--color-border)]">
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-        <Link href={`/${locale}`} className="flex items-center gap-2 group">
+        <Link
+          href={`/${locale}`}
+          onClick={(e) => {
+            e.preventDefault();
+            router.push(`/${locale}`);
+            router.refresh();
+          }}
+          className="flex items-center gap-2 group"
+        >
           <span className="text-2xl">🔬</span>
           <span
             className="text-xl font-bold text-[var(--color-primary-dark)] group-hover:text-[var(--color-primary)] transition-colors"

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { PubMedArticle } from '@/lib/pubmed';
 import { SynthesisResult } from '@/lib/synthesis';
 import { PUBMED_BASE } from '@/lib/constants';
+import AdBanner from './AdBanner';
 
 interface ResultsCardProps {
   result: SynthesisResult;
@@ -112,6 +113,18 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
           ))}
         </div>
       </div>
+
+      {/* Ad Banner — small, non-intrusive */}
+      {process.env.NEXT_PUBLIC_ADSTERRA_AD_KEY && (
+        <div className="flex justify-center">
+          <AdBanner
+            adKey={process.env.NEXT_PUBLIC_ADSTERRA_AD_KEY}
+            width={728}
+            height={90}
+            className="rounded-xl opacity-80 hover:opacity-100 transition-opacity"
+          />
+        </div>
+      )}
 
       {/* Disclaimer */}
       <div className="bg-[var(--color-warning)]/10 rounded-2xl p-4 border border-[var(--color-warning)]/30">

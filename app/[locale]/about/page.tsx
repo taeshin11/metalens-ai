@@ -1,9 +1,11 @@
 import { useTranslations } from 'next-intl';
 import type { Metadata } from 'next';
+import { CONTACT_EMAIL } from '@/lib/constants';
 
 export const metadata: Metadata = {
-  title: 'About',
-  description: 'Learn about MetaLens AI by SPINAI — our mission to democratize medical research insights.',
+  title: 'About MetaLens AI',
+  description: 'Learn about MetaLens AI by SPINAI — our mission to democratize medical research insights with free AI-powered meta-analysis.',
+  keywords: 'MetaLens AI, SPINAI, about, medical research AI, meta-analysis tool, PubMed AI',
 };
 
 export default function AboutPage() {
@@ -23,6 +25,7 @@ export default function AboutPage() {
         <Section icon="💡" title={t('whyTitle')} text={t('whyText')} />
         <Section icon="⚙️" title={t('howWeWork')} text={t('howWeWorkText')} />
         <Section icon="🔍" title={t('transparency')} text={t('transparencyText')} />
+        <Section icon="🏢" title={t('teamTitle')} text={t('teamText')} />
         <Section icon="🌐" title={t('openTitle')} text={t('openText')} />
         <section className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)]">
           <h2
@@ -31,13 +34,13 @@ export default function AboutPage() {
           >
             <span>✉️</span> {t('contact')}
           </h2>
-          <p className="text-[var(--color-text-secondary)] leading-relaxed text-lg">
+          <p className="text-[var(--color-text-secondary)] leading-relaxed text-lg whitespace-pre-line">
             {t('contactText')}{' '}
             <a
-              href="mailto:taeshinkim11@gmail.com"
+              href={`mailto:${CONTACT_EMAIL}`}
               className="text-[var(--color-primary)] hover:underline"
             >
-              taeshinkim11@gmail.com
+              {CONTACT_EMAIL}
             </a>
           </p>
         </section>
@@ -55,7 +58,7 @@ function Section({ icon, title, text }: { icon: string; title: string; text: str
       >
         <span>{icon}</span> {title}
       </h2>
-      <p className="text-[var(--color-text-secondary)] leading-relaxed text-lg">{text}</p>
+      <p className="text-[var(--color-text-secondary)] leading-relaxed text-lg whitespace-pre-line">{text}</p>
     </section>
   );
 }
