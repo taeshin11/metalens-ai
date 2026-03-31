@@ -7,11 +7,12 @@ import { motion } from 'framer-motion';
 interface KeywordInputProps {
   onSubmit: (keywords: string) => void;
   isLoading: boolean;
+  initialValue?: string;
 }
 
-export default function KeywordInput({ onSubmit, isLoading }: KeywordInputProps) {
+export default function KeywordInput({ onSubmit, isLoading, initialValue }: KeywordInputProps) {
   const t = useTranslations('hero');
-  const [keywords, setKeywords] = useState('');
+  const [keywords, setKeywords] = useState(initialValue || '');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

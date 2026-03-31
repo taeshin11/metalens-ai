@@ -135,6 +135,23 @@ export default function HomePage() {
                   onSubmit={handleAnalyze}
                   isLoading={stage === 'searching' || stage === 'synthesizing'}
                 />
+                {/* Quick example buttons */}
+                <div className="flex flex-wrap justify-center gap-2 mt-4">
+                  {[
+                    { label: 'Pranlukast vs Montelukast', kw: 'pranlukast, montelukast, asthma, efficacy' },
+                    { label: 'Metformin vs Insulin', kw: 'metformin, insulin, type 2 diabetes, efficacy' },
+                    { label: 'Ibuprofen vs Acetaminophen', kw: 'ibuprofen, acetaminophen, pain, efficacy' },
+                  ].map((ex) => (
+                    <button
+                      key={ex.kw}
+                      onClick={() => handleAnalyze(ex.kw)}
+                      disabled={stage === 'searching' || stage === 'synthesizing'}
+                      className="px-3 py-1.5 text-xs text-[var(--color-primary-dark)] bg-[var(--color-primary)]/8 border border-[var(--color-primary)]/20 rounded-full hover:bg-[var(--color-primary)]/15 transition-colors disabled:opacity-40"
+                    >
+                      {ex.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Stats */}
@@ -245,17 +262,17 @@ export default function HomePage() {
               </p>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[
-                  { slug: 'pranlukast-vs-montelukast', d1: 'Pranlukast', d2: 'Montelukast', cond: 'Asthma' },
-                  { slug: 'metformin-vs-insulin', d1: 'Metformin', d2: 'Insulin', cond: 'Type 2 Diabetes' },
-                  { slug: 'ibuprofen-vs-acetaminophen', d1: 'Ibuprofen', d2: 'Acetaminophen', cond: 'Pain Relief' },
-                  { slug: 'lisinopril-vs-losartan', d1: 'Lisinopril', d2: 'Losartan', cond: 'Hypertension' },
-                  { slug: 'omeprazole-vs-pantoprazole', d1: 'Omeprazole', d2: 'Pantoprazole', cond: 'GERD' },
-                  { slug: 'sertraline-vs-fluoxetine', d1: 'Sertraline', d2: 'Fluoxetine', cond: 'Depression' },
+                  { d1: 'Pranlukast', d2: 'Montelukast', cond: 'Asthma', kw: 'pranlukast, montelukast, asthma, efficacy, safety' },
+                  { d1: 'Metformin', d2: 'Insulin', cond: 'Type 2 Diabetes', kw: 'metformin, insulin, type 2 diabetes, glycemic control, efficacy' },
+                  { d1: 'Ibuprofen', d2: 'Acetaminophen', cond: 'Pain Relief', kw: 'ibuprofen, acetaminophen, pain, analgesic, efficacy, safety' },
+                  { d1: 'Lisinopril', d2: 'Losartan', cond: 'Hypertension', kw: 'lisinopril, losartan, hypertension, blood pressure, efficacy' },
+                  { d1: 'Omeprazole', d2: 'Pantoprazole', cond: 'GERD', kw: 'omeprazole, pantoprazole, GERD, acid reflux, proton pump inhibitor' },
+                  { d1: 'Sertraline', d2: 'Fluoxetine', cond: 'Depression', kw: 'sertraline, fluoxetine, depression, SSRI, efficacy, side effects' },
                 ].map((c) => (
-                  <Link
-                    key={c.slug}
-                    href={`/${locale}/compare/${c.slug}`}
-                    className="block p-5 bg-white rounded-2xl border border-[var(--color-border)] hover:border-[var(--color-primary-light)] hover:shadow-md transition-all group"
+                  <button
+                    key={c.kw}
+                    onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); handleAnalyze(c.kw); }}
+                    className="text-left p-5 bg-white rounded-2xl border border-[var(--color-border)] hover:border-[var(--color-primary-light)] hover:shadow-md transition-all group cursor-pointer"
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-primary)]"></span>
@@ -264,7 +281,7 @@ export default function HomePage() {
                       </span>
                     </div>
                     <p className="text-xs text-[var(--color-text-muted)]">{c.cond}</p>
-                  </Link>
+                  </button>
                 ))}
               </div>
             </div>
