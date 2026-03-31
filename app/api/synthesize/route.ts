@@ -12,7 +12,13 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        messages: [{ role: 'user', content: prompt }],
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a medical research analyst. CRITICAL: Output ONLY your final answer. Do NOT output any thinking, reasoning, planning, or internal monologue. Do NOT start with "We need to", "Let me", "Let\'s", "I need to", or any planning text. Start directly with your structured findings. If you catch yourself writing planning text, stop and restart with just the answer.',
+          },
+          { role: 'user', content: prompt },
+        ],
         model: 'openai',
         temperature: 0.2,
       }),
@@ -23,10 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     const raw = await response.text();
-
-    // Pollinations sometimes returns JSON with reasoning_content (from reasoning models)
-    // instead of plain text. Extract the actual content.
-    const result = extractContent(raw);
+    const result = cleanResponse(raw);
 
     return NextResponse.json({ result });
   } catch {
@@ -34,41 +37,82 @@ export async function POST(request: NextRequest) {
   }
 }
 
-function extractContent(raw: string): string {
-  // Try parsing as JSON first
-  try {
-    const parsed = JSON.parse(raw);
+function cleanResponse(raw: string): string {
+  let text = raw;
 
-    // Format: { role: "assistant", reasoning_content: "...", content: "..." }
+  // 1. Handle JSON responses (reasoning models return {role, reasoning_content, content})
+  try {
+    const parsed = JSON.parse(text);
     if (parsed && typeof parsed === 'object') {
-      // Prefer "content" field (the actual answer)
       if (typeof parsed.content === 'string' && parsed.content.trim()) {
-        return parsed.content.trim();
-      }
-      // Some models put result in "message.content"
-      if (parsed.message && typeof parsed.message.content === 'string') {
-        return parsed.message.content.trim();
-      }
-      // If only reasoning_content exists but no content, the model
-      // didn't produce a final answer - use reasoning as fallback
-      if (typeof parsed.reasoning_content === 'string' && parsed.reasoning_content.trim()) {
-        return parsed.reasoning_content.trim();
-      }
-      // Array of choices (OpenAI format)
-      if (Array.isArray(parsed.choices) && parsed.choices[0]?.message?.content) {
-        return parsed.choices[0].message.content.trim();
+        text = parsed.content.trim();
+      } else if (Array.isArray(parsed.choices) && parsed.choices[0]?.message?.content) {
+        text = parsed.choices[0].message.content.trim();
+      } else if (typeof parsed.reasoning_content === 'string') {
+        // Only reasoning, no content — model failed to produce answer
+        // Extract any structured content after reasoning
+        text = parsed.reasoning_content;
       }
     }
   } catch {
-    // Not JSON — treat as plain text (normal case)
+    // Not JSON, use as-is
   }
 
-  return stripPollinationsAd(raw.trim());
+  // 2. Strip reasoning/thinking preamble that some models dump
+  text = stripReasoningPreamble(text);
+
+  // 3. Strip Pollinations ad footer
+  text = stripPollinationsAd(text);
+
+  return text.trim();
+}
+
+function stripReasoningPreamble(text: string): string {
+  // Detect if the response starts with reasoning/planning text
+  // Pattern: "We need to...", "Let's identify...", "Let me...", "I need to..."
+  // followed eventually by actual numbered findings
+
+  // Look for the first occurrence of a numbered finding like "1. **" or "**1."
+  const findingsPattern = /^(\d+)\.\s*\*\*/m;
+  const match = text.match(findingsPattern);
+
+  if (match && match.index !== undefined && match.index > 0) {
+    // Check if content before the first finding looks like reasoning
+    const preamble = text.substring(0, match.index);
+    const reasoningIndicators = [
+      'We need to', 'Let\'s identify', 'Let\'s craft', 'Let me',
+      'I need to', 'Must use', 'Must cite', 'Must include',
+      'Let\'s produce', 'Key topics:', 'We have many abstracts',
+      'need to synthesize', 'Let\'s extract',
+    ];
+
+    const isReasoning = reasoningIndicators.some(indicator =>
+      preamble.includes(indicator)
+    );
+
+    if (isReasoning) {
+      // Strip the reasoning preamble, keep only the findings
+      return text.substring(match.index);
+    }
+  }
+
+  // Also handle case where entire response is reasoning with no findings
+  const lines = text.split('\n');
+  const firstLine = lines[0]?.trim() || '';
+  const fullReasoning = [
+    'We need to produce', 'We need to ', 'Let\'s identify',
+    'We have many abstracts', 'I will now', 'Let me analyze',
+  ];
+  if (fullReasoning.some(p => firstLine.startsWith(p)) && !text.match(/^\d+\.\s*\*\*/m)) {
+    // Entire response is reasoning with no structured output
+    // Return a fallback message
+    return 'The analysis could not be completed. Please try again with different keywords.';
+  }
+
+  return text;
 }
 
 function stripPollinationsAd(text: string): string {
-  // Pollinations appends ads like "---\n🌸 **Ad** 🌸\nPowered by Pollinations..."
-  // or "---\n**Support Pollinations.AI:**"
   const adPatterns = [
     /\n---\s*\n+\*?\*?Support Pollinations[\s\S]*/i,
     /\n---\s*\n+🌸[\s\S]*/,
@@ -79,5 +123,5 @@ function stripPollinationsAd(text: string): string {
   for (const pattern of adPatterns) {
     cleaned = cleaned.replace(pattern, '');
   }
-  return cleaned.trim();
+  return cleaned;
 }
