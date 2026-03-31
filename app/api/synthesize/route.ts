@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 const POLLINATIONS_URL = 'https://text.pollinations.ai/';
 const SYSTEM_MSG = 'You are a medical research analyst. Output ONLY your final structured answer. No thinking, planning, or reasoning text.';
 
+// Models to try in order of preference
+const MODELS = ['openai', 'mistral', 'claude'];
+
 export async function POST(request: NextRequest) {
   try {
     const { prompt } = await request.json();
@@ -11,8 +14,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing prompt' }, { status: 400 });
     }
 
-    // Try up to 2 times (retry once on failure)
-    const result = await callPollinationsWithRetry(prompt, 2);
+    // Try each model, with retry on the first one
+    const result = await synthesizeWithFallback(prompt);
 
     if (!result) {
       return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
@@ -21,33 +24,36 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ result });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error';
-    if (msg.includes('timed out')) {
+    if (msg.includes('timed out') || msg.includes('AbortError')) {
       return NextResponse.json({ error: 'AI synthesis timed out. Please try again.' }, { status: 504 });
     }
     return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
   }
 }
 
-async function callPollinationsWithRetry(prompt: string, maxRetries: number): Promise<string | null> {
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      const result = await callPollinations(prompt);
-      if (result && result.trim()) return result;
-      // Empty result (AI failure response) — retry
-    } catch {
-      // Error — retry
-    }
-    if (attempt < maxRetries - 1) {
-      await new Promise(r => setTimeout(r, 2000));
+async function synthesizeWithFallback(prompt: string): Promise<string | null> {
+  // Try primary model twice, then fallback models once each
+  for (const model of MODELS) {
+    const attempts = model === MODELS[0] ? 2 : 1;
+    for (let attempt = 0; attempt < attempts; attempt++) {
+      try {
+        const result = await callPollinations(prompt, model);
+        if (result && result.trim()) return result;
+      } catch {
+        // Continue to next attempt/model
+      }
+      if (attempt < attempts - 1) {
+        await new Promise(r => setTimeout(r, 1500));
+      }
     }
   }
   return null;
 }
 
-async function callPollinations(prompt: string): Promise<string> {
+async function callPollinations(prompt: string, model: string): Promise<string> {
   const controller = new AbortController();
-  // 25s per attempt. With retry: 25s + 2s + 25s = 52s (fits Vercel 60s limit)
-  const timeout = setTimeout(() => controller.abort(), 25000);
+  // 18s per attempt — allows time for 3+ attempts within Vercel 60s limit
+  const timeout = setTimeout(() => controller.abort(), 18000);
 
   try {
     const response = await fetch(POLLINATIONS_URL, {
@@ -59,13 +65,12 @@ async function callPollinations(prompt: string): Promise<string> {
           { role: 'system', content: SYSTEM_MSG },
           { role: 'user', content: prompt },
         ],
-        model: 'openai',
+        model,
         temperature: 0.2,
       }),
     });
 
     if (!response.ok) {
-      // Pollinations returned error — throw to trigger retry
       throw new Error(`Pollinations returned ${response.status}`);
     }
 
@@ -95,7 +100,6 @@ const FAILURE_PHRASES = [
 
 function isFailureResponse(text: string): boolean {
   const lower = text.toLowerCase();
-  // If the response is very short and matches a failure phrase, it's a failure
   if (text.length < 300 && FAILURE_PHRASES.some(p => lower.includes(p))) {
     return true;
   }
@@ -138,7 +142,6 @@ function cleanResponse(raw: string): string {
 }
 
 function stripReasoningPreamble(text: string): string {
-  // Look for structured findings like "1. **" anywhere in the text
   const findingsPattern = /^(\d+)\.\s*\*\*/m;
   const match = text.match(findingsPattern);
 
@@ -148,12 +151,10 @@ function stripReasoningPreamble(text: string): string {
       'I need to', 'Must use', 'Must cite', 'Let\'s produce', 'We have many',
       'Let\'s extract', 'Key topics:', 'need to synthesize'];
     if (indicators.some(i => preamble.includes(i))) {
-      // Found findings after reasoning — return just the findings
       return text.substring(match.index);
     }
   }
 
-  // Also try "1." without bold (some models don't use markdown)
   const numberedPattern = /^1\.\s+\S/m;
   const numMatch = text.match(numberedPattern);
   if (numMatch && numMatch.index !== undefined && numMatch.index > 200) {
@@ -163,6 +164,5 @@ function stripReasoningPreamble(text: string): string {
     }
   }
 
-  // Never return a failure message — any AI response is better than nothing
   return text;
 }

@@ -10,10 +10,33 @@ export interface PubMedArticle {
   doi?: string;
 }
 
+async function fetchWithRetry(url: string, retries = 2): Promise<Response> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return res;
+      // PubMed rate limit (429) or server error — retry
+      if (res.status === 429 || res.status >= 500) {
+        if (i < retries - 1) {
+          await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+          continue;
+        }
+      }
+      throw new Error(`PubMed returned ${res.status}`);
+    } catch (err) {
+      if (i < retries - 1) {
+        await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw new Error('PubMed request failed after retries');
+}
+
 export async function searchPubMed(keywords: string, maxResults = 20): Promise<string[]> {
   const url = `${BASE_URL}/esearch.fcgi?db=pubmed&term=${encodeURIComponent(keywords)}&retmax=${maxResults}&retmode=json&sort=relevance`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('PubMed search failed');
+  const res = await fetchWithRetry(url);
   const data = await res.json();
   return data.esearchresult?.idlist || [];
 }
@@ -21,8 +44,7 @@ export async function searchPubMed(keywords: string, maxResults = 20): Promise<s
 export async function fetchAbstracts(pmids: string[]): Promise<PubMedArticle[]> {
   if (pmids.length === 0) return [];
   const url = `${BASE_URL}/efetch.fcgi?db=pubmed&id=${pmids.join(',')}&retmode=xml`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('PubMed fetch failed');
+  const res = await fetchWithRetry(url);
   const xml = await res.text();
   return parseArticlesFromXml(xml);
 }

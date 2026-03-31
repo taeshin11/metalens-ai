@@ -66,13 +66,17 @@ export async function synthesizeWithAI(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt }),
-  }, 45000);
+  }, 55000);
 
   if (!synthesisResponse.ok) {
     throw new Error('AI synthesis failed');
   }
 
   const { result: englishResult } = await synthesisResponse.json();
+
+  if (!englishResult || !englishResult.trim()) {
+    throw new Error('AI returned empty result');
+  }
 
   // Step 2: Translate if not English
   if (language !== 'English' && englishResult) {
