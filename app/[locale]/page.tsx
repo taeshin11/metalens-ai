@@ -10,6 +10,7 @@ import FeedbackButton from '@/components/FeedbackButton';
 import { searchAndFetch, PubMedArticle } from '@/lib/pubmed';
 import { synthesizeWithPuter } from '@/lib/synthesis';
 import { collectData } from '@/lib/analytics';
+import { translateForPubMed } from '@/lib/translate';
 
 type Stage = 'idle' | 'searching' | 'synthesizing' | 'done' | 'error';
 
@@ -31,7 +32,9 @@ export default function HomePage() {
     setResult('');
 
     try {
-      const papers = await searchAndFetch(kw, 20);
+      // Translate non-English keywords to English for PubMed search
+      const englishKeywords = await translateForPubMed(kw);
+      const papers = await searchAndFetch(englishKeywords, 20);
 
       if (papers.length === 0) {
         setStage('error');
