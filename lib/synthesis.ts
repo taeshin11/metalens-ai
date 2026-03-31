@@ -104,48 +104,31 @@ export async function synthesizeWithAI(
   const prompt = buildPrompt(articles);
   let englishResult = '';
 
-  // Strategy 1: Server-side (Gemini API)
+  // Strategy 1: Server-side Gemini API (fast, 10s timeout — skip if slow)
   try {
-    console.log('[Synthesis] Trying server-side API...');
     const synthesisResponse = await fetchWithTimeout('/api/synthesize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt }),
-    }, 30000);
+    }, 10000);
 
-    console.log('[Synthesis] Server response:', synthesisResponse.status);
     if (synthesisResponse.ok) {
       const { result } = await synthesisResponse.json();
       if (result && result.trim()) englishResult = result;
     }
-  } catch (err) {
-    console.log('[Synthesis] Server failed:', err instanceof Error ? err.message : 'unknown');
+  } catch {
+    // Server failed or timed out — fall through to client-side
   }
 
-  // Strategy 2: Client-side Pollinations (bypasses Vercel IP restrictions)
+  // Strategy 2: Client-side Pollinations (direct from browser, no CORS issue)
   if (!englishResult) {
-    console.log('[Synthesis] Server failed, trying client-side Pollinations...');
     try {
       const result = await callPollinationsClient(prompt);
       if (result && result.trim().length > 50) {
         englishResult = result;
-        console.log('[Synthesis] Client-side Pollinations succeeded');
       }
-    } catch (err) {
-      console.log('[Synthesis] Pollinations openai failed:', err instanceof Error ? err.message : 'unknown');
-    }
-
-    if (!englishResult) {
-      // Try mistral model
-      try {
-        console.log('[Synthesis] Trying Pollinations mistral...');
-        const result = await callPollinationsClient(prompt);
-        if (result && result.trim().length > 50) {
-          englishResult = result;
-        }
-      } catch (err) {
-        console.log('[Synthesis] Pollinations mistral failed:', err instanceof Error ? err.message : 'unknown');
-      }
+    } catch {
+      // openai model failed
     }
   }
 
