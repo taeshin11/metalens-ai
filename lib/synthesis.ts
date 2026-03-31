@@ -59,7 +59,7 @@ export async function synthesizeWithAI(
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt }),
-  }, 30000);
+  }, 45000);
 
   if (!synthesisResponse.ok) {
     throw new Error('AI synthesis failed');
@@ -74,7 +74,7 @@ export async function synthesizeWithAI(
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: englishResult, language }),
-      }, 25000);
+      }, 45000);
 
       if (translateResponse.ok) {
         const { translated } = await translateResponse.json();
