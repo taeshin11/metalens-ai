@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const POLLINATIONS_URL = 'https://text.pollinations.ai/';
+const SYSTEM_MSG = 'You are a medical research analyst. Output ONLY your final structured answer. No thinking, planning, or reasoning text.';
+
 export async function POST(request: NextRequest) {
   try {
     const { prompt } = await request.json();
@@ -8,54 +11,74 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing prompt' }, { status: 400 });
     }
 
-    // 25s timeout — Vercel hobby has 60s limit, leave margin
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 25000);
+    // Try up to 2 times (retry once on failure)
+    const result = await callPollinationsWithRetry(prompt, 2);
 
-    let response: Response;
-    try {
-      response = await fetch('https://text.pollinations.ai/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: controller.signal,
-        body: JSON.stringify({
-          messages: [
-            {
-              role: 'system',
-              content: 'You are a medical research analyst. CRITICAL: Output ONLY your final answer. Do NOT output any thinking, reasoning, planning, or internal monologue. Do NOT start with "We need to", "Let me", "Let\'s", "I need to", or any planning text. Start directly with your structured findings.',
-            },
-            { role: 'user', content: prompt },
-          ],
-          model: 'openai',
-          temperature: 0.2,
-        }),
-      });
-    } catch (err: unknown) {
-      clearTimeout(timeout);
-      if (err instanceof Error && err.name === 'AbortError') {
-        return NextResponse.json({ error: 'AI synthesis timed out. Please try again.' }, { status: 504 });
-      }
-      throw err;
+    if (!result) {
+      return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
     }
-    clearTimeout(timeout);
+
+    return NextResponse.json({ result });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    if (msg.includes('timed out')) {
+      return NextResponse.json({ error: 'AI synthesis timed out. Please try again.' }, { status: 504 });
+    }
+    return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
+  }
+}
+
+async function callPollinationsWithRetry(prompt: string, maxRetries: number): Promise<string | null> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const result = await callPollinations(prompt);
+      if (result) return result;
+    } catch {
+      if (attempt < maxRetries - 1) {
+        // Wait 2s before retry
+        await new Promise(r => setTimeout(r, 2000));
+        continue;
+      }
+    }
+  }
+  return null;
+}
+
+async function callPollinations(prompt: string): Promise<string> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 40000);
+
+  try {
+    const response = await fetch(POLLINATIONS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
+      body: JSON.stringify({
+        messages: [
+          { role: 'system', content: SYSTEM_MSG },
+          { role: 'user', content: prompt },
+        ],
+        model: 'openai',
+        temperature: 0.2,
+      }),
+    });
 
     if (!response.ok) {
-      return NextResponse.json({ error: 'AI synthesis failed' }, { status: 502 });
+      // Pollinations returned error — throw to trigger retry
+      throw new Error(`Pollinations returned ${response.status}`);
     }
 
     const raw = await response.text();
-    const result = cleanResponse(raw);
-
-    return NextResponse.json({ result });
-  } catch {
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return cleanResponse(raw);
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
 function cleanResponse(raw: string): string {
   let text = raw;
 
-  // 1. Handle JSON responses (reasoning models return {role, reasoning_content, content})
+  // Handle JSON responses from reasoning models
   try {
     const parsed = JSON.parse(text);
     if (parsed && typeof parsed === 'object') {
@@ -64,79 +87,34 @@ function cleanResponse(raw: string): string {
       } else if (Array.isArray(parsed.choices) && parsed.choices[0]?.message?.content) {
         text = parsed.choices[0].message.content.trim();
       } else if (typeof parsed.reasoning_content === 'string') {
-        // Only reasoning, no content — model failed to produce answer
-        // Extract any structured content after reasoning
         text = parsed.reasoning_content;
       }
     }
   } catch {
-    // Not JSON, use as-is
+    // Not JSON
   }
 
-  // 2. Strip reasoning/thinking preamble that some models dump
+  // Strip reasoning preamble
   text = stripReasoningPreamble(text);
 
-  // 3. Strip Pollinations ad footer
-  text = stripPollinationsAd(text);
+  // Strip Pollinations ads
+  text = text.replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '');
 
   return text.trim();
 }
 
 function stripReasoningPreamble(text: string): string {
-  // Detect if the response starts with reasoning/planning text
-  // Pattern: "We need to...", "Let's identify...", "Let me...", "I need to..."
-  // followed eventually by actual numbered findings
-
-  // Look for the first occurrence of a numbered finding like "1. **" or "**1."
   const findingsPattern = /^(\d+)\.\s*\*\*/m;
   const match = text.match(findingsPattern);
 
   if (match && match.index !== undefined && match.index > 0) {
-    // Check if content before the first finding looks like reasoning
     const preamble = text.substring(0, match.index);
-    const reasoningIndicators = [
-      'We need to', 'Let\'s identify', 'Let\'s craft', 'Let me',
-      'I need to', 'Must use', 'Must cite', 'Must include',
-      'Let\'s produce', 'Key topics:', 'We have many abstracts',
-      'need to synthesize', 'Let\'s extract',
-    ];
-
-    const isReasoning = reasoningIndicators.some(indicator =>
-      preamble.includes(indicator)
-    );
-
-    if (isReasoning) {
-      // Strip the reasoning preamble, keep only the findings
+    const indicators = ['We need to', 'Let\'s identify', 'Let\'s craft', 'Let me',
+      'I need to', 'Must use', 'Must cite', 'Let\'s produce', 'We have many'];
+    if (indicators.some(i => preamble.includes(i))) {
       return text.substring(match.index);
     }
   }
 
-  // Also handle case where entire response is reasoning with no findings
-  const lines = text.split('\n');
-  const firstLine = lines[0]?.trim() || '';
-  const fullReasoning = [
-    'We need to produce', 'We need to ', 'Let\'s identify',
-    'We have many abstracts', 'I will now', 'Let me analyze',
-  ];
-  if (fullReasoning.some(p => firstLine.startsWith(p)) && !text.match(/^\d+\.\s*\*\*/m)) {
-    // Entire response is reasoning with no structured output
-    // Return a fallback message
-    return 'The analysis could not be completed. Please try again with different keywords.';
-  }
-
   return text;
-}
-
-function stripPollinationsAd(text: string): string {
-  const adPatterns = [
-    /\n---\s*\n+\*?\*?Support Pollinations[\s\S]*/i,
-    /\n---\s*\n+🌸[\s\S]*/,
-    /\n---\s*\n+\*?\*?Ad\*?\*?[\s\S]*/i,
-    /\n---\s*\n+Powered by Pollinations[\s\S]*/i,
-  ];
-  let cleaned = text;
-  for (const pattern of adPatterns) {
-    cleaned = cleaned.replace(pattern, '');
-  }
-  return cleaned;
 }
