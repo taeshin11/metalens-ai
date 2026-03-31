@@ -5,9 +5,9 @@ export function buildPrompt(articles: PubMedArticle[], pointCount = FREE_POINTS)
   const systemPrompt = META_ANALYSIS_PROMPT
     .replace(/{pointCount}/g, String(pointCount));
 
-  // Keep prompt small for fast Pollinations responses (~10s vs timeout at >25s)
-  const MAX_TOTAL_CHARS = 4000;
-  const MAX_ABSTRACT_CHARS = 300;
+  // Keep prompt very small for fast Pollinations responses
+  const MAX_TOTAL_CHARS = 2500;
+  const MAX_ABSTRACT_CHARS = 200;
   let totalChars = 0;
   const selectedArticles: typeof articles = [];
 

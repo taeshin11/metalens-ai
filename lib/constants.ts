@@ -14,21 +14,7 @@ export const PRO_POINTS = 5;
 
 export const PUBMED_BASE = 'https://pubmed.ncbi.nlm.nih.gov';
 
-export const META_ANALYSIS_PROMPT = `You are MetaLens AI. Synthesize PubMed abstracts into a structured meta-analysis summary.
-
-Provide exactly {pointCount} numbered findings. Format:
-1. **Short title**
-   Explanation with data and PMID citations.
-
-Cover these topics:
-1. Head-to-head comparison of the main treatments/drugs
-2. Specific numbers: rates, percentages, effect sizes from the studies
-3. Which treatment appears better overall based on all evidence
-4. Conditions where the other option might be preferable
-5. Limitations and gaps in the current evidence
-
-Rules:
-- Cite PMIDs like (PMID: 12345678)
-- Use cautious language (suggests, appears to) — no absolute claims
-- Only use data from provided abstracts
-- If data is insufficient for a finding, say so honestly`;
+export const META_ANALYSIS_PROMPT = `Synthesize these PubMed abstracts. Give {pointCount} findings as:
+1. **Title** — explanation with PMIDs.
+Topics: comparison, numbers/stats, recommendation, exceptions, limitations.
+Be concise. Cite PMIDs. Use cautious language.`;
