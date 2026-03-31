@@ -52,7 +52,6 @@ export default async function LocaleLayout({
           href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
-        <script src="https://js.puter.com/v2/" defer></script>
       </head>
       <body className="min-h-full flex flex-col" style={{ fontFamily: "'Source Sans 3', sans-serif" }}>
         <NextIntlClientProvider messages={messages}>

@@ -13,54 +13,32 @@ export function buildPrompt(articles: PubMedArticle[], language: string, pointCo
   return `${systemPrompt}\n\n--- ABSTRACTS ---\n\n${abstractsText}`;
 }
 
-export interface SynthesisCallbacks {
-  onToken?: (token: string) => void;
-  onComplete?: (text: string) => void;
-  onError?: (error: Error) => void;
-}
-
-declare global {
-  interface Window {
-    puter?: {
-      ai: {
-        chat: (prompt: string, options?: Record<string, unknown>) => Promise<{ text?: string; message?: { content: string } }>;
-      };
-    };
-  }
-}
-
-export async function synthesizeWithPuter(
+/**
+ * Synthesize using Pollinations.ai — completely free, no API key, no login.
+ * https://text.pollinations.ai/
+ */
+export async function synthesizeWithAI(
   articles: PubMedArticle[],
   language: string,
-  callbacks?: SynthesisCallbacks
 ): Promise<string> {
   const prompt = buildPrompt(articles, language);
 
-  // Wait for puter to be available (script loads with defer)
-  if (typeof window === 'undefined') {
-    throw new Error('Puter.js not loaded');
-  }
-
-  // Poll for puter.js availability (up to 10 seconds)
-  for (let i = 0; i < 20 && !window.puter; i++) {
-    await new Promise((r) => setTimeout(r, 500));
-  }
-  if (!window.puter) {
-    throw new Error('Puter.js failed to load. Please refresh and try again.');
-  }
-
-  try {
-    const response = await window.puter.ai.chat(prompt, {
-      model: 'gpt-4.1-nano',
+  const response = await fetch('https://text.pollinations.ai/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      messages: [
+        { role: 'user', content: prompt },
+      ],
+      model: 'openai',
       temperature: 0.3,
-    });
+    }),
+  });
 
-    const text = response?.message?.content || response?.text || '';
-    callbacks?.onComplete?.(text);
-    return text;
-  } catch (error) {
-    const err = error instanceof Error ? error : new Error('AI synthesis failed');
-    callbacks?.onError?.(err);
-    throw err;
+  if (!response.ok) {
+    throw new Error('AI synthesis failed');
   }
+
+  const text = await response.text();
+  return text;
 }

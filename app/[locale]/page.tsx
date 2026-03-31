@@ -8,7 +8,7 @@ import ResultsCard from '@/components/ResultsCard';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import FeedbackButton from '@/components/FeedbackButton';
 import { searchAndFetch, PubMedArticle } from '@/lib/pubmed';
-import { synthesizeWithPuter } from '@/lib/synthesis';
+import { synthesizeWithAI } from '@/lib/synthesis';
 import { collectData } from '@/lib/analytics';
 import { translateForPubMed } from '@/lib/translate';
 
@@ -53,7 +53,7 @@ export default function HomePage() {
       };
       const language = langMap[locale] || 'English';
 
-      const text = await synthesizeWithPuter(papers, language);
+      const text = await synthesizeWithAI(papers, language);
       setResult(text);
       setStage('done');
     } catch {
