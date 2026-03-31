@@ -59,11 +59,17 @@
   "about": {
     "title": "Über MetaLens AI",
     "mission": "Unsere Mission",
-    "missionText": "MetaLens AI wurde von SPINAI entwickelt, um den Zugang zu medizinischen Forschungserkenntnissen zu demokratisieren. Wir glauben, dass jeder Mediziner, Student und Forscher in der Lage sein sollte, Erkenntnisse aus Tausenden von Artikeln schnell zu synthetisieren.",
+    "missionText": "MetaLens AI wurde von SPINAI entwickelt, um den Zugang zu medizinischen Forschungserkenntnissen zu demokratisieren. Wir glauben, dass jeder Mediziner, Student und Forscher in der Lage sein sollte, Erkenntnisse aus Tausenden von Artikeln schnell zu synthetisieren — ohne teure Abonnements oder stundenlange manuelle Recherche.",
+    "whyTitle": "Warum wir das entwickelt haben",
+    "whyText": "Mediziner treffen täglich evidenzbasierte Entscheidungen, doch die Durchsicht dutzender Forschungsartikel ist zeitaufwendig. Bestehende Tools wie Elicit und Consensus kosten 10–50 $ pro Monat. MetaLens AI liefert sofortige, strukturierte Zusammenfassungen aus über 40 Millionen PubMed-Artikeln — völlig kostenlos.",
     "howWeWork": "Wie wir arbeiten",
-    "howWeWorkText": "Wir nutzen die Datenbank von PubMed mit über 40 Millionen Artikeln und fortschrittliche KI, um strukturierte Metaanalyse-Zusammenfassungen in Sekunden — nicht Stunden — zu liefern.",
+    "howWeWorkText": "Wir kombinieren die umfassende biomedizinische Datenbank von PubMed mit fortschrittlicher KI-Synthese, um Forschungsabstracts zu analysieren und in Sekunden strukturierte Metaanalyse-Zusammenfassungen zu erstellen. Unsere Pipeline: Stichwortsuche → PubMed-API → Abstract-Abruf → KI-Synthese → strukturierte Erkenntnisse mit Quellenangaben.",
+    "transparency": "Transparenz und Einschränkungen",
+    "transparencyText": "MetaLens AI analysiert Abstracts, keine Volltextartikel. KI kann Fehler machen oder Nuancen übersehen. Wir verwenden vorsichtige Formulierungen und verlinken stets auf die Originalquellen, damit Sie die Ergebnisse überprüfen können. Dieses Tool ergänzt — ersetzt aber niemals — das fachärztliche Urteil.",
+    "openTitle": "Offen und Kostenlos",
+    "openText": "MetaLens AI läuft auf kostenloser Infrastruktur: PubMeds kostenlose API, offene KI-Modelle und Vercels kostenloses Hosting. Keine API-Schlüssel, keine Konten, keine Bezahlschranken im kostenlosen Tarif. Wir glauben, dass der Zugang zu Forschung keinen Preis haben sollte.",
     "contact": "Kontakt",
-    "contactText": "Fragen oder Interesse an Zusammenarbeit? Kontaktieren Sie uns unter"
+    "contactText": "Haben Sie Fragen, Feedback oder Ideen zur Zusammenarbeit? Kontaktieren Sie uns unter"
   },
   "howItWorks": {
     "title": "So funktioniert es",
@@ -91,7 +97,29 @@
   },
   "privacy": {
     "title": "Datenschutzerklärung",
-    "content": "Zuletzt aktualisiert: März 2026\n\nMetaLens AI von SPINAI respektiert Ihre Privatsphäre.\n\n1. Datenerhebung: Wir erheben minimale anonyme Nutzungsdaten (Suchbegriffe, Browsersprache, Artikelanzahl), um unseren Service zu verbessern. Es werden keine personenbezogenen Daten (PII) erhoben oder gespeichert.\n\n2. Suchanfragen: Ihre Suchbegriffe werden zur Verarbeitung an PubMed (NIH) und unseren KI-Anbieter übermittelt. Anfragen werden nach der Verarbeitung nicht auf unseren Servern gespeichert.\n\n3. Cookies: Wir verwenden keine Tracking-Cookies. Pro Besuch wird ausschließlich zu Analysezwecken eine zufällige Sitzungs-ID generiert.\n\n4. Drittanbieter-Dienste: Wir verwenden PubMed (NCBI/NIH) für Forschungsdaten und Pollinations.ai für die KI-Synthese. Diese Dienste haben ihre eigenen Datenschutzrichtlinien.\n\n5. Datenspeicherung: Wir können anonyme, aggregierte Nutzungsstatistiken über Google Sheets zur Produktverbesserung erfassen.\n\n6. Kinder: Dieser Dienst richtet sich nicht an Kinder unter 13 Jahren.\n\n7. Änderungen: Wir können diese Richtlinie aktualisieren. Änderungen werden auf dieser Seite veröffentlicht.\n\nKontakt: taeshinkim11@gmail.com"
+    "lastUpdated": "Zuletzt aktualisiert: März 2026",
+    "intro": "MetaLens AI von SPINAI respektiert Ihre Privatsphäre. Diese Richtlinie erläutert, welche Daten wir erheben, wie wir sie verwenden und welche Rechte Sie haben.",
+    "s1Title": "1. Datenerhebung",
+    "s1Text": "Wir erheben minimale anonyme Nutzungsdaten — Suchbegriffe, Browsersprache, Anzahl gefundener Artikel und eine zufällige Sitzungskennung — um unseren Service zu verbessern. Wir erheben keine personenbezogenen Daten (PII) wie Namen, E-Mail-Adressen oder IP-Adressen.",
+    "s2Title": "2. Suchanfragen",
+    "s2Text": "Ihre Suchbegriffe werden zur Verarbeitung an PubMed (NIH) und unseren KI-Anbieter (Pollinations.ai) übermittelt. Anfragen werden nach Abschluss der Verarbeitung nicht auf unseren Servern gespeichert.",
+    "s3Title": "3. Cookies und Tracking",
+    "s3Text": "Wir verwenden keine Tracking-Cookies, Werbepixel oder Fingerprinting. Pro Besuch wird in Ihrem Browser eine zufällige Sitzungs-ID generiert — ausschließlich für anonyme Analysen — und niemals mit Ihrer Identität verknüpft.",
+    "s4Title": "4. Drittanbieter-Dienste",
+    "s4Text": "Wir integrieren folgende Drittanbieter-Dienste, die jeweils ihren eigenen Datenschutzrichtlinien unterliegen:\n• PubMed (NCBI/NIH) — Abruf von Forschungsdaten\n• Pollinations.ai — KI-Textsynthese\n• Google Sheets (über Apps Script) — anonyme Analyse-Aggregation\n• Vercel — Website-Hosting und Edge-Bereitstellung",
+    "s5Title": "5. Datenspeicherung",
+    "s5Text": "Anonyme, aggregierte Nutzungsstatistiken werden bis zu 12 Monate zur Produktverbesserung aufbewahrt und danach gelöscht. Es werden keine personenbezogenen Daten gespeichert, da keine erhoben werden.",
+    "s6Title": "6. Ihre Rechte",
+    "s6Text": "Da wir keine PII erheben, gibt es keine personenbezogenen Daten, auf die zugegriffen, die korrigiert oder gelöscht werden müssten. Bei Bedenken zu Daten im Zusammenhang mit Ihrer Nutzung kontaktieren Sie uns bitte — wir helfen Ihnen umgehend. Für Nutzer in der EU (DSGVO) oder Kalifornien (CCPA) bestätigen wir, dass wir keine personenbezogenen Daten zu Werbezwecken verkaufen, teilen oder verarbeiten.",
+    "s7Title": "7. HIPAA-Hinweis",
+    "s7Text": "MetaLens AI ist keine von HIPAA erfasste Einrichtung. Dieses Tool synthetisiert öffentlich zugängliche Forschungsabstracts und verarbeitet, speichert oder übermittelt keine geschützten Gesundheitsinformationen (PHI).",
+    "s8Title": "8. Kinder",
+    "s8Text": "Dieser Dienst richtet sich nicht an Kinder unter 13 Jahren. Wir erheben wissentlich keine Daten von Minderjährigen.",
+    "s9Title": "9. Sicherheit",
+    "s9Text": "Alle Datenübertragungen sind über HTTPS/TLS verschlüsselt. Wir befolgen branchenübliche Sicherheitspraktiken zum Schutz der Integrität unseres Dienstes.",
+    "s10Title": "10. Änderungen",
+    "s10Text": "Wir können diese Richtlinie aktualisieren. Änderungen werden mit aktualisiertem Datum auf dieser Seite veröffentlicht.",
+    "contactLine": "Fragen? Kontaktieren Sie uns unter"
   },
   "terms": {
     "title": "Nutzungsbedingungen",
