@@ -122,5 +122,21 @@
     "hypertension": "Bluthochdruck",
     "gerd": "GERD",
     "depression": "Depression"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Einblicke in medizinische Forschung, KI und evidenzbasierte Medizin.",
+    "tagEducation": "Bildung",
+    "tagAI": "KI & Gesundheit",
+    "tagTutorial": "Tutorial",
+    "post1Title": "Was ist eine Meta-Analyse? Ein Leitfaden für Einsteiger",
+    "post1Excerpt": "Erfahren Sie, was Meta-Analysen sind, warum sie wichtig sind und wie KI den Zugang erleichtert.",
+    "post2Title": "Wie KI die medizinische Forschung 2026 verändert",
+    "post2Excerpt": "Von Literaturrecherchen bis zur Arzneimittelentwicklung – KI verändert die medizinische Wissenschaft.",
+    "post3Title": "Medikamentenwirksamkeit vergleichen: Ein praktischer Leitfaden",
+    "post3Excerpt": "Schritt-für-Schritt-Anleitung für Medizinstudenten und Apotheker zum Vergleich von Behandlungsergebnissen.",
+    "backToBlog": "Zurück zum Blog",
+    "tryCTA": "Bereit für KI-gestützte Meta-Analyse?",
+    "tryBtn": "MetaLens AI kostenlos testen"
   }
 }

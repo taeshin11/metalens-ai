@@ -63,5 +63,21 @@ function extractContent(raw: string): string {
     // Not JSON — treat as plain text (normal case)
   }
 
-  return raw.trim();
+  return stripPollinationsAd(raw.trim());
+}
+
+function stripPollinationsAd(text: string): string {
+  // Pollinations appends ads like "---\n🌸 **Ad** 🌸\nPowered by Pollinations..."
+  // or "---\n**Support Pollinations.AI:**"
+  const adPatterns = [
+    /\n---\s*\n+\*?\*?Support Pollinations[\s\S]*/i,
+    /\n---\s*\n+🌸[\s\S]*/,
+    /\n---\s*\n+\*?\*?Ad\*?\*?[\s\S]*/i,
+    /\n---\s*\n+Powered by Pollinations[\s\S]*/i,
+  ];
+  let cleaned = text;
+  for (const pattern of adPatterns) {
+    cleaned = cleaned.replace(pattern, '');
+  }
+  return cleaned.trim();
 }

@@ -122,5 +122,21 @@
     "title": "Page non trouvée",
     "description": "La page que vous recherchez n'existe pas. Essayez de rechercher des études médicales depuis la page d'accueil.",
     "backHome": "Retour à l'accueil"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Perspectives sur la recherche médicale, l'IA et la médecine factuelle.",
+    "tagEducation": "Éducation",
+    "tagAI": "IA & Santé",
+    "tagTutorial": "Tutoriel",
+    "post1Title": "Qu'est-ce qu'une méta-analyse ? Guide du débutant",
+    "post1Excerpt": "Découvrez ce qu'est une méta-analyse, son importance et comment l'IA la rend accessible à tous.",
+    "post2Title": "Comment l'IA transforme la recherche médicale en 2026",
+    "post2Excerpt": "Des revues de littérature à la découverte de médicaments, l'IA transforme la science médicale.",
+    "post3Title": "Comment comparer l'efficacité des médicaments : Guide pratique",
+    "post3Excerpt": "Tutoriel étape par étape pour étudiants en médecine et pharmaciens sur la comparaison des traitements.",
+    "backToBlog": "Retour au blog",
+    "tryCTA": "Prêt à essayer la méta-analyse par IA ?",
+    "tryBtn": "Essayer MetaLens AI Gratuitement"
   }
 }

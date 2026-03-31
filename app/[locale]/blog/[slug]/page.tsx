@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 type BlogContent = {
   title: string;
@@ -137,6 +138,12 @@ export default async function BlogPostPage({
 
   if (!post) notFound();
 
+  return <BlogPostContent locale={locale} post={post} />;
+}
+
+function BlogPostContent({ locale, post }: { locale: string; post: BlogContent }) {
+  const t = useTranslations('blog');
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -158,7 +165,7 @@ export default async function BlogPostPage({
         href={`/${locale}/blog`}
         className="inline-flex items-center text-sm text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors mb-8"
       >
-        &larr; Back to Blog
+        &larr; {t('backToBlog')}
       </Link>
 
       <article>
@@ -196,13 +203,13 @@ export default async function BlogPostPage({
 
         <div className="mt-12 p-6 bg-[var(--color-primary)]/5 rounded-2xl border border-[var(--color-primary)]/20 text-center">
           <p className="text-[var(--color-text-primary)] font-medium mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
-            Ready to try AI-powered meta-analysis?
+            {t('tryCTA')}
           </p>
           <Link
             href={`/${locale}`}
             className="inline-flex items-center px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-full font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
           >
-            Try MetaLens AI Free
+            {t('tryBtn')}
           </Link>
         </div>
       </article>

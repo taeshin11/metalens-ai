@@ -122,5 +122,21 @@
     "hypertension": "고혈압",
     "gerd": "위식도역류질환",
     "depression": "우울증"
+  },
+  "blog": {
+    "title": "블로그",
+    "subtitle": "의학 연구, AI, 근거 중심 의학에 대한 인사이트.",
+    "tagEducation": "교육",
+    "tagAI": "AI & 의료",
+    "tagTutorial": "튜토리얼",
+    "post1Title": "메타분석이란? 초보자 가이드",
+    "post1Excerpt": "메타분석의 개념, 의학 연구에서의 중요성, AI가 어떻게 접근성을 높이는지 알아보세요.",
+    "post2Title": "2026년 AI가 의학 연구를 변화시키는 방법",
+    "post2Excerpt": "문헌 검토에서 신약 개발까지, AI가 의학에 접근하는 방식을 어떻게 바꾸고 있는지 살펴봅니다.",
+    "post3Title": "약물 효능 비교 방법: 실용 가이드",
+    "post3Excerpt": "의대생과 약사를 위한 출판된 근거를 사용한 치료 결과 비교 단계별 튜토리얼.",
+    "backToBlog": "블로그로 돌아가기",
+    "tryCTA": "AI 기반 메타분석을 체험해 보세요!",
+    "tryBtn": "MetaLens AI 무료 사용"
   }
 }

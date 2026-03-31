@@ -122,5 +122,21 @@
     "hypertension": "高血圧",
     "gerd": "逆流性食道炎",
     "depression": "うつ病"
+  },
+  "blog": {
+    "title": "ブログ",
+    "subtitle": "医学研究、AI、エビデンスに基づく医療に関するインサイト。",
+    "tagEducation": "教育",
+    "tagAI": "AI・医療",
+    "tagTutorial": "チュートリアル",
+    "post1Title": "メタ分析とは？初心者ガイド",
+    "post1Excerpt": "メタ分析の概念、医学研究での重要性、AIがどのようにアクセスしやすくしているかを学びましょう。",
+    "post2Title": "2026年、AIが医学研究をどう変えているか",
+    "post2Excerpt": "文献レビューから創薬まで、AIが医学へのアプローチを変えています。",
+    "post3Title": "薬剤の有効性を比較する方法：実践ガイド",
+    "post3Excerpt": "医学生と薬剤師のための、公表されたエビデンスを用いた治療効果比較チュートリアル。",
+    "backToBlog": "ブログに戻る",
+    "tryCTA": "AI搭載メタ分析を体験しませんか？",
+    "tryBtn": "MetaLens AIを無料で試す"
   }
 }

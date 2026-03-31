@@ -122,5 +122,21 @@
     "hypertension": "高血压",
     "gerd": "胃食管反流病",
     "depression": "抑郁症"
+  },
+  "blog": {
+    "title": "博客",
+    "subtitle": "关于医学研究、AI和循证医学的洞见。",
+    "tagEducation": "教育",
+    "tagAI": "AI与医疗",
+    "tagTutorial": "教程",
+    "post1Title": "什么是荟萃分析？入门指南",
+    "post1Excerpt": "了解荟萃分析的概念、在医学研究中的重要性，以及AI如何让它变得更加普及。",
+    "post2Title": "2026年AI如何改变医学研究",
+    "post2Excerpt": "从文献综述到药物发现，AI正在重塑我们研究医学的方式。",
+    "post3Title": "如何比较药物疗效：实用指南",
+    "post3Excerpt": "面向医学生和药剂师的分步教程：如何利用已发表的证据比较治疗结果。",
+    "backToBlog": "返回博客",
+    "tryCTA": "准备体验AI驱动的荟萃分析吗？",
+    "tryBtn": "免费试用MetaLens AI"
   }
 }

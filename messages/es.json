@@ -122,5 +122,21 @@
     "hypertension": "Hipertensión",
     "gerd": "ERGE",
     "depression": "Depresión"
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Perspectivas sobre investigación médica, IA y medicina basada en evidencia.",
+    "tagEducation": "Educación",
+    "tagAI": "IA y Salud",
+    "tagTutorial": "Tutorial",
+    "post1Title": "¿Qué es un meta-análisis? Guía para principiantes",
+    "post1Excerpt": "Aprende qué es un meta-análisis, su importancia en la investigación médica y cómo la IA lo hace accesible.",
+    "post2Title": "Cómo la IA está transformando la investigación médica en 2026",
+    "post2Excerpt": "Desde revisiones bibliográficas hasta descubrimiento de fármacos, la IA está cambiando la ciencia médica.",
+    "post3Title": "Cómo comparar la eficacia de medicamentos: Guía práctica",
+    "post3Excerpt": "Tutorial paso a paso para estudiantes de medicina y farmacéuticos sobre cómo comparar resultados de tratamientos.",
+    "backToBlog": "Volver al blog",
+    "tryCTA": "¿Listo para probar el meta-análisis con IA?",
+    "tryBtn": "Prueba MetaLens AI Gratis"
   }
 }

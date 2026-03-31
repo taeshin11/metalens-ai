@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { useTranslations } from 'next-intl';
 
 export const metadata: Metadata = {
   title: 'Blog',
@@ -9,27 +10,27 @@ export const metadata: Metadata = {
 const posts = [
   {
     slug: 'what-is-meta-analysis',
-    title: 'What Is a Meta-Analysis? A Beginner\'s Guide',
-    excerpt: 'Learn what meta-analysis is, why it matters in medical research, and how AI is making it accessible to everyone.',
+    titleKey: 'post1Title',
+    excerptKey: 'post1Excerpt',
     date: '2026-03-15',
-    readTime: '6 min read',
-    tag: 'Education',
+    readTime: '6 min',
+    tagKey: 'tagEducation',
   },
   {
     slug: 'ai-in-medical-research',
-    title: 'How AI Is Transforming Medical Research in 2026',
-    excerpt: 'From literature reviews to drug discovery, artificial intelligence is reshaping how we approach medical science.',
+    titleKey: 'post2Title',
+    excerptKey: 'post2Excerpt',
     date: '2026-03-20',
-    readTime: '8 min read',
-    tag: 'AI & Healthcare',
+    readTime: '8 min',
+    tagKey: 'tagAI',
   },
   {
     slug: 'how-to-compare-drug-efficacy',
-    title: 'How to Compare Drug Efficacy: A Practical Guide',
-    excerpt: 'A step-by-step tutorial for medical students and pharmacists on comparing treatment outcomes using published evidence.',
+    titleKey: 'post3Title',
+    excerptKey: 'post3Excerpt',
     date: '2026-03-25',
-    readTime: '7 min read',
-    tag: 'Tutorial',
+    readTime: '7 min',
+    tagKey: 'tagTutorial',
   },
 ];
 
@@ -40,16 +41,22 @@ export default async function BlogPage({
 }) {
   const { locale } = await params;
 
+  return <BlogContent locale={locale} />;
+}
+
+function BlogContent({ locale }: { locale: string }) {
+  const t = useTranslations('blog');
+
   return (
     <div className="max-w-[800px] mx-auto px-4 sm:px-6 py-16">
       <h1
         className="text-4xl font-bold text-[var(--color-text-primary)] mb-4"
         style={{ fontFamily: 'Outfit, sans-serif' }}
       >
-        Blog
+        {t('title')}
       </h1>
       <p className="text-lg text-[var(--color-text-secondary)] mb-12">
-        Insights on medical research, AI, and evidence-based medicine.
+        {t('subtitle')}
       </p>
 
       <div className="space-y-6">
@@ -62,7 +69,7 @@ export default async function BlogPage({
             <article className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)] hover:border-[var(--color-primary-light)] hover:shadow-md transition-all">
               <div className="flex items-center gap-3 mb-3">
                 <span className="px-2.5 py-0.5 text-xs font-medium bg-[var(--color-primary)]/10 text-[var(--color-primary-dark)] rounded-full">
-                  {post.tag}
+                  {t(post.tagKey)}
                 </span>
                 <span className="text-xs text-[var(--color-text-muted)]">{post.date}</span>
                 <span className="text-xs text-[var(--color-text-muted)]">{post.readTime}</span>
@@ -71,10 +78,10 @@ export default async function BlogPage({
                 className="text-xl font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors mb-2"
                 style={{ fontFamily: 'Outfit, sans-serif' }}
               >
-                {post.title}
+                {t(post.titleKey)}
               </h2>
               <p className="text-[var(--color-text-secondary)] leading-relaxed">
-                {post.excerpt}
+                {t(post.excerptKey)}
               </p>
             </article>
           </Link>

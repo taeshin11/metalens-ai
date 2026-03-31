@@ -95,6 +95,22 @@
     "title": "Terms of Service",
     "content": "Last updated: March 2026\n\nBy using MetaLens AI, you agree to the following terms:\n\n1. Nature of Service: MetaLens AI provides AI-generated summaries of publicly available PubMed research abstracts. Results are for informational and educational purposes only.\n\n2. Not Medical Advice: Nothing on this site constitutes medical advice, diagnosis, or treatment recommendations. Always consult a qualified healthcare professional before making medical decisions.\n\n3. Accuracy: While we strive for accuracy, AI can produce errors, hallucinations, or misinterpretations. Always verify findings with the original source papers.\n\n4. Limitation of Liability: SPINAI is not liable for any decisions, actions, or outcomes based on the information provided by MetaLens AI.\n\n5. Fair Use: Free tier users may perform up to 5 analyses per day. Automated scraping or abuse of the service is prohibited.\n\n6. Intellectual Property: The MetaLens AI name, logo, and design are property of SPINAI. Research abstracts are sourced from PubMed/NCBI and are subject to their terms.\n\n7. Changes: We reserve the right to modify these terms at any time.\n\nContact: taeshinkim11@gmail.com"
   },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Insights on medical research, AI, and evidence-based medicine.",
+    "tagEducation": "Education",
+    "tagAI": "AI & Healthcare",
+    "tagTutorial": "Tutorial",
+    "post1Title": "What Is a Meta-Analysis? A Beginner's Guide",
+    "post1Excerpt": "Learn what meta-analysis is, why it matters in medical research, and how AI is making it accessible to everyone.",
+    "post2Title": "How AI Is Transforming Medical Research in 2026",
+    "post2Excerpt": "From literature reviews to drug discovery, artificial intelligence is reshaping how we approach medical science.",
+    "post3Title": "How to Compare Drug Efficacy: A Practical Guide",
+    "post3Excerpt": "A step-by-step tutorial for medical students and pharmacists on comparing treatment outcomes using published evidence.",
+    "backToBlog": "Back to Blog",
+    "tryCTA": "Ready to try AI-powered meta-analysis?",
+    "tryBtn": "Try MetaLens AI Free"
+  },
   "compare": {
     "comparingFor": "Comparing treatments for",
     "description": "Compare {drug1} vs {drug2} for {condition} based on published PubMed evidence.",
