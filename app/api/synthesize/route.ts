@@ -8,21 +8,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing prompt' }, { status: 400 });
     }
 
-    const response = await fetch('https://text.pollinations.ai/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a medical research analyst. CRITICAL: Output ONLY your final answer. Do NOT output any thinking, reasoning, planning, or internal monologue. Do NOT start with "We need to", "Let me", "Let\'s", "I need to", or any planning text. Start directly with your structured findings. If you catch yourself writing planning text, stop and restart with just the answer.',
-          },
-          { role: 'user', content: prompt },
-        ],
-        model: 'openai',
-        temperature: 0.2,
-      }),
-    });
+    // 25s timeout — Vercel hobby has 60s limit, leave margin
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
+
+    let response: Response;
+    try {
+      response = await fetch('https://text.pollinations.ai/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a medical research analyst. CRITICAL: Output ONLY your final answer. Do NOT output any thinking, reasoning, planning, or internal monologue. Do NOT start with "We need to", "Let me", "Let\'s", "I need to", or any planning text. Start directly with your structured findings.',
+            },
+            { role: 'user', content: prompt },
+          ],
+          model: 'openai',
+          temperature: 0.2,
+        }),
+      });
+    } catch (err: unknown) {
+      clearTimeout(timeout);
+      if (err instanceof Error && err.name === 'AbortError') {
+        return NextResponse.json({ error: 'AI synthesis timed out. Please try again.' }, { status: 504 });
+      }
+      throw err;
+    }
+    clearTimeout(timeout);
 
     if (!response.ok) {
       return NextResponse.json({ error: 'AI synthesis failed' }, { status: 502 });

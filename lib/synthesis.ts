@@ -6,9 +6,9 @@ export function buildPrompt(articles: PubMedArticle[], language: string, pointCo
     .replace('{language}', language)
     .replace('{pointCount}', String(pointCount));
 
-  // Limit abstracts to ~8000 chars total to stay within Pollinations token limits
-  const MAX_TOTAL_CHARS = 8000;
-  const MAX_ABSTRACT_CHARS = 600;
+  // Limit abstracts to stay within Pollinations token limits and prevent timeouts
+  const MAX_TOTAL_CHARS = 6000;
+  const MAX_ABSTRACT_CHARS = 400;
   let totalChars = 0;
   const selectedArticles: typeof articles = [];
 
@@ -39,11 +39,26 @@ export async function synthesizeWithAI(
 ): Promise<string> {
   const prompt = buildPrompt(articles, language);
 
-  const response = await fetch('/api/synthesize', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt }),
-  });
+  // 30s client timeout — slightly longer than server's 25s
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
+  let response: Response;
+  try {
+    response = await fetch('/api/synthesize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+      signal: controller.signal,
+    });
+  } catch (err: unknown) {
+    clearTimeout(timeout);
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new Error('Analysis timed out. Please try again.');
+    }
+    throw err;
+  }
+  clearTimeout(timeout);
 
   if (!response.ok) {
     throw new Error('AI synthesis failed');
