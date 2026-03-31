@@ -32,13 +32,13 @@ async function callPollinationsWithRetry(prompt: string, maxRetries: number): Pr
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       const result = await callPollinations(prompt);
-      if (result) return result;
+      if (result && result.trim()) return result;
+      // Empty result (AI failure response) — retry
     } catch {
-      if (attempt < maxRetries - 1) {
-        // Wait 2s before retry
-        await new Promise(r => setTimeout(r, 2000));
-        continue;
-      }
+      // Error — retry
+    }
+    if (attempt < maxRetries - 1) {
+      await new Promise(r => setTimeout(r, 2000));
     }
   }
   return null;
@@ -76,6 +76,32 @@ async function callPollinations(prompt: string): Promise<string> {
   }
 }
 
+// Phrases that indicate the AI failed to produce a real analysis
+const FAILURE_PHRASES = [
+  'analysis could not be completed',
+  'could not be completed',
+  'unable to complete',
+  'cannot complete the analysis',
+  'not enough information',
+  'insufficient data',
+  'try again with different',
+  'please try again',
+  'I cannot provide',
+  'I\'m unable to',
+  'I am unable to',
+  'sorry, I cannot',
+  'sorry, I can\'t',
+];
+
+function isFailureResponse(text: string): boolean {
+  const lower = text.toLowerCase();
+  // If the response is very short and matches a failure phrase, it's a failure
+  if (text.length < 300 && FAILURE_PHRASES.some(p => lower.includes(p))) {
+    return true;
+  }
+  return false;
+}
+
 function cleanResponse(raw: string): string {
   let text = raw;
 
@@ -101,7 +127,14 @@ function cleanResponse(raw: string): string {
   // Strip Pollinations ads
   text = text.replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '');
 
-  return text.trim();
+  text = text.trim();
+
+  // Detect AI failure responses and return empty to trigger retry
+  if (isFailureResponse(text)) {
+    return '';
+  }
+
+  return text;
 }
 
 function stripReasoningPreamble(text: string): string {

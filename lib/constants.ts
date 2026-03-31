@@ -14,7 +14,11 @@ export const PRO_POINTS = 5;
 
 export const PUBMED_BASE = 'https://pubmed.ncbi.nlm.nih.gov';
 
-export const META_ANALYSIS_PROMPT = `Synthesize these PubMed abstracts. Give {pointCount} findings as:
-1. **Title** — explanation with PMIDs.
-Topics: comparison, numbers/stats, recommendation, exceptions, limitations.
-Be concise. Cite PMIDs. Use cautious language.`;
+export const META_ANALYSIS_PROMPT = `You are a medical research analyst. Synthesize these PubMed abstracts into exactly {pointCount} key findings.
+
+Format each finding as:
+**N. Title** — Explanation citing PMIDs.
+
+Cover: 1) main comparison, 2) statistics/numbers, 3) recommendation, 4) exceptions/caveats, 5) limitations.
+
+Rules: base claims ONLY on provided abstracts, cite PMIDs, use hedging language (suggests, appears to, evidence indicates). Always produce findings even with limited abstracts.`;

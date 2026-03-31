@@ -4,13 +4,12 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
 import KeywordInput from '@/components/KeywordInput';
 import ResultsCard from '@/components/ResultsCard';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import FeedbackButton from '@/components/FeedbackButton';
 import { searchAndFetch, PubMedArticle } from '@/lib/pubmed';
-import { synthesizeWithAI } from '@/lib/synthesis';
+import { synthesizeWithAI, SynthesisResult } from '@/lib/synthesis';
 import { collectData } from '@/lib/analytics';
 import { translateForPubMed } from '@/lib/translate';
 
@@ -25,7 +24,7 @@ export default function HomePage() {
 
   const [stage, setStage] = useState<Stage>('idle');
   const [articles, setArticles] = useState<PubMedArticle[]>([]);
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState<SynthesisResult | null>(null);
   const [keywords, setKeywords] = useState('');
   const [error, setError] = useState('');
   const [autoTriggered, setAutoTriggered] = useState(false);
@@ -44,7 +43,7 @@ export default function HomePage() {
     setKeywords(kw);
     setStage('searching');
     setError('');
-    setResult('');
+    setResult(null);
 
     try {
       // Translate non-English keywords to English for PubMed search
@@ -68,8 +67,8 @@ export default function HomePage() {
       };
       const language = langMap[locale] || 'English';
 
-      const text = await synthesizeWithAI(papers, language);
-      setResult(text);
+      const synthesisResult = await synthesizeWithAI(papers, language);
+      setResult(synthesisResult);
       setStage('done');
     } catch {
       setStage('error');
@@ -79,7 +78,7 @@ export default function HomePage() {
 
   const handleNewSearch = () => {
     setStage('idle');
-    setResult('');
+    setResult(null);
     setArticles([]);
     setKeywords('');
     setError('');
@@ -205,7 +204,7 @@ export default function HomePage() {
       )}
 
       {/* Results */}
-      {stage === 'done' && (
+      {stage === 'done' && result && (
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 pb-16">
           <ResultsCard
             result={result}

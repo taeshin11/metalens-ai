@@ -29,6 +29,8 @@
     "title": "分析結果",
     "papersFound": "件の論文が見つかりました",
     "keyFindings": "主な知見",
+    "originalFindings": "原文の知見（英語）",
+    "translatedSummary": "日本語の要約",
     "sources": "出典",
     "viewOnPubMed": "PubMedで見る",
     "disclaimer": "これは情報提供のみを目的としたAI生成の要約です。医学的アドバイスではありません。必ず医療専門家にご相談ください。",

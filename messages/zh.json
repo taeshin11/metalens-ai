@@ -29,6 +29,8 @@
     "title": "分析结果",
     "papersFound": "篇论文",
     "keyFindings": "主要发现",
+    "originalFindings": "原文发现（英语）",
+    "translatedSummary": "中文摘要",
     "sources": "来源",
     "viewOnPubMed": "在PubMed上查看",
     "disclaimer": "这是仅供参考的AI生成摘要，不构成医疗建议。请务必咨询医疗专业人员。",

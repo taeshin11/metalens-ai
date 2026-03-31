@@ -1,6 +1,12 @@
 import { PubMedArticle } from './pubmed';
 import { META_ANALYSIS_PROMPT, FREE_POINTS } from './constants';
 
+export interface SynthesisResult {
+  english: string;
+  translated: string | null;
+  language: string;
+}
+
 export function buildPrompt(articles: PubMedArticle[], pointCount = FREE_POINTS): string {
   const systemPrompt = META_ANALYSIS_PROMPT
     .replace(/{pointCount}/g, String(pointCount));
@@ -46,12 +52,13 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
 
 /**
  * Step 1: Synthesize in English (best quality)
- * Step 2: If language is not English, translate the result
+ * Step 2: If language is not English, translate the result in parallel
+ * Returns both English original and translated version
  */
 export async function synthesizeWithAI(
   articles: PubMedArticle[],
   language: string,
-): Promise<string> {
+): Promise<SynthesisResult> {
   // Step 1: Always analyze in English for best quality
   const prompt = buildPrompt(articles);
 
@@ -78,12 +85,14 @@ export async function synthesizeWithAI(
 
       if (translateResponse.ok) {
         const { translated } = await translateResponse.json();
-        if (translated) return translated;
+        if (translated) {
+          return { english: englishResult, translated, language };
+        }
       }
     } catch {
-      // Translation failed — return English result as fallback
+      // Translation failed — return English only
     }
   }
 
-  return englishResult;
+  return { english: englishResult, translated: null, language };
 }

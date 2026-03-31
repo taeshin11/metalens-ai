@@ -2,20 +2,58 @@
 
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore, useRef, useEffect } from 'react';
+
+// External timer store — avoids setState-in-effect lint errors
+let _elapsed = 0;
+const _listeners = new Set<() => void>();
+let _interval: ReturnType<typeof setInterval> | null = null;
+
+function startTimer() {
+  if (_interval) return;
+  _elapsed = 0;
+  _interval = setInterval(() => {
+    _elapsed += 1;
+    _listeners.forEach((l) => l());
+  }, 1000);
+}
+
+function stopTimer() {
+  if (_interval) {
+    clearInterval(_interval);
+    _interval = null;
+  }
+}
+
+function resetTimer() {
+  _elapsed = 0;
+  _listeners.forEach((l) => l());
+}
+
+function subscribeTimer(cb: () => void) {
+  _listeners.add(cb);
+  startTimer();
+  return () => {
+    _listeners.delete(cb);
+    if (_listeners.size === 0) stopTimer();
+  };
+}
+
+function getTimerSnapshot() {
+  return _elapsed;
+}
 
 export default function LoadingSkeleton({ stage }: { stage: 'searching' | 'synthesizing' }) {
   const t = useTranslations('results');
-  const [elapsed, setElapsed] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => setElapsed((s) => s + 1), 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const elapsed = useSyncExternalStore(subscribeTimer, getTimerSnapshot, () => 0);
 
   // Reset timer when stage changes
+  const prevStage = useRef(stage);
   useEffect(() => {
-    setElapsed(0);
+    if (prevStage.current !== stage) {
+      prevStage.current = stage;
+      resetTimer();
+    }
   }, [stage]);
 
   const steps = [

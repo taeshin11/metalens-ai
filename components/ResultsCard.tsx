@@ -3,10 +3,11 @@
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { PubMedArticle } from '@/lib/pubmed';
+import { SynthesisResult } from '@/lib/synthesis';
 import { PUBMED_BASE } from '@/lib/constants';
 
 interface ResultsCardProps {
-  result: string;
+  result: SynthesisResult;
   articles: PubMedArticle[];
   keywords: string;
   onNewSearch: () => void;
@@ -40,17 +41,38 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
         </p>
       </div>
 
-      {/* Key Findings */}
+      {/* Translated Summary — shown when user is non-English */}
+      {result.translated && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.4 }}
+          className="bg-gradient-to-br from-[var(--color-primary)]/5 to-[var(--color-info)]/5 rounded-2xl p-6 shadow-sm border border-[var(--color-primary)]/20"
+        >
+          <h3
+            className="text-lg font-semibold text-[var(--color-primary-dark)] mb-4 flex items-center gap-2"
+            style={{ fontFamily: 'Outfit, sans-serif' }}
+          >
+            <span>🌐</span>
+            {t('translatedSummary')}
+          </h3>
+          <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
+            {result.translated}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Key Findings (English original) */}
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
         <h3
           className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2"
           style={{ fontFamily: 'Outfit, sans-serif' }}
         >
           <span className="text-[var(--color-success)]">✦</span>
-          {t('keyFindings')}
+          {result.translated ? t('originalFindings') : t('keyFindings')}
         </h3>
         <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
-          {result}
+          {result.english}
         </div>
       </div>
 

@@ -18,39 +18,20 @@ export default function AboutPage() {
         {t('title')}
       </h1>
 
-      <div className="space-y-8">
+      <div className="space-y-6">
+        <Section icon="🎯" title={t('mission')} text={t('missionText')} />
+        <Section icon="💡" title={t('whyTitle')} text={t('whyText')} />
+        <Section icon="⚙️" title={t('howWeWork')} text={t('howWeWorkText')} />
+        <Section icon="🔍" title={t('transparency')} text={t('transparencyText')} />
+        <Section icon="🌐" title={t('openTitle')} text={t('openText')} />
         <section className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)]">
           <h2
-            className="text-2xl font-semibold text-[var(--color-primary-dark)] mb-4"
+            className="text-2xl font-semibold text-[var(--color-primary-dark)] mb-4 flex items-center gap-3"
             style={{ fontFamily: 'Outfit, sans-serif' }}
           >
-            {t('mission')}
+            <span>✉️</span> {t('contact')}
           </h2>
           <p className="text-[var(--color-text-secondary)] leading-relaxed text-lg">
-            {t('missionText')}
-          </p>
-        </section>
-
-        <section className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)]">
-          <h2
-            className="text-2xl font-semibold text-[var(--color-primary-dark)] mb-4"
-            style={{ fontFamily: 'Outfit, sans-serif' }}
-          >
-            {t('howWeWork')}
-          </h2>
-          <p className="text-[var(--color-text-secondary)] leading-relaxed text-lg">
-            {t('howWeWorkText')}
-          </p>
-        </section>
-
-        <section className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)]">
-          <h2
-            className="text-2xl font-semibold text-[var(--color-primary-dark)] mb-4"
-            style={{ fontFamily: 'Outfit, sans-serif' }}
-          >
-            {t('contact')}
-          </h2>
-          <p className="text-[var(--color-text-secondary)] leading-relaxed">
             {t('contactText')}{' '}
             <a
               href="mailto:taeshinkim11@gmail.com"
@@ -62,5 +43,19 @@ export default function AboutPage() {
         </section>
       </div>
     </div>
+  );
+}
+
+function Section({ icon, title, text }: { icon: string; title: string; text: string }) {
+  return (
+    <section className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)]">
+      <h2
+        className="text-2xl font-semibold text-[var(--color-primary-dark)] mb-4 flex items-center gap-3"
+        style={{ fontFamily: 'Outfit, sans-serif' }}
+      >
+        <span>{icon}</span> {title}
+      </h2>
+      <p className="text-[var(--color-text-secondary)] leading-relaxed text-lg">{text}</p>
+    </section>
   );
 }
