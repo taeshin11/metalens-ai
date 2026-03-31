@@ -39,15 +39,12 @@ async function synthesize(prompt: string): Promise<string | null> {
     }
   }
 
-  // Strategy 2: Pollinations with multiple models
-  const pollinationModels = ['openai', 'mistral', 'llama'];
-  for (const model of pollinationModels) {
-    try {
-      const result = await callPollinations(prompt, model);
-      if (result && result.trim()) return result;
-    } catch {
-      // Try next model
-    }
+  // Strategy 2: Pollinations (single attempt, 55s timeout)
+  try {
+    const result = await callPollinations(prompt, 'openai');
+    if (result && result.trim()) return result;
+  } catch {
+    // Pollinations failed
   }
 
   return null;
@@ -72,7 +69,7 @@ async function callGemini(prompt: string, apiKey: string): Promise<string> {
 
 async function callPollinations(prompt: string, model = 'openai'): Promise<string> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45000);
+  const timeout = setTimeout(() => controller.abort(), 55000);
 
   try {
     const response = await fetch(POLLINATIONS_URL, {
