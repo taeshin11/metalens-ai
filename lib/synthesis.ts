@@ -100,13 +100,13 @@ export async function synthesizeWithAI(
   const prompt = buildPrompt(articles);
   let englishResult = '';
 
-  // Strategy 1: Server-side Gemini API (fast, 10s timeout — skip if slow)
+  // Strategy 1: Server-side (Gemini → Pollinations fallback)
   try {
     const synthesisResponse = await fetchWithTimeout('/api/synthesize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt }),
-    }, 10000);
+    }, 55000);
 
     if (synthesisResponse.ok) {
       const { result } = await synthesisResponse.json();
