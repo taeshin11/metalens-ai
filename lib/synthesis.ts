@@ -106,32 +106,45 @@ export async function synthesizeWithAI(
 
   // Strategy 1: Server-side (Gemini API)
   try {
+    console.log('[Synthesis] Trying server-side API...');
     const synthesisResponse = await fetchWithTimeout('/api/synthesize', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt }),
     }, 30000);
 
+    console.log('[Synthesis] Server response:', synthesisResponse.status);
     if (synthesisResponse.ok) {
       const { result } = await synthesisResponse.json();
       if (result && result.trim()) englishResult = result;
     }
-  } catch {
-    // Server failed — will try client-side
+  } catch (err) {
+    console.log('[Synthesis] Server failed:', err instanceof Error ? err.message : 'unknown');
   }
 
   // Strategy 2: Client-side Pollinations (bypasses Vercel IP restrictions)
   if (!englishResult) {
-    const models = ['openai', 'mistral'];
-    for (const model of models) {
+    console.log('[Synthesis] Server failed, trying client-side Pollinations...');
+    try {
+      const result = await callPollinationsClient(prompt);
+      if (result && result.trim().length > 50) {
+        englishResult = result;
+        console.log('[Synthesis] Client-side Pollinations succeeded');
+      }
+    } catch (err) {
+      console.log('[Synthesis] Pollinations openai failed:', err instanceof Error ? err.message : 'unknown');
+    }
+
+    if (!englishResult) {
+      // Try mistral model
       try {
+        console.log('[Synthesis] Trying Pollinations mistral...');
         const result = await callPollinationsClient(prompt);
         if (result && result.trim().length > 50) {
           englishResult = result;
-          break;
         }
-      } catch {
-        // Try next model
+      } catch (err) {
+        console.log('[Synthesis] Pollinations mistral failed:', err instanceof Error ? err.message : 'unknown');
       }
     }
   }
