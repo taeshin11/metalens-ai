@@ -16,6 +16,7 @@ export default function Header() {
     { href: `/${locale}/how-it-works`, label: t('howItWorks') },
     { href: `/${locale}/about`, label: t('about') },
     { href: `/${locale}/faq`, label: t('faq') },
+    { href: `/${locale}/blog`, label: t('blog') },
   ];
 
   return (

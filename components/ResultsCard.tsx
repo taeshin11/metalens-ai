@@ -62,7 +62,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
         >
           📚 {t('sources')}
         </h3>
-        <div className="space-y-3 max-h-80 overflow-y-auto">
+        <div className="space-y-3">
           {articles.slice(0, 10).map((article) => (
             <div
               key={article.pmid}
