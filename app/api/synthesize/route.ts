@@ -105,17 +105,31 @@ function cleanResponse(raw: string): string {
 }
 
 function stripReasoningPreamble(text: string): string {
+  // Look for structured findings like "1. **" anywhere in the text
   const findingsPattern = /^(\d+)\.\s*\*\*/m;
   const match = text.match(findingsPattern);
 
   if (match && match.index !== undefined && match.index > 0) {
     const preamble = text.substring(0, match.index);
     const indicators = ['We need to', 'Let\'s identify', 'Let\'s craft', 'Let me',
-      'I need to', 'Must use', 'Must cite', 'Let\'s produce', 'We have many'];
+      'I need to', 'Must use', 'Must cite', 'Let\'s produce', 'We have many',
+      'Let\'s extract', 'Key topics:', 'need to synthesize'];
     if (indicators.some(i => preamble.includes(i))) {
+      // Found findings after reasoning — return just the findings
       return text.substring(match.index);
     }
   }
 
+  // Also try "1." without bold (some models don't use markdown)
+  const numberedPattern = /^1\.\s+\S/m;
+  const numMatch = text.match(numberedPattern);
+  if (numMatch && numMatch.index !== undefined && numMatch.index > 200) {
+    const preamble = text.substring(0, numMatch.index);
+    if (/We need|Let's|Let me|Must use/i.test(preamble)) {
+      return text.substring(numMatch.index);
+    }
+  }
+
+  // Never return a failure message — any AI response is better than nothing
   return text;
 }
