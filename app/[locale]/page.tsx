@@ -3,6 +3,7 @@
 import { useTranslations, useLocale } from 'next-intl';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import KeywordInput from '@/components/KeywordInput';
 import ResultsCard from '@/components/ResultsCard';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
@@ -182,6 +183,104 @@ export default function HomePage() {
             onNewSearch={handleNewSearch}
           />
         </div>
+      )}
+
+      {/* Below-the-fold content (only when idle) */}
+      {stage === 'idle' && (
+        <>
+          {/* How It Works */}
+          <section className="bg-white border-t border-[var(--color-border)]">
+            <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
+              <h2
+                className="text-3xl font-bold text-[var(--color-text-primary)] text-center mb-12"
+                style={{ fontFamily: 'Outfit, sans-serif' }}
+              >
+                {t('howItWorksTitle')}
+              </h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { icon: '⌨️', step: '1', title: t('step1'), desc: t('step1Desc') },
+                  { icon: '🔍', step: '2', title: t('step2'), desc: t('step2Desc') },
+                  { icon: '🤖', step: '3', title: t('step3'), desc: t('step3Desc') },
+                  { icon: '📊', step: '4', title: t('step4'), desc: t('step4Desc') },
+                ].map((s) => (
+                  <div key={s.step} className="text-center p-6 rounded-2xl bg-[var(--color-bg-primary)] border border-[var(--color-border)]">
+                    <div className="text-3xl mb-3">{s.icon}</div>
+                    <div className="text-xs font-semibold text-[var(--color-primary)] uppercase tracking-wider mb-2">Step {s.step}</div>
+                    <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                      {s.title}
+                    </h3>
+                    <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">{s.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Popular Comparisons */}
+          <section className="bg-[var(--color-bg-primary)]">
+            <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
+              <h2
+                className="text-3xl font-bold text-[var(--color-text-primary)] text-center mb-4"
+                style={{ fontFamily: 'Outfit, sans-serif' }}
+              >
+                {t('popularTitle')}
+              </h2>
+              <p className="text-center text-[var(--color-text-secondary)] mb-10 max-w-xl mx-auto">
+                {t('popularDesc')}
+              </p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  { slug: 'pranlukast-vs-montelukast', d1: 'Pranlukast', d2: 'Montelukast', cond: 'Asthma' },
+                  { slug: 'metformin-vs-insulin', d1: 'Metformin', d2: 'Insulin', cond: 'Type 2 Diabetes' },
+                  { slug: 'ibuprofen-vs-acetaminophen', d1: 'Ibuprofen', d2: 'Acetaminophen', cond: 'Pain Relief' },
+                  { slug: 'lisinopril-vs-losartan', d1: 'Lisinopril', d2: 'Losartan', cond: 'Hypertension' },
+                  { slug: 'omeprazole-vs-pantoprazole', d1: 'Omeprazole', d2: 'Pantoprazole', cond: 'GERD' },
+                  { slug: 'sertraline-vs-fluoxetine', d1: 'Sertraline', d2: 'Fluoxetine', cond: 'Depression' },
+                ].map((c) => (
+                  <Link
+                    key={c.slug}
+                    href={`/${locale}/compare/${c.slug}`}
+                    className="block p-5 bg-white rounded-2xl border border-[var(--color-border)] hover:border-[var(--color-primary-light)] hover:shadow-md transition-all group"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-primary)]"></span>
+                      <span className="text-sm font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors">
+                        {c.d1} vs {c.d2}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[var(--color-text-muted)]">{c.cond}</p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Who Is This For */}
+          <section className="bg-white border-t border-[var(--color-border)]">
+            <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
+              <h2
+                className="text-3xl font-bold text-[var(--color-text-primary)] text-center mb-10"
+                style={{ fontFamily: 'Outfit, sans-serif' }}
+              >
+                {t('forWhoTitle')}
+              </h2>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {[
+                  { icon: '🎓', label: t('forStudents') },
+                  { icon: '💊', label: t('forPharmacists') },
+                  { icon: '🔬', label: t('forResearchers') },
+                  { icon: '⚕️', label: t('forClinicians') },
+                ].map((p) => (
+                  <div key={p.label} className="text-center p-5 rounded-2xl bg-[var(--color-bg-primary)] border border-[var(--color-border)]">
+                    <div className="text-3xl mb-2">{p.icon}</div>
+                    <p className="font-medium text-[var(--color-text-primary)]">{p.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
       )}
     </>
   );
