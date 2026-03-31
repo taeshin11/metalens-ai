@@ -77,12 +77,12 @@ export default function LoadingSkeleton({ stage }: { stage: 'searching' | 'synth
     >
       <div className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)]">
         {/* Progress steps */}
-        <div className="flex items-center gap-2 mb-6 overflow-hidden">
+        <div className="flex flex-col gap-3 mb-6">
           {steps.map((step, i) => {
             const isActive = step.key === stage;
             const isDone = steps.findIndex((s) => s.key === stage) > i;
             return (
-              <div key={step.key} className="flex items-center gap-2 min-w-0 flex-1">
+              <div key={step.key} className="flex items-center gap-3">
                 <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold shrink-0 transition-colors ${
                   isDone
                     ? 'bg-[var(--color-success)] text-white'
@@ -92,16 +92,11 @@ export default function LoadingSkeleton({ stage }: { stage: 'searching' | 'synth
                 }`}>
                   {isDone ? '✓' : i + 1}
                 </div>
-                <span className={`text-sm truncate min-w-0 ${
-                  isActive ? 'text-[var(--color-text-primary)] font-medium' : 'text-[var(--color-text-muted)]'
+                <span className={`text-sm ${
+                  isActive ? 'text-[var(--color-text-primary)] font-medium' : isDone ? 'text-[var(--color-success)]' : 'text-[var(--color-text-muted)]'
                 }`}>
                   {step.label}
                 </span>
-                {i < steps.length - 1 && (
-                  <div className={`w-6 h-0.5 shrink-0 rounded ${
-                    isDone ? 'bg-[var(--color-success)]' : 'bg-[var(--color-bg-secondary)]'
-                  }`} />
-                )}
               </div>
             );
           })}
