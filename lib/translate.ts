@@ -1,5 +1,3 @@
-const POLLINATIONS_URL = 'https://text.pollinations.ai/';
-
 /**
  * Check if text contains non-Latin characters (CJK, Korean, Arabic, Cyrillic, etc.)
  */
@@ -9,7 +7,7 @@ function hasNonLatinChars(text: string): boolean {
 
 /**
  * Translate non-English keywords to English medical terms for PubMed search.
- * Calls Pollinations directly from client to avoid server rate limits.
+ * Uses server-side Gemini API for reliable translation.
  */
 export async function translateForPubMed(keywords: string): Promise<string> {
   if (!hasNonLatinChars(keywords)) {
@@ -17,33 +15,16 @@ export async function translateForPubMed(keywords: string): Promise<string> {
   }
 
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
-
-    const response = await fetch(POLLINATIONS_URL, {
+    const response = await fetch('/api/translate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      signal: controller.signal,
-      body: JSON.stringify({
-        messages: [
-          {
-            role: 'user',
-            content: `Translate these medical/scientific keywords to English. Return ONLY the English medical terms separated by commas, nothing else.\n\nKeywords: ${keywords}`,
-          },
-        ],
-        model: 'openai',
-        temperature: 0,
-        seed: Math.floor(Math.random() * 100000),
-      }),
+      body: JSON.stringify({ keywords }),
     });
-
-    clearTimeout(timeout);
 
     if (!response.ok) return keywords;
 
-    const translated = await response.text();
-    const cleaned = translated.trim().replace(/^["']|["']$/g, '');
-    return cleaned || keywords;
+    const data = await response.json();
+    return data.translated || keywords;
   } catch {
     return keywords;
   }
