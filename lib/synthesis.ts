@@ -1,10 +1,9 @@
 import { PubMedArticle } from './pubmed';
 import { META_ANALYSIS_PROMPT, FREE_POINTS } from './constants';
 
-export function buildPrompt(articles: PubMedArticle[], language: string, pointCount = FREE_POINTS): string {
+export function buildPrompt(articles: PubMedArticle[], pointCount = FREE_POINTS): string {
   const systemPrompt = META_ANALYSIS_PROMPT
-    .replace('{language}', language)
-    .replace('{pointCount}', String(pointCount));
+    .replace(/{pointCount}/g, String(pointCount));
 
   // Limit abstracts to stay within Pollinations token limits and prevent timeouts
   const MAX_TOTAL_CHARS = 6000;
@@ -29,41 +28,62 @@ export function buildPrompt(articles: PubMedArticle[], language: string, pointCo
   return `${systemPrompt}\n\n--- ABSTRACTS ---\n\n${abstractsText}`;
 }
 
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    return response;
+  } catch (err: unknown) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new Error('Request timed out. Please try again.');
+    }
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 /**
- * Synthesize via our server-side API route (which calls Pollinations.ai).
- * This avoids CORS issues from client-side calls.
+ * Step 1: Synthesize in English (best quality)
+ * Step 2: If language is not English, translate the result
  */
 export async function synthesizeWithAI(
   articles: PubMedArticle[],
   language: string,
 ): Promise<string> {
-  const prompt = buildPrompt(articles, language);
+  // Step 1: Always analyze in English for best quality
+  const prompt = buildPrompt(articles);
 
-  // 30s client timeout — slightly longer than server's 25s
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
+  const synthesisResponse = await fetchWithTimeout('/api/synthesize', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+  }, 30000);
 
-  let response: Response;
-  try {
-    response = await fetch('/api/synthesize', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt }),
-      signal: controller.signal,
-    });
-  } catch (err: unknown) {
-    clearTimeout(timeout);
-    if (err instanceof Error && err.name === 'AbortError') {
-      throw new Error('Analysis timed out. Please try again.');
-    }
-    throw err;
-  }
-  clearTimeout(timeout);
-
-  if (!response.ok) {
+  if (!synthesisResponse.ok) {
     throw new Error('AI synthesis failed');
   }
 
-  const data = await response.json();
-  return data.result;
+  const { result: englishResult } = await synthesisResponse.json();
+
+  // Step 2: Translate if not English
+  if (language !== 'English' && englishResult) {
+    try {
+      const translateResponse = await fetchWithTimeout('/api/translate-result', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: englishResult, language }),
+      }, 25000);
+
+      if (translateResponse.ok) {
+        const { translated } = await translateResponse.json();
+        if (translated) return translated;
+      }
+    } catch {
+      // Translation failed — return English result as fallback
+    }
+  }
+
+  return englishResult;
 }
