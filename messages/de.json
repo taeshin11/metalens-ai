@@ -51,14 +51,17 @@
     "builtBy": "Entwickelt von",
     "feedback": "Haben Sie einen Vorschlag? Lassen Sie es uns wissen",
     "privacy": "Datenschutz",
-    "terms": "Nutzungsbedingungen"
+    "terms": "Nutzungsbedingungen",
+    "rights": "Alle Rechte vorbehalten."
   },
   "about": {
     "title": "Über MetaLens AI",
     "mission": "Unsere Mission",
     "missionText": "MetaLens AI wurde von SPINAI entwickelt, um den Zugang zu medizinischen Forschungserkenntnissen zu demokratisieren. Wir glauben, dass jeder Mediziner, Student und Forscher in der Lage sein sollte, Erkenntnisse aus Tausenden von Artikeln schnell zu synthetisieren.",
     "howWeWork": "Wie wir arbeiten",
-    "howWeWorkText": "Wir nutzen die Datenbank von PubMed mit über 40 Millionen Artikeln und fortschrittliche KI, um strukturierte Metaanalyse-Zusammenfassungen in Sekunden — nicht Stunden — zu liefern."
+    "howWeWorkText": "Wir nutzen die Datenbank von PubMed mit über 40 Millionen Artikeln und fortschrittliche KI, um strukturierte Metaanalyse-Zusammenfassungen in Sekunden — nicht Stunden — zu liefern.",
+    "contact": "Kontakt",
+    "contactText": "Fragen oder Interesse an Zusammenarbeit? Kontaktieren Sie uns unter"
   },
   "howItWorks": {
     "title": "So funktioniert es",
@@ -92,11 +95,32 @@
     "title": "Nutzungsbedingungen",
     "content": "Zuletzt aktualisiert: März 2026\n\nDurch die Nutzung von MetaLens AI stimmen Sie den folgenden Bedingungen zu:\n\n1. Art des Dienstes: MetaLens AI stellt von KI generierte Zusammenfassungen öffentlich zugänglicher PubMed-Forschungsabstracts bereit. Die Ergebnisse dienen ausschließlich Informations- und Bildungszwecken.\n\n2. Kein medizinischer Rat: Nichts auf dieser Website stellt medizinischen Rat, Diagnose oder Behandlungsempfehlungen dar. Konsultieren Sie vor medizinischen Entscheidungen stets einen qualifizierten Arzt.\n\n3. Genauigkeit: Obwohl wir uns um Genauigkeit bemühen, kann KI Fehler, Halluzinationen oder Fehlinterpretationen produzieren. Überprüfen Sie Erkenntnisse stets anhand der Originalartikel.\n\n4. Haftungsbeschränkung: SPINAI haftet nicht für Entscheidungen, Handlungen oder Ergebnisse, die auf den von MetaLens AI bereitgestellten Informationen basieren.\n\n5. Faire Nutzung: Nutzer des kostenlosen Tarifs können täglich bis zu 5 Analysen durchführen. Automatisiertes Scraping oder Missbrauch des Dienstes ist untersagt.\n\n6. Geistiges Eigentum: Name, Logo und Design von MetaLens AI sind Eigentum von SPINAI. Forschungsabstracts stammen aus PubMed/NCBI und unterliegen deren Nutzungsbedingungen.\n\n7. Änderungen: Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern.\n\nKontakt: taeshinkim11@gmail.com"
   },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht. Versuchen Sie, auf der Startseite nach medizinischer Forschung zu suchen.",
+    "backHome": "Zurück zur Startseite"
+  },
   "errors": {
     "noResults": "Für diese Schlüsselwörter wurden keine Artikel gefunden. Versuchen Sie andere oder allgemeinere Begriffe.",
     "apiError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "rateLimit": "Sie haben das Tageslimit erreicht. Wechseln Sie zu Pro für unbegrenzte Analysen.",
     "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
     "tryAgain": "Erneut versuchen"
+  },
+  "compare": {
+    "comparingFor": "Behandlungen vergleichen für",
+    "description": "Vergleichen Sie {drug1} vs {drug2} für {condition} basierend auf veröffentlichter PubMed-Evidenz.",
+    "searchEvidence": "PubMed nach Evidenz zu {drug} und {condition} durchsuchen.",
+    "ctaTitle": "KI-gestützten Vergleich erhalten",
+    "ctaDesc": "Verwenden Sie MetaLens AI, um die neueste PubMed-Evidenz zu {drug1} und {drug2} für {condition} zu analysieren.",
+    "analyzeBtn": "{drug1} vs {drug2} analysieren",
+    "disclaimer": "Diese Seite dient nur zu Informationszwecken. Sie stellt KEINE medizinische Beratung dar. Konsultieren Sie immer einen qualifizierten Arzt.",
+    "otherTitle": "Weitere Medikamentenvergleiche",
+    "asthma": "Asthma",
+    "diabetes": "Typ-2-Diabetes",
+    "pain": "Schmerzlinderung",
+    "hypertension": "Bluthochdruck",
+    "gerd": "GERD",
+    "depression": "Depression"
   }
 }

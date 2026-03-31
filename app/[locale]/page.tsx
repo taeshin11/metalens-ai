@@ -1,7 +1,8 @@
 'use client';
 
 import { useTranslations, useLocale } from 'next-intl';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import KeywordInput from '@/components/KeywordInput';
@@ -20,11 +21,24 @@ export default function HomePage() {
   const tErr = useTranslations('errors');
   const locale = useLocale();
 
+  const searchParams = useSearchParams();
+
   const [stage, setStage] = useState<Stage>('idle');
   const [articles, setArticles] = useState<PubMedArticle[]>([]);
   const [result, setResult] = useState('');
   const [keywords, setKeywords] = useState('');
   const [error, setError] = useState('');
+  const [autoTriggered, setAutoTriggered] = useState(false);
+
+  // Auto-trigger analysis from ?q= parameter (e.g. from compare pages)
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q && !autoTriggered && stage === 'idle') {
+      setAutoTriggered(true);
+      handleAnalyze(q);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, autoTriggered, stage]);
 
   const handleAnalyze = async (kw: string) => {
     setKeywords(kw);

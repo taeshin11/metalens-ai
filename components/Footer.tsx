@@ -45,7 +45,7 @@ export default function Footer() {
         </div>
 
         <p className="text-center text-xs text-[var(--color-text-muted)] mt-6">
-          &copy; {new Date().getFullYear()} {BRAND_NAME}. All rights reserved.
+          &copy; {new Date().getFullYear()} {BRAND_NAME}. {t('rights')}
         </p>
       </div>
     </footer>

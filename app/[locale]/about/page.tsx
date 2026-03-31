@@ -48,10 +48,10 @@ export default function AboutPage() {
             className="text-2xl font-semibold text-[var(--color-primary-dark)] mb-4"
             style={{ fontFamily: 'Outfit, sans-serif' }}
           >
-            Contact
+            {t('contact')}
           </h2>
           <p className="text-[var(--color-text-secondary)] leading-relaxed">
-            Have questions or want to collaborate? Reach out at{' '}
+            {t('contactText')}{' '}
             <a
               href="mailto:taeshinkim11@gmail.com"
               className="text-[var(--color-primary)] hover:underline"

@@ -51,14 +51,17 @@
     "builtBy": "Développé par",
     "feedback": "Vous avez une suggestion ? Faites-le nous savoir",
     "privacy": "Confidentialité",
-    "terms": "Conditions"
+    "terms": "Conditions",
+    "rights": "Tous droits réservés."
   },
   "about": {
     "title": "À propos de MetaLens AI",
     "mission": "Notre Mission",
     "missionText": "MetaLens AI a été créé par SPINAI pour démocratiser l'accès aux connaissances issues de la recherche médicale. Nous croyons que chaque professionnel de santé, étudiant et chercheur doit pouvoir synthétiser rapidement les preuves issues de milliers d'articles.",
     "howWeWork": "Notre Fonctionnement",
-    "howWeWorkText": "Nous exploitons la base de données de PubMed contenant plus de 40 millions d'articles et une IA avancée pour fournir des résumés structurés de méta-analyse en quelques secondes — et non en quelques heures."
+    "howWeWorkText": "Nous exploitons la base de données de PubMed contenant plus de 40 millions d'articles et une IA avancée pour fournir des résumés structurés de méta-analyse en quelques secondes — et non en quelques heures.",
+    "contact": "Contact",
+    "contactText": "Des questions ou envie de collaborer ? Contactez-nous à"
   },
   "howItWorks": {
     "title": "Comment ça marche",
@@ -98,5 +101,26 @@
     "rateLimit": "Vous avez atteint la limite quotidienne. Passez à Pro pour des analyses illimitées.",
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
     "tryAgain": "Réessayer"
+  },
+  "compare": {
+    "comparingFor": "Comparaison de traitements pour",
+    "description": "Comparez {drug1} vs {drug2} pour {condition} basé sur les preuves publiées dans PubMed.",
+    "searchEvidence": "Rechercher sur PubMed les preuves sur {drug} et {condition}.",
+    "ctaTitle": "Obtenir une Comparaison par IA",
+    "ctaDesc": "Utilisez MetaLens AI pour analyser les dernières preuves PubMed comparant {drug1} et {drug2} pour {condition}.",
+    "analyzeBtn": "Analyser {drug1} vs {drug2}",
+    "disclaimer": "Cette page est à titre informatif uniquement. Elle NE constitue PAS un avis médical. Consultez toujours un professionnel de santé qualifié.",
+    "otherTitle": "Autres Comparaisons de Médicaments",
+    "asthma": "Asthme",
+    "diabetes": "Diabète de Type 2",
+    "pain": "Soulagement de la Douleur",
+    "hypertension": "Hypertension",
+    "gerd": "RGO",
+    "depression": "Dépression"
+  },
+  "notFound": {
+    "title": "Page non trouvée",
+    "description": "La page que vous recherchez n'existe pas. Essayez de rechercher des études médicales depuis la page d'accueil.",
+    "backHome": "Retour à l'accueil"
   }
 }

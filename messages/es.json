@@ -51,14 +51,17 @@
     "builtBy": "Desarrollado por",
     "feedback": "¿Tienes alguna sugerencia? Cuéntanos",
     "privacy": "Privacidad",
-    "terms": "Términos"
+    "terms": "Términos",
+    "rights": "Todos los derechos reservados."
   },
   "about": {
     "title": "Acerca de MetaLens AI",
     "mission": "Nuestra Misión",
     "missionText": "MetaLens AI fue creado por SPINAI para democratizar el acceso a los conocimientos de investigación médica. Creemos que todo profesional de la salud, estudiante e investigador debe poder sintetizar rápidamente la evidencia de miles de artículos.",
     "howWeWork": "Cómo Trabajamos",
-    "howWeWorkText": "Aprovechamos la base de datos de más de 40 millones de artículos de PubMed y la IA avanzada para ofrecer resúmenes estructurados de metaanálisis en segundos, no en horas."
+    "howWeWorkText": "Aprovechamos la base de datos de más de 40 millones de artículos de PubMed y la IA avanzada para ofrecer resúmenes estructurados de metaanálisis en segundos, no en horas.",
+    "contact": "Contacto",
+    "contactText": "¿Preguntas o quieres colaborar? Escríbenos a"
   },
   "howItWorks": {
     "title": "Cómo Funciona",
@@ -92,11 +95,32 @@
     "title": "Términos de Servicio",
     "content": "Última actualización: marzo de 2026\n\nAl usar MetaLens AI, aceptas los siguientes términos:\n\n1. Naturaleza del servicio: MetaLens AI proporciona resúmenes generados por IA de resúmenes de investigación de PubMed disponibles públicamente. Los resultados son únicamente para fines informativos y educativos.\n\n2. No es consejo médico: Nada en este sitio constituye consejo médico, diagnóstico ni recomendaciones de tratamiento. Consulta siempre a un profesional de la salud cualificado antes de tomar decisiones médicas.\n\n3. Precisión: Aunque nos esforzamos por ser precisos, la IA puede producir errores, alucinaciones o malinterpretaciones. Verifica siempre los hallazgos con los artículos originales.\n\n4. Limitación de responsabilidad: SPINAI no es responsable de ninguna decisión, acción o resultado basado en la información proporcionada por MetaLens AI.\n\n5. Uso justo: Los usuarios del plan gratuito pueden realizar hasta 5 análisis por día. Se prohíbe el scraping automatizado o el abuso del servicio.\n\n6. Propiedad intelectual: El nombre, logotipo y diseño de MetaLens AI son propiedad de SPINAI. Los resúmenes de investigación provienen de PubMed/NCBI y están sujetos a sus términos.\n\n7. Cambios: Nos reservamos el derecho de modificar estos términos en cualquier momento.\n\nContacto: taeshinkim11@gmail.com"
   },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe. Intenta buscar investigación médica desde la página de inicio.",
+    "backHome": "Volver al inicio"
+  },
   "errors": {
     "noResults": "No se encontraron artículos para estas palabras clave. Prueba con términos diferentes o más amplios.",
     "apiError": "Algo salió mal. Por favor, inténtalo de nuevo.",
     "rateLimit": "Has alcanzado el límite diario. Actualiza a Pro para análisis ilimitados.",
     "networkError": "Error de red. Por favor, verifica tu conexión e inténtalo de nuevo.",
     "tryAgain": "Intentar de nuevo"
+  },
+  "compare": {
+    "comparingFor": "Comparando tratamientos para",
+    "description": "Compare {drug1} vs {drug2} para {condition} basado en evidencia publicada en PubMed.",
+    "searchEvidence": "Buscar en PubMed evidencia sobre {drug} y {condition}.",
+    "ctaTitle": "Obtener una Comparación con IA",
+    "ctaDesc": "Use MetaLens AI para analizar la evidencia más reciente de PubMed comparando {drug1} y {drug2} para {condition}.",
+    "analyzeBtn": "Analizar {drug1} vs {drug2}",
+    "disclaimer": "Esta página es solo informativa. NO constituye consejo médico. Consulte siempre a un profesional de salud calificado.",
+    "otherTitle": "Otras Comparaciones de Medicamentos",
+    "asthma": "Asma",
+    "diabetes": "Diabetes Tipo 2",
+    "pain": "Alivio del Dolor",
+    "hypertension": "Hipertensión",
+    "gerd": "ERGE",
+    "depression": "Depresión"
   }
 }

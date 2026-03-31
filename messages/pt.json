@@ -51,14 +51,17 @@
     "builtBy": "Desenvolvido por",
     "feedback": "Tem uma sugestão? Fale conosco",
     "privacy": "Privacidade",
-    "terms": "Termos"
+    "terms": "Termos",
+    "rights": "Todos os direitos reservados."
   },
   "about": {
     "title": "Sobre o MetaLens AI",
     "mission": "Nossa Missão",
     "missionText": "O MetaLens AI foi criado pela SPINAI para democratizar o acesso a insights de pesquisa médica. Acreditamos que todo profissional de saúde, estudante e pesquisador deve ser capaz de sintetizar rapidamente evidências de milhares de artigos.",
     "howWeWork": "Como Trabalhamos",
-    "howWeWorkText": "Utilizamos a base de dados do PubMed com mais de 40 milhões de artigos e IA avançada para fornecer resumos estruturados de meta-análise em segundos — não em horas."
+    "howWeWorkText": "Utilizamos a base de dados do PubMed com mais de 40 milhões de artigos e IA avançada para fornecer resumos estruturados de meta-análise em segundos — não em horas.",
+    "contact": "Contato",
+    "contactText": "Tem dúvidas ou quer colaborar? Entre em contato em"
   },
   "howItWorks": {
     "title": "Como Funciona",
@@ -92,11 +95,32 @@
     "title": "Termos de Serviço",
     "content": "Última atualização: março de 2026\n\nAo usar o MetaLens AI, você concorda com os seguintes termos:\n\n1. Natureza do serviço: O MetaLens AI fornece resumos gerados por IA de resumos de pesquisa do PubMed disponíveis publicamente. Os resultados são apenas para fins informativos e educacionais.\n\n2. Não é conselho médico: Nada neste site constitui conselho médico, diagnóstico ou recomendações de tratamento. Consulte sempre um profissional de saúde qualificado antes de tomar decisões médicas.\n\n3. Precisão: Embora nos esforcemos pela precisão, a IA pode produzir erros, alucinações ou interpretações equivocadas. Sempre verifique os resultados com os artigos originais.\n\n4. Limitação de responsabilidade: A SPINAI não é responsável por quaisquer decisões, ações ou resultados com base nas informações fornecidas pelo MetaLens AI.\n\n5. Uso justo: Usuários do plano gratuito podem realizar até 5 análises por dia. É proibido o scraping automatizado ou abuso do serviço.\n\n6. Propriedade intelectual: O nome, logotipo e design do MetaLens AI são propriedade da SPINAI. Os resumos de pesquisa são provenientes do PubMed/NCBI e estão sujeitos aos seus termos.\n\n7. Alterações: Reservamo-nos o direito de modificar estes termos a qualquer momento.\n\nContato: taeshinkim11@gmail.com"
   },
+  "notFound": {
+    "title": "Página não encontrada",
+    "description": "A página que você procura não existe. Tente pesquisar pesquisas médicas na página inicial.",
+    "backHome": "Voltar ao início"
+  },
   "errors": {
     "noResults": "Nenhum artigo encontrado para estas palavras-chave. Tente termos diferentes ou mais abrangentes.",
     "apiError": "Algo deu errado. Por favor, tente novamente.",
     "rateLimit": "Você atingiu o limite diário. Atualize para Pro para análises ilimitadas.",
     "networkError": "Erro de rede. Verifique sua conexão e tente novamente.",
     "tryAgain": "Tentar novamente"
+  },
+  "compare": {
+    "comparingFor": "Comparando tratamentos para",
+    "description": "Compare {drug1} vs {drug2} para {condition} com base em evidências publicadas no PubMed.",
+    "searchEvidence": "Pesquisar no PubMed evidências sobre {drug} e {condition}.",
+    "ctaTitle": "Obter uma Comparação com IA",
+    "ctaDesc": "Use o MetaLens AI para analisar as evidências mais recentes do PubMed comparando {drug1} e {drug2} para {condition}.",
+    "analyzeBtn": "Analisar {drug1} vs {drug2}",
+    "disclaimer": "Esta página é apenas informativa. NÃO constitui aconselhamento médico. Consulte sempre um profissional de saúde qualificado.",
+    "otherTitle": "Outras Comparações de Medicamentos",
+    "asthma": "Asma",
+    "diabetes": "Diabetes Tipo 2",
+    "pain": "Alívio da Dor",
+    "hypertension": "Hipertensão",
+    "gerd": "DRGE",
+    "depression": "Depressão"
   }
 }

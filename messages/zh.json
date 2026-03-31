@@ -51,14 +51,17 @@
     "builtBy": "开发者",
     "feedback": "有建议？请告诉我们",
     "privacy": "隐私政策",
-    "terms": "服务条款"
+    "terms": "服务条款",
+    "rights": "保留所有权利。"
   },
   "about": {
     "title": "关于 MetaLens AI",
     "mission": "我们的使命",
     "missionText": "MetaLens AI由SPINAI创建，旨在让更多人能够获取医学研究见解。我们相信每位医疗专业人员、学生和研究人员都应该能够快速综合来自数千篇论文的证据。",
     "howWeWork": "我们的工作方式",
-    "howWeWorkText": "我们利用PubMed超过4000万篇论文的数据库和先进AI，在数秒内（而非数小时）提供结构化的荟萃分析摘要。"
+    "howWeWorkText": "我们利用PubMed超过4000万篇论文的数据库和先进AI，在数秒内（而非数小时）提供结构化的荟萃分析摘要。",
+    "contact": "联系我们",
+    "contactText": "有问题或想合作？请联系："
   },
   "howItWorks": {
     "title": "使用方法",
@@ -92,11 +95,32 @@
     "title": "服务条款",
     "content": "最后更新：2026年3月\n\n使用MetaLens AI即表示您同意以下条款：\n\n1. 服务性质：MetaLens AI提供公开的PubMed研究摘要的AI生成汇总。结果仅供参考和教育用途。\n\n2. 非医疗建议：本网站的任何内容均不构成医疗建议、诊断或治疗推荐。在做出医疗决定之前，请务必咨询具备资质的医疗专业人员。\n\n3. 准确性：虽然我们力求准确，但AI可能产生错误、幻觉或误解。请始终通过原始来源论文核实研究结果。\n\n4. 责任限制：SPINAI对基于MetaLens AI所提供信息而做出的决定、行动或结果不承担任何责任。\n\n5. 合理使用：免费套餐用户每天最多可进行5次分析。禁止自动抓取或滥用本服务。\n\n6. 知识产权：MetaLens AI的名称、标志和设计均为SPINAI的财产。研究摘要来源于PubMed/NCBI，受其条款约束。\n\n7. 变更：我们保留随时修改这些条款的权利。\n\n联系方式：taeshinkim11@gmail.com"
   },
+  "notFound": {
+    "title": "页面未找到",
+    "description": "您查找的页面不存在。请尝试从首页搜索医学研究。",
+    "backHome": "返回首页"
+  },
   "errors": {
     "noResults": "未找到与这些关键词相关的论文。请尝试不同或更宽泛的搜索词。",
     "apiError": "出现错误，请重试。",
     "rateLimit": "您已达到每日限额。升级至Pro版可享无限次分析。",
     "networkError": "网络错误，请检查您的连接后重试。",
     "tryAgain": "重试"
+  },
+  "compare": {
+    "comparingFor": "比较治疗方案：",
+    "description": "根据PubMed发表的证据，比较{drug1}和{drug2}治疗{condition}的效果。",
+    "searchEvidence": "在PubMed上搜索{drug}治疗{condition}的证据。",
+    "ctaTitle": "获取AI驱动的比较分析",
+    "ctaDesc": "使用MetaLens AI分析{drug1}和{drug2}治疗{condition}的最新PubMed证据。",
+    "analyzeBtn": "分析 {drug1} vs {drug2}",
+    "disclaimer": "本页面仅供参考，不构成医学建议。治疗决定请咨询专业医疗人员。",
+    "otherTitle": "其他药物比较",
+    "asthma": "哮喘",
+    "diabetes": "2型糖尿病",
+    "pain": "疼痛缓解",
+    "hypertension": "高血压",
+    "gerd": "胃食管反流病",
+    "depression": "抑郁症"
   }
 }
