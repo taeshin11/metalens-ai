@@ -46,7 +46,8 @@ async function callPollinationsWithRetry(prompt: string, maxRetries: number): Pr
 
 async function callPollinations(prompt: string): Promise<string> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 40000);
+  // 25s per attempt. With retry: 25s + 2s + 25s = 52s (fits Vercel 60s limit)
+  const timeout = setTimeout(() => controller.abort(), 25000);
 
   try {
     const response = await fetch(POLLINATIONS_URL, {
