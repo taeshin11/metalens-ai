@@ -36,9 +36,17 @@ export async function synthesizeWithPuter(
 ): Promise<string> {
   const prompt = buildPrompt(articles, language);
 
-  // Wait for puter to be available
-  if (typeof window === 'undefined' || !window.puter) {
+  // Wait for puter to be available (script loads with defer)
+  if (typeof window === 'undefined') {
     throw new Error('Puter.js not loaded');
+  }
+
+  // Poll for puter.js availability (up to 10 seconds)
+  for (let i = 0; i < 20 && !window.puter; i++) {
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  if (!window.puter) {
+    throw new Error('Puter.js failed to load. Please refresh and try again.');
   }
 
   try {
