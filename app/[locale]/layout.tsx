@@ -46,6 +46,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className="h-full antialiased">
       <head>
+        <link rel="alternate" type="application/rss+xml" title="MetaLens AI Blog" href="/feed.xml" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
