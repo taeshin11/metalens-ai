@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "MetaLens AI — Herramienta gratuita de metaanálisis médico con IA",
+    "description": "Ingrese palabras clave médicas y obtenga resúmenes de metaanálisis con IA de más de 40M de artículos de PubMed. Herramienta gratuita de SPINAI."
+  },
   "hero": {
     "title": "Metaanálisis Médico Impulsado por IA",
     "subtitle": "Introduce palabras clave médicas y obtén resúmenes instantáneos de metaanálisis impulsados por IA a partir de más de 40 millones de artículos de PubMed.",

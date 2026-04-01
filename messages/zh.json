@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "MetaLens AI — 免费AI医学荟萃分析工具",
+    "description": "输入医学关键词，从4000万篇PubMed论文中即时获取AI荟萃分析摘要。SPINAI免费工具。"
+  },
   "hero": {
     "title": "AI驱动的医学荟萃分析",
     "subtitle": "输入医学关键词，即可从4000万篇以上的PubMed论文中获得AI驱动的荟萃分析摘要。",

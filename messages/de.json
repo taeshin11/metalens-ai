@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "MetaLens AI — Kostenloses KI-Metaanalyse-Tool für Medizin",
+    "description": "Geben Sie medizinische Schlüsselwörter ein und erhalten Sie sofort KI-gestützte Metaanalyse-Zusammenfassungen aus über 40 Mio. PubMed-Artikeln. Kostenloses Tool von SPINAI."
+  },
   "hero": {
     "title": "KI-gestützte medizinische Metaanalyse",
     "subtitle": "Geben Sie medizinische Schlüsselwörter ein und erhalten Sie sofortige KI-gestützte Metaanalyse-Zusammenfassungen aus über 40 Millionen PubMed-Artikeln.",

@@ -13,7 +13,7 @@ export interface PubMedArticle {
 async function fetchWithRetry(url: string, retries = 2): Promise<Response> {
   for (let i = 0; i < retries; i++) {
     try {
-      const res = await fetch(url);
+      const res = await fetch(url, { cache: 'no-store' });
       if (res.ok) return res;
       // PubMed rate limit (429) or server error — retry
       if (res.status === 429 || res.status >= 500) {

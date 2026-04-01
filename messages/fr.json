@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "MetaLens AI — Outil gratuit de méta-analyse médicale par IA",
+    "description": "Entrez des mots-clés médicaux et obtenez des résumés de méta-analyse par IA à partir de plus de 40M d'articles PubMed. Outil gratuit de SPINAI."
+  },
   "hero": {
     "title": "Méta-analyse Médicale Propulsée par l'IA",
     "subtitle": "Saisissez des mots-clés médicaux et obtenez des résumés instantanés de méta-analyse propulsés par l'IA à partir de plus de 40 millions d'articles PubMed.",

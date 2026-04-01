@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "MetaLens AI — 무료 AI 의학 메타분석 도구",
+    "description": "의학 키워드를 입력하면 4천만 건 이상의 PubMed 논문에서 AI 메타분석 요약을 즉시 제공합니다. SPINAI 무료 도구."
+  },
   "hero": {
     "title": "AI 기반 의학 메타분석",
     "subtitle": "의학 키워드를 입력하면 4천만 건 이상의 PubMed 논문에서 AI 기반 메타분석 요약을 즉시 제공합니다.",

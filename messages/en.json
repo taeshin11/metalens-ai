@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "MetaLens AI — Free AI-Powered Medical Meta-Analysis Tool",
+    "description": "Enter medical keywords and get instant AI-powered meta-analysis summaries from 40M+ PubMed papers. Free tool by SPINAI."
+  },
   "hero": {
     "title": "AI-Powered Medical Meta-Analysis",
     "subtitle": "Enter medical keywords and get instant AI-powered meta-analysis summaries from 40M+ PubMed papers.",
