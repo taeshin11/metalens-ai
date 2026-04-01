@@ -49,11 +49,25 @@ async function translate(text: string, systemPrompt: string): Promise<string | n
   const geminiKey = process.env.GEMINI_API_KEY;
 
   if (geminiKey) {
+    // Try free tier first
     try {
       const { GoogleGenAI } = await import('@google/genai');
       const ai = new GoogleGenAI({ apiKey: geminiKey });
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
+        contents: [{ role: 'user', parts: [{ text }] }],
+        config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 2000 },
+      });
+      const result = response.text?.trim();
+      if (result) return result;
+    } catch { /* free tier exhausted */ }
+
+    // Try cheapest paid model
+    try {
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey: geminiKey });
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash-lite',
         contents: [{ role: 'user', parts: [{ text }] }],
         config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 2000 },
       });
@@ -83,7 +97,8 @@ async function translate(text: string, systemPrompt: string): Promise<string | n
     clearTimeout(timeout);
     if (!response.ok) return null;
     const data = await response.json();
-    const raw = data?.choices?.[0]?.message?.content || '';
+    const msg = data?.choices?.[0]?.message;
+    const raw = msg?.content || msg?.reasoning_content || '';
     // Strip Pollinations ads
     return raw.trim().replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '').trim() || null;
   } catch {

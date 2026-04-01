@@ -67,6 +67,22 @@ async function callPollinationsClient(prompt: string): Promise<string> {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     let text = await response.text();
 
+    // Handle JSON responses (Pollinations may return OpenAI-compatible JSON)
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed === 'object') {
+        if (typeof parsed.content === 'string') {
+          text = parsed.content.trim();
+        } else if (Array.isArray(parsed.choices) && parsed.choices[0]?.message) {
+          const msg = parsed.choices[0].message;
+          const extracted = msg.content || msg.reasoning_content || '';
+          if (typeof extracted === 'string' && extracted.trim()) {
+            text = extracted.trim();
+          }
+        }
+      }
+    } catch { /* not JSON, use as-is */ }
+
     // Strip Pollinations ads
     text = text.replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '');
     return text.trim();

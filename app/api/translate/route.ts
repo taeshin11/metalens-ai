@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     const geminiKey = process.env.GEMINI_API_KEY;
 
     if (geminiKey) {
+      // Try free tier first
       try {
         const { GoogleGenAI } = await import('@google/genai');
         const ai = new GoogleGenAI({ apiKey: geminiKey });
@@ -29,7 +30,20 @@ export async function POST(request: NextRequest) {
         });
         const translated = response.text?.trim().replace(/^["']|["']$/g, '');
         if (translated) return NextResponse.json({ translated });
-      } catch { /* fall through */ }
+      } catch { /* free tier exhausted */ }
+
+      // Try cheapest paid model
+      try {
+        const { GoogleGenAI } = await import('@google/genai');
+        const ai = new GoogleGenAI({ apiKey: geminiKey });
+        const response = await ai.models.generateContent({
+          model: 'gemini-2.0-flash-lite',
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          config: { temperature: 0, maxOutputTokens: 200 },
+        });
+        const translated = response.text?.trim().replace(/^["']|["']$/g, '');
+        if (translated) return NextResponse.json({ translated });
+      } catch { /* fall through to Pollinations */ }
     }
 
     // Fallback: Pollinations
@@ -50,7 +64,8 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) return NextResponse.json({ translated: keywords });
     const data = await response.json();
-    const translated = data?.choices?.[0]?.message?.content || '';
+    const msg = data?.choices?.[0]?.message;
+    const translated = msg?.content || msg?.reasoning_content || '';
     const cleaned = translated.trim().replace(/^["']|["']$/g, '');
     return NextResponse.json({ translated: cleaned || keywords });
   } catch {

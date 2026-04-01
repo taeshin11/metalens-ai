@@ -28,18 +28,29 @@ export async function POST(request: NextRequest) {
 }
 
 async function synthesize(prompt: string): Promise<string | null> {
-  // Strategy 1: Gemini API (if key is configured)
   const geminiKey = process.env.GEMINI_API_KEY;
+
+  // Strategy 1: Gemini 2.5 Flash (free tier)
   if (geminiKey) {
     try {
-      const result = await callGemini(prompt, geminiKey);
+      const result = await callGemini(prompt, geminiKey, 'gemini-2.5-flash');
       if (result && result.trim()) return result;
     } catch {
-      // Gemini failed (likely 429 rate limit) — fall through to Pollinations
+      // Free tier exhausted (429) — fall through to paid model
     }
   }
 
-  // Strategy 2: Pollinations (single attempt, 55s timeout)
+  // Strategy 2: Gemini 2.0 Flash-Lite (cheapest paid — ~$0.075/1M tokens)
+  if (geminiKey) {
+    try {
+      const result = await callGemini(prompt, geminiKey, 'gemini-2.0-flash-lite');
+      if (result && result.trim()) return result;
+    } catch {
+      // Paid model also failed — fall through to Pollinations
+    }
+  }
+
+  // Strategy 3: Pollinations (free, no key needed)
   try {
     const result = await callPollinations(prompt, 'openai');
     if (result && result.trim()) return result;
@@ -50,12 +61,12 @@ async function synthesize(prompt: string): Promise<string | null> {
   return null;
 }
 
-async function callGemini(prompt: string, apiKey: string): Promise<string> {
+async function callGemini(prompt: string, apiKey: string, model: string): Promise<string> {
   const { GoogleGenAI } = await import('@google/genai');
   const ai = new GoogleGenAI({ apiKey });
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model,
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
     config: {
       systemInstruction: SYSTEM_MSG,
@@ -107,13 +118,20 @@ const FAILURE_PHRASES = [
 function cleanResponse(raw: string): string {
   let text = raw;
 
-  // Handle JSON responses
+  // Handle JSON responses (OpenAI-compatible format)
   try {
     const parsed = JSON.parse(text);
     if (parsed && typeof parsed === 'object') {
-      if (typeof parsed.content === 'string') text = parsed.content.trim();
-      else if (Array.isArray(parsed.choices) && parsed.choices[0]?.message?.content)
-        text = parsed.choices[0].message.content.trim();
+      if (typeof parsed.content === 'string') {
+        text = parsed.content.trim();
+      } else if (Array.isArray(parsed.choices) && parsed.choices[0]?.message) {
+        const msg = parsed.choices[0].message;
+        // Prefer content, fall back to reasoning_content (some models put output there)
+        const extracted = msg.content || msg.reasoning_content || '';
+        if (typeof extracted === 'string' && extracted.trim()) {
+          text = extracted.trim();
+        }
+      }
     }
   } catch { /* not JSON */ }
 
