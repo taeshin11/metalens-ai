@@ -152,6 +152,17 @@
     "description": "La página que buscas no existe. Intenta buscar investigación médica desde la página de inicio.",
     "backHome": "Volver al inicio"
   },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signOut": "Cerrar sesión",
+    "loginTitle": "Inicia sesión para continuar",
+    "loginDesc": "Crea una cuenta gratuita para desbloquear análisis ilimitados.",
+    "continueWithGoogle": "Continuar con Google",
+    "benefit1": "Búsquedas ilimitadas por día",
+    "benefit2": "Guarda tu historial de búsqueda",
+    "benefit3": "Accede a funciones avanzadas",
+    "termsNote": "Al iniciar sesión, aceptas nuestros Términos de Servicio y Política de Privacidad."
+  },
   "errors": {
     "noResults": "No se encontraron artículos para estas palabras clave. Prueba con términos diferentes o más amplios.",
     "apiError": "Algo salió mal. Por favor, inténtalo de nuevo.",

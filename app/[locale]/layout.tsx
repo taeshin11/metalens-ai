@@ -7,6 +7,7 @@ import { SITE_NAME, SITE_URL } from '@/lib/constants';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import HomeJsonLd from '@/components/HomeJsonLd';
+import AuthProvider from '@/components/AuthProvider';
 import '../globals.css';
 
 export async function generateMetadata({
@@ -92,12 +93,14 @@ export default async function LocaleLayout({
         />
       </head>
       <body className="min-h-full flex flex-col" style={{ fontFamily: "'Source Sans 3', sans-serif" }}>
-        <NextIntlClientProvider messages={messages}>
-          <HomeJsonLd />
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </NextIntlClientProvider>
+        <AuthProvider>
+          <NextIntlClientProvider messages={messages}>
+            <HomeJsonLd />
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </NextIntlClientProvider>
+        </AuthProvider>
       </body>
     </html>
   );

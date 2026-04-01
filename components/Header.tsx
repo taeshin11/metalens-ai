@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import UserMenu from './UserMenu';
 
 export default function Header() {
   const t = useTranslations('nav');
@@ -55,12 +56,17 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="md:hidden p-2 text-[var(--color-text-secondary)]"
-          aria-label="Toggle menu"
-        >
+        <div className="flex items-center gap-3">
+          <div className="hidden md:block">
+            <UserMenu />
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden p-2 text-[var(--color-text-secondary)]"
+            aria-label="Toggle menu"
+          >
           <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
             {menuOpen ? (
               <path d="M6 6l12 12M6 18L18 6" />
@@ -69,6 +75,7 @@ export default function Header() {
             )}
           </svg>
         </button>
+        </div>
       </div>
 
       {/* Mobile nav */}
@@ -84,6 +91,9 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
+          <div className="pt-2 border-t border-[var(--color-border)] mt-2">
+            <UserMenu />
+          </div>
         </nav>
       )}
     </header>

@@ -3,11 +3,13 @@
 import { useTranslations, useLocale } from 'next-intl';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import KeywordInput, { SearchFilters } from '@/components/KeywordInput';
 import ResultsCard from '@/components/ResultsCard';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import FeedbackButton from '@/components/FeedbackButton';
+import LoginModal from '@/components/LoginModal';
 import { searchAndFetch, PubMedArticle } from '@/lib/pubmed';
 import { synthesizeWithAI, SynthesisResult } from '@/lib/synthesis';
 import { collectData } from '@/lib/analytics';
@@ -16,10 +18,13 @@ import { buildPubMedQuery } from '@/lib/pubmed-filters';
 
 type Stage = 'idle' | 'searching' | 'synthesizing' | 'done' | 'error';
 
+const FREE_SEARCHES = 1;
+
 export default function HomePage() {
   const t = useTranslations('hero');
   const tErr = useTranslations('errors');
   const locale = useLocale();
+  const { data: session } = useSession();
 
   const searchParams = useSearchParams();
 
@@ -29,6 +34,7 @@ export default function HomePage() {
   const [keywords, setKeywords] = useState('');
   const [error, setError] = useState('');
   const [autoTriggered, setAutoTriggered] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   // Auto-trigger analysis from ?q= parameter (e.g. from compare pages)
   useEffect(() => {
@@ -41,6 +47,16 @@ export default function HomePage() {
   }, [searchParams, autoTriggered, stage]);
 
   const handleAnalyze = async (kw: string, filters?: SearchFilters) => {
+    // Check if login required (after FREE_SEARCHES without session)
+    if (!session?.user) {
+      const count = parseInt(sessionStorage.getItem('searchCount') || '0', 10);
+      if (count >= FREE_SEARCHES) {
+        setShowLogin(true);
+        return;
+      }
+      sessionStorage.setItem('searchCount', String(count + 1));
+    }
+
     setKeywords(kw);
     setStage('searching');
     setError('');
@@ -88,6 +104,7 @@ export default function HomePage() {
 
   return (
     <>
+      <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
       <FeedbackButton />
 
       {/* Hero Section */}

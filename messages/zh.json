@@ -152,6 +152,17 @@
     "description": "您查找的页面不存在。请尝试从首页搜索医学研究。",
     "backHome": "返回首页"
   },
+  "auth": {
+    "signIn": "登录",
+    "signOut": "退出",
+    "loginTitle": "登录以继续",
+    "loginDesc": "创建免费账户，解锁无限医学研究分析。",
+    "continueWithGoogle": "使用Google继续",
+    "benefit1": "每日无限搜索",
+    "benefit2": "保存搜索历史",
+    "benefit3": "使用高级功能",
+    "termsNote": "登录即表示您同意我们的服务条款和隐私政策。"
+  },
   "errors": {
     "noResults": "未找到与这些关键词相关的论文。请尝试不同或更宽泛的搜索词。",
     "apiError": "出现错误，请重试。",

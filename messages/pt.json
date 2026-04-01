@@ -152,6 +152,17 @@
     "description": "A página que você procura não existe. Tente pesquisar pesquisas médicas na página inicial.",
     "backHome": "Voltar ao início"
   },
+  "auth": {
+    "signIn": "Entrar",
+    "signOut": "Sair",
+    "loginTitle": "Entre para continuar",
+    "loginDesc": "Crie uma conta gratuita para desbloquear análises ilimitadas.",
+    "continueWithGoogle": "Continuar com Google",
+    "benefit1": "Pesquisas ilimitadas por dia",
+    "benefit2": "Salve seu histórico de pesquisa",
+    "benefit3": "Acesse recursos avançados",
+    "termsNote": "Ao entrar, você concorda com nossos Termos de Serviço e Política de Privacidade."
+  },
   "errors": {
     "noResults": "Nenhum artigo encontrado para estas palavras-chave. Tente termos diferentes ou mais abrangentes.",
     "apiError": "Algo deu errado. Por favor, tente novamente.",

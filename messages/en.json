@@ -231,6 +231,17 @@
     "description": "The page you're looking for doesn't exist. Try searching for medical research from the homepage.",
     "backHome": "Back to Home"
   },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "loginTitle": "Sign in to continue",
+    "loginDesc": "Create a free account to unlock unlimited medical research analyses.",
+    "continueWithGoogle": "Continue with Google",
+    "benefit1": "Unlimited searches per day",
+    "benefit2": "Save your search history",
+    "benefit3": "Access advanced features",
+    "termsNote": "By signing in, you agree to our Terms of Service and Privacy Policy."
+  },
   "errors": {
     "noResults": "No papers found for these keywords. Try different or broader terms.",
     "apiError": "Something went wrong. Please try again.",

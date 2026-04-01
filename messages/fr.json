@@ -147,6 +147,17 @@
     "title": "Conditions d'Utilisation",
     "content": "Dernière mise à jour : mars 2026\n\nEn utilisant MetaLens AI, vous acceptez les conditions suivantes :\n\n1. Nature du service : MetaLens AI fournit des résumés générés par l'IA à partir de résumés de recherche PubMed accessibles au public. Les résultats sont uniquement à des fins d'information et d'éducation.\n\n2. Pas un avis médical : Rien sur ce site ne constitue un avis médical, un diagnostic ou des recommandations de traitement. Consultez toujours un professionnel de santé qualifié avant de prendre des décisions médicales.\n\n3. Exactitude : Bien que nous nous efforcions d'être précis, l'IA peut produire des erreurs, des hallucinations ou des interprétations erronées. Vérifiez toujours les résultats auprès des articles originaux.\n\n4. Limitation de responsabilité : SPINAI n'est pas responsable des décisions, actions ou résultats basés sur les informations fournies par MetaLens AI.\n\n5. Utilisation équitable : Les utilisateurs du plan gratuit peuvent effectuer jusqu'à 5 analyses par jour. Le scraping automatisé ou l'abus du service est interdit.\n\n6. Propriété intellectuelle : Le nom, le logo et le design de MetaLens AI sont la propriété de SPINAI. Les résumés de recherche proviennent de PubMed/NCBI et sont soumis à leurs conditions.\n\n7. Modifications : Nous nous réservons le droit de modifier ces conditions à tout moment.\n\nContact : taeshinkim11@gmail.com"
   },
+  "auth": {
+    "signIn": "Se connecter",
+    "signOut": "Se déconnecter",
+    "loginTitle": "Connectez-vous pour continuer",
+    "loginDesc": "Créez un compte gratuit pour des analyses médicales illimitées.",
+    "continueWithGoogle": "Continuer avec Google",
+    "benefit1": "Recherches illimitées par jour",
+    "benefit2": "Sauvegardez votre historique",
+    "benefit3": "Accédez aux fonctions avancées",
+    "termsNote": "En vous connectant, vous acceptez nos Conditions d'utilisation et Politique de confidentialité."
+  },
   "errors": {
     "noResults": "Aucun article trouvé pour ces mots-clés. Essayez des termes différents ou plus généraux.",
     "apiError": "Une erreur s'est produite. Veuillez réessayer.",

@@ -1,0 +1,152 @@
+[
+  {
+    "query": "aspirin, cardiovascular, prevention",
+    "index": 1,
+    "status": "SUCCESS",
+    "papers": 19,
+    "time": "10.7",
+    "findingsPreview": "**1. Main Comparison: Aspirin's Role in Primary vs. Secondary Prevention** — Evidence consistently indicates that aspirin has a clear, long-establishe",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "metformin, weight loss, obesity",
+    "index": 2,
+    "status": "SUCCESS",
+    "papers": 20,
+    "time": "15.6",
+    "findingsPreview": "**1. Comparative Approaches to Weight Management** — Evidence suggests that various interventions are being compared for weight management, including ",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "COVID-19, vaccine, efficacy",
+    "index": 3,
+    "status": "SUCCESS",
+    "papers": 15,
+    "time": "15.4",
+    "findingsPreview": "**1. **Evaluation of COVID-19 Vaccine Safety and Efficacy Across Types** — Evidence indicates that research has focused on evaluating the safety and e",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "depression, SSRI, therapy",
+    "index": 4,
+    "status": "SUCCESS",
+    "papers": 19,
+    "time": "11.5",
+    "findingsPreview": "**1. Main Comparison of Esketamine and Quetiapine for TRD** — Evidence from PMID: 37792613 suggests that esketamine nasal spray is being compared to q",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "hypertension, ACE inhibitors",
+    "index": 5,
+    "status": "SUCCESS",
+    "papers": 16,
+    "time": "15.2",
+    "findingsPreview": "**1. Efficacy and Safety of ACE Inhibitors in Hypertension** — Evidence suggests that angiotensin-converting enzyme (ACE) inhibitors are effective and",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "diabetes, insulin, HbA1c",
+    "index": 6,
+    "status": "SUCCESS",
+    "papers": 19,
+    "time": "15.2",
+    "findingsPreview": "**1. Efficacy of Biosimilar Insulin in Type 1 Diabetes** — Evidence suggests that switching children and youth with type 1 diabetes in low-income sett",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "cancer, immunotherapy, PD-1",
+    "index": 7,
+    "status": "SUCCESS",
+    "papers": 20,
+    "time": "16.7",
+    "findingsPreview": "**1. Immune Checkpoint Blockade as a Treatment Paradigm** — Immune checkpoint inhibitors, particularly those targeting PD-1/PD-L1 and CTLA-4, appear t",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "alzheimer, donepezil, memantine",
+    "index": 8,
+    "status": "SUCCESS",
+    "papers": 20,
+    "time": "14.9",
+    "findingsPreview": "**1. Therapeutic Approaches for Alzheimer's Disease** — Evidence suggests that memantine, donepezil, or their combination are frequently used therapeu",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "asthma, inhaled corticosteroids",
+    "index": 9,
+    "status": "SUCCESS",
+    "papers": 20,
+    "time": "8.0",
+    "findingsPreview": "**1. Main Comparison: Fixed-Dose Combination vs. SABA Monotherapy for Asthma Rescue** — Evidence from PMID: 35569035 suggests that a fixed-dose combin",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "migraine, triptans, prevention",
+    "index": 10,
+    "status": "SUCCESS",
+    "papers": 17,
+    "time": "15.1",
+    "findingsPreview": "**1. Main Treatment Comparisons** — Evidence indicates that triptans are widely used in the acute management of migraine, with systematic reviews and ",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "osteoporosis, bisphosphonates",
+    "index": 11,
+    "status": "SUCCESS",
+    "papers": 18,
+    "time": "8.0",
+    "findingsPreview": "**1. Main Comparison of Osteoporosis Treatments** — Evidence indicates that bisphosphonates (BPs) are widely used and have consolidated beneficial eff",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "obesity, GLP-1, semaglutide",
+    "index": 12,
+    "status": "SUCCESS",
+    "papers": 20,
+    "time": "9.0",
+    "findingsPreview": "**1. Main Comparison: Semaglutide vs. Placebo and Liraglutide for Weight Management** — Evidence indicates that once-weekly semaglutide (2.4 mg) as an",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "heart failure, beta blockers",
+    "index": 13,
+    "status": "SUCCESS",
+    "papers": 15,
+    "time": "14.9",
+    "findingsPreview": "**1. Main Comparison: Beneficial Effects in Heart Failure and Post-Myocardial Infarction**\n— Evidence suggests that β-blockers reduce cardiovascular h",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "cholesterol, statins, risk",
+    "index": 14,
+    "status": "SUCCESS",
+    "papers": 19,
+    "time": "8.5",
+    "findingsPreview": "**1. Main Comparison: Statins vs. Non-Statin Therapies for Lipid Lowering** — Evidence indicates that statins are widely prescribed for lowering LDL-c",
+    "error": "",
+    "hasTranslation": false
+  },
+  {
+    "query": "chronic pain, opioids, alternatives",
+    "index": 15,
+    "status": "SUCCESS",
+    "papers": 18,
+    "time": "14.8",
+    "findingsPreview": "**1. Main Comparison: Opioids vs. Multimodal and Non-Opioid Approaches for Chronic Pain** — Evidence suggests a primary comparison between opioid anal",
+    "error": "",
+    "hasTranslation": false
+  }
+]
