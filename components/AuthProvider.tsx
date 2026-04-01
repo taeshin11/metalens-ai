@@ -1,10 +1,12 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import type { Tier } from '@/lib/constants';
 
 interface User {
   email: string;
   name: string;
+  tier: Tier;
 }
 
 interface AuthContextType {
@@ -12,6 +14,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, name: string) => Promise<boolean>;
   logout: () => Promise<void>;
+  refreshSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -19,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   login: async () => false,
   logout: async () => {},
+  refreshSession: async () => {},
 });
 
 export function useAuth() {
@@ -29,13 +33,19 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetch('/api/auth/session')
-      .then(res => res.json())
-      .then(data => setUser(data.user || null))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+  const fetchSession = useCallback(async () => {
+    try {
+      const res = await fetch('/api/auth/session');
+      const data = await res.json();
+      setUser(data.user || null);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => { fetchSession(); }, [fetchSession]);
 
   const login = useCallback(async (email: string, name: string) => {
     try {
@@ -45,7 +55,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         body: JSON.stringify({ email, name }),
       });
       if (res.ok) {
-        setUser({ email, name });
+        setUser({ email, name, tier: 'free' });
         return true;
       }
       return false;
@@ -60,7 +70,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, refreshSession: fetchSession }}>
       {children}
     </AuthContext.Provider>
   );

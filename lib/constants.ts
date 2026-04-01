@@ -8,9 +8,48 @@ export const SUPPORTED_LOCALES = ['en', 'ko', 'ja', 'zh', 'es', 'pt', 'de', 'fr'
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
-export const FREE_DAILY_LIMIT = 5;
-export const FREE_POINTS = 5;
-export const PRO_POINTS = 5;
+// === Tier System ===
+export type Tier = 'free' | 'pro' | 'ultra';
+
+export const TIER_CONFIG = {
+  free: {
+    dailyLimit: 999,              // TEMP: unlimited during beta
+    pointCount: 7,                // TEMP: same as Pro during beta
+    model: 'gemini-2.5-flash',    // free tier of Gemini
+    label: 'Free',
+    price: 0,
+    yearlyPrice: 0,
+  },
+  pro: {
+    dailyLimit: 50,
+    pointCount: 7,
+    model: 'gemini-2.0-flash-lite', // cheapest paid Gemini
+    label: 'Pro',
+    price: 2.99,
+    yearlyPrice: 29.99,
+  },
+  ultra: {
+    dailyLimit: 200,
+    pointCount: 10,
+    model: 'gemini-2.5-flash',     // best Gemini model (paid quota)
+    label: 'Ultra',
+    price: 6.99,
+    yearlyPrice: 69.99,
+  },
+} as const;
+
+// Lemon Squeezy Variant IDs (set in env)
+export const LS_VARIANTS = {
+  pro_monthly: process.env.LS_VARIANT_PRO_MONTHLY || '',
+  pro_yearly: process.env.LS_VARIANT_PRO_YEARLY || '',
+  ultra_monthly: process.env.LS_VARIANT_ULTRA_MONTHLY || '',
+  ultra_yearly: process.env.LS_VARIANT_ULTRA_YEARLY || '',
+};
+
+// Legacy compat
+export const FREE_DAILY_LIMIT = TIER_CONFIG.free.dailyLimit;
+export const FREE_POINTS = TIER_CONFIG.free.pointCount;
+export const PRO_POINTS = TIER_CONFIG.pro.pointCount;
 
 export const PUBMED_BASE = 'https://pubmed.ncbi.nlm.nih.gov';
 

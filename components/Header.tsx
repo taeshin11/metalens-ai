@@ -17,6 +17,7 @@ export default function Header() {
   const links = [
     { href: `/${locale}`, label: t('home') },
     { href: `/${locale}/how-it-works`, label: t('howItWorks') },
+    // { href: `/${locale}/pricing`, label: 'Pricing' },  // TEMP: hidden until payments are set up
     { href: `/${locale}/about`, label: t('about') },
     { href: `/${locale}/faq`, label: t('faq') },
     { href: `/${locale}/blog`, label: t('blog') },
@@ -34,7 +35,7 @@ export default function Header() {
           }}
           className="flex items-center gap-2 group"
         >
-          <span className="text-2xl">🔬</span>
+          <span className="text-2xl" aria-label="MetaLens AI">🔬</span>
           <span
             className="text-xl font-bold text-[var(--color-primary-dark)] group-hover:text-[var(--color-primary)] transition-colors"
             style={{ fontFamily: 'Outfit, sans-serif' }}

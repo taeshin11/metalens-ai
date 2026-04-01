@@ -15,6 +15,7 @@ import { synthesizeWithAI, SynthesisResult } from '@/lib/synthesis';
 import { collectData } from '@/lib/analytics';
 import { translateForPubMed } from '@/lib/translate';
 import { buildPubMedQuery } from '@/lib/pubmed-filters';
+import { TIER_CONFIG } from '@/lib/constants';
 
 type Stage = 'idle' | 'searching' | 'synthesizing' | 'done' | 'error';
 
@@ -35,6 +36,10 @@ export default function HomePage() {
   const [error, setError] = useState('');
   const [autoTriggered, setAutoTriggered] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [remaining, setRemaining] = useState<number | null>(null);
+
+  const tier = user?.tier || 'free';
+  const tierConfig = TIER_CONFIG[tier];
 
   // Auto-trigger analysis from ?q= parameter (e.g. from compare pages)
   useEffect(() => {
@@ -85,12 +90,23 @@ export default function HomePage() {
       };
       const language = langMap[locale] || 'English';
 
-      const synthesisResult = await synthesizeWithAI(papers, language);
+      const synthesisResult = await synthesizeWithAI(papers, language, tierConfig.pointCount);
+
+      // Track remaining from server response
+      if (synthesisResult.remaining !== undefined) {
+        setRemaining(synthesisResult.remaining);
+      }
+
       setResult(synthesisResult);
       setStage('done');
-    } catch {
+    } catch (err) {
       setStage('error');
-      setError(tErr('apiError'));
+      // Check for rate limit
+      if (err instanceof Error && err.message.includes('429')) {
+        setError(tErr('rateLimit'));
+      } else {
+        setError(tErr('apiError'));
+      }
     }
   };
 
@@ -211,12 +227,15 @@ export default function HomePage() {
           >
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-red-200 text-center">
               <p className="text-red-500 text-lg mb-4">{error}</p>
-              <button
-                onClick={handleNewSearch}
-                className="px-6 py-2.5 text-sm font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-full hover:bg-[var(--color-primary)]/20 transition-colors"
-              >
-                ← {tErr('tryAgain')}
-              </button>
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={handleNewSearch}
+                  className="px-6 py-2.5 text-sm font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-full hover:bg-[var(--color-primary)]/20 transition-colors"
+                >
+                  ← {tErr('tryAgain')}
+                </button>
+                {/* Upgrade link hidden during beta */}
+              </div>
             </div>
           </motion.div>
         </div>
@@ -225,6 +244,8 @@ export default function HomePage() {
       {/* Results */}
       {stage === 'done' && result && (
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 pb-16">
+          {/* Remaining counter hidden during beta */}
+
           <ResultsCard
             result={result}
             articles={articles}
@@ -304,6 +325,8 @@ export default function HomePage() {
               </div>
             </div>
           </section>
+
+          {/* Pricing CTA hidden during beta */}
 
           {/* Who Is This For */}
           <section className="bg-white border-t border-[var(--color-border)]">

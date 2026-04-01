@@ -50,21 +50,39 @@ const comparisons: Record<string, ComparisonData> = {
   },
 };
 
+function parseSlug(slug: string): ComparisonData | null {
+  const match = slug.match(/^(.+)-vs-(.+)$/);
+  if (!match) return null;
+  const drug1 = match[1].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  const drug2 = match[2].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+  return {
+    drug1,
+    drug2,
+    conditionKey: '',
+    keywords: `${drug1}, ${drug2}, efficacy, safety, comparison`,
+  };
+}
+
+function getComparison(slug: string): ComparisonData | null {
+  return comparisons[slug] || parseSlug(slug);
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ drugs: string }>;
 }): Promise<Metadata> {
   const { drugs } = await params;
-  const data = comparisons[drugs];
+  const data = getComparison(drugs);
   if (!data) return { title: 'Not Found' };
 
   const title = `${data.drug1} vs ${data.drug2}`;
   return {
     title,
-    description: `Compare ${data.drug1} vs ${data.drug2} based on published PubMed evidence.`,
+    description: `Compare ${data.drug1} vs ${data.drug2} based on published PubMed evidence. AI-powered meta-analysis from 40M+ papers.`,
     openGraph: {
       title: `${title} | MetaLens AI`,
+      description: `AI-powered comparison of ${data.drug1} vs ${data.drug2}. Instant meta-analysis from PubMed research.`,
       url: `${SITE_URL}/en/compare/${drugs}`,
     },
   };
@@ -76,7 +94,7 @@ export default async function ComparePage({
   params: Promise<{ locale: string; drugs: string }>;
 }) {
   const { locale, drugs } = await params;
-  const data = comparisons[drugs];
+  const data = getComparison(drugs);
 
   if (!data) notFound();
 
@@ -86,7 +104,7 @@ export default async function ComparePage({
 function CompareContent({ locale, drugs, data }: { locale: string; drugs: string; data: ComparisonData }) {
   const t = useTranslations('compare');
 
-  const condition = t(data.conditionKey);
+  const condition = data.conditionKey ? t(data.conditionKey) : 'Clinical Outcomes';
 
   const jsonLd = {
     '@context': 'https://schema.org',

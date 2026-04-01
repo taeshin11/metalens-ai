@@ -1,13 +1,15 @@
 import { PubMedArticle } from './pubmed';
-import { META_ANALYSIS_PROMPT, FREE_POINTS } from './constants';
+import { META_ANALYSIS_PROMPT, FREE_POINTS, TIER_CONFIG } from './constants';
+import type { Tier } from './constants';
 
 export interface SynthesisResult {
   english: string;
   translated: string | null;
   language: string;
+  remaining?: number;
 }
 
-export function buildPrompt(articles: PubMedArticle[], pointCount = FREE_POINTS): string {
+export function buildPrompt(articles: PubMedArticle[], pointCount: number = FREE_POINTS): string {
   const systemPrompt = META_ANALYSIS_PROMPT
     .replace(/{pointCount}/g, String(pointCount));
 
@@ -97,9 +99,11 @@ async function callPollinationsClient(prompt: string): Promise<string> {
 export async function synthesizeWithAI(
   articles: PubMedArticle[],
   language: string,
+  pointCount?: number,
 ): Promise<SynthesisResult> {
-  const prompt = buildPrompt(articles);
+  const prompt = buildPrompt(articles, pointCount);
   let englishResult = '';
+  let remaining: number | undefined;
 
   // Strategy 1: Server-side (Gemini → Pollinations fallback)
   try {
@@ -109,11 +113,17 @@ export async function synthesizeWithAI(
       body: JSON.stringify({ prompt }),
     }, 55000);
 
-    if (synthesisResponse.ok) {
-      const { result } = await synthesisResponse.json();
-      if (result && result.trim()) englishResult = result;
+    if (synthesisResponse.status === 429) {
+      throw new Error('429: Daily limit reached');
     }
-  } catch {
+
+    if (synthesisResponse.ok) {
+      const data = await synthesisResponse.json();
+      if (data.result && data.result.trim()) englishResult = data.result;
+      if (data.remaining !== undefined) remaining = data.remaining;
+    }
+  } catch (err) {
+    if (err instanceof Error && err.message.includes('429')) throw err;
     // Server failed or timed out — fall through to client-side
   }
 
@@ -145,7 +155,7 @@ export async function synthesizeWithAI(
       if (translateResponse.ok) {
         const { translated } = await translateResponse.json();
         if (translated) {
-          return { english: englishResult, translated, language };
+          return { english: englishResult, translated, language, remaining };
         }
       }
     } catch {
@@ -157,12 +167,12 @@ export async function synthesizeWithAI(
       const translatePrompt = `Translate the following medical analysis into ${language}. Keep the numbered format and all PMID references. Output ONLY the translation:\n\n${englishResult}`;
       const translated = await callPollinationsClient(translatePrompt);
       if (translated && translated.trim().length > 50) {
-        return { english: englishResult, translated, language };
+        return { english: englishResult, translated, language, remaining };
       }
     } catch {
       // Return English only
     }
   }
 
-  return { english: englishResult, translated: null, language };
+  return { english: englishResult, translated: null, language, remaining };
 }

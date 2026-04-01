@@ -1,4 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rate-limit';
+import { TIER_CONFIG } from '@/lib/constants';
+import { trackUsage } from '@/lib/usage-tracker';
+import type { Tier } from '@/lib/constants';
 
 // Allow up to 60s for AI synthesis on Vercel
 export const maxDuration = 60;
@@ -8,45 +13,61 @@ const POLLINATIONS_URL = 'https://text.pollinations.ai/openai/chat/completions';
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt } = await request.json();
+    const session = await getSession();
+    const tier: Tier = session?.tier || 'free';
+    const identifier = session?.email || request.headers.get('x-forwarded-for') || 'anon';
 
+    // Server-side rate limit
+    const rl = checkRateLimit(identifier, tier);
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Daily limit reached', limit: rl.limit, tier },
+        { status: 429 },
+      );
+    }
+
+    const { prompt } = await request.json();
     if (!prompt) {
       return NextResponse.json({ error: 'Missing prompt' }, { status: 400 });
     }
 
-    // Try Gemini first, then Pollinations fallback
-    const result = await synthesize(prompt);
+    // Use tier-appropriate model
+    const result = await synthesize(prompt, tier);
 
     if (!result) {
       return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
     }
 
-    return NextResponse.json({ result });
+    // Track usage for admin dashboard
+    trackUsage(identifier, tier, TIER_CONFIG[tier].model);
+
+    return NextResponse.json({ result, remaining: rl.remaining });
   } catch {
     return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
   }
 }
 
-async function synthesize(prompt: string): Promise<string | null> {
+async function synthesize(prompt: string, tier: Tier): Promise<string | null> {
   const geminiKey = process.env.GEMINI_API_KEY;
+  const tierModel = TIER_CONFIG[tier].model;
 
-  // Strategy 1: Gemini 2.5 Flash (free tier)
+  // Strategy 1: Tier-specific Gemini model
   if (geminiKey) {
     try {
-      const result = await callGemini(prompt, geminiKey, 'gemini-2.5-flash');
+      const result = await callGemini(prompt, geminiKey, tierModel);
       if (result && result.trim()) return result;
     } catch {
-      // Free tier exhausted (429) — fall through to paid model
+      // Primary model failed — try fallback
     }
   }
 
-  // Strategy 2: Gemini 2.0 Flash-Lite (cheapest paid — ~$0.075/1M tokens)
-  if (geminiKey) {
+  // Strategy 2: Gemini fallback (Flash-Lite is cheapest)
+  if (geminiKey && tierModel !== 'gemini-2.0-flash-lite') {
     try {
       const result = await callGemini(prompt, geminiKey, 'gemini-2.0-flash-lite');
       if (result && result.trim()) return result;
     } catch {
-      // Paid model also failed — fall through to Pollinations
+      // Fallback also failed
     }
   }
 

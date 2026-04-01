@@ -9,11 +9,31 @@ export default function HomeJsonLd() {
     description: SITE_DESCRIPTION,
     applicationCategory: 'HealthApplication',
     operatingSystem: 'Any',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-    },
+    offers: [
+      {
+        '@type': 'Offer',
+        name: 'Free',
+        price: '0',
+        priceCurrency: 'USD',
+        description: '5 analyses per day, 5-point summaries',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Pro',
+        price: '2.99',
+        priceCurrency: 'USD',
+        billingIncrement: 'P1M',
+        description: '50 analyses per day, 7-point summaries, data extraction table, PDF export',
+      },
+      {
+        '@type': 'Offer',
+        name: 'Ultra',
+        price: '6.99',
+        priceCurrency: 'USD',
+        billingIncrement: 'P1M',
+        description: '200 analyses per day, 10-point summaries, statistical meta-analysis, forest plots',
+      },
+    ],
     author: {
       '@type': 'Organization',
       name: 'SPINAI',
