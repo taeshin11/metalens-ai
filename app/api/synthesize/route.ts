@@ -71,7 +71,7 @@ async function callGemini(prompt: string, apiKey: string, model: string): Promis
     config: {
       systemInstruction: SYSTEM_MSG,
       temperature: 0.2,
-      maxOutputTokens: 2000,
+      maxOutputTokens: 8000,
     },
   });
 

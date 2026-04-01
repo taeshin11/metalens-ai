@@ -56,7 +56,7 @@ async function translate(text: string, systemPrompt: string): Promise<string | n
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: [{ role: 'user', parts: [{ text }] }],
-        config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 2000 },
+        config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 4000 },
       });
       const result = response.text?.trim();
       if (result) return result;
@@ -69,7 +69,7 @@ async function translate(text: string, systemPrompt: string): Promise<string | n
       const response = await ai.models.generateContent({
         model: 'gemini-2.0-flash-lite',
         contents: [{ role: 'user', parts: [{ text }] }],
-        config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 2000 },
+        config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 4000 },
       });
       const result = response.text?.trim();
       if (result) return result;

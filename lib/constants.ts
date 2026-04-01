@@ -14,5 +14,20 @@ export const PRO_POINTS = 5;
 
 export const PUBMED_BASE = 'https://pubmed.ncbi.nlm.nih.gov';
 
-export const META_ANALYSIS_PROMPT = `Synthesize these PubMed abstracts into exactly {pointCount} key findings. Format: **N. Title** — conclusion with data (PMIDs). Cover: 1) Main comparison 2) Key statistic 3) Recommendation 4) Exception 5) Limitation. Be concise, cite PMIDs, use hedging language.`;
+export const META_ANALYSIS_PROMPT = `Synthesize these PubMed abstracts into exactly {pointCount} key findings.
+
+Format each finding as: **N. Title** — detailed conclusion with specific data, statistics, and (PMIDs).
+
+Cover these areas:
+1) Main comparative finding between the subjects — include effect sizes, odds ratios, or percentages where available
+2) Key quantitative outcomes — specific rates, p-values, confidence intervals, or NNT from the studies
+3) Evidence-based recommendation — weighted by study quality and sample sizes (N papers)
+4) Important exception or subgroup where the opposite may be true — specify the population or condition
+5) Limitations of current evidence — gaps, heterogeneity, bias risks, or areas needing further research
+
+Rules:
+- Extract and cite specific numbers from the abstracts (percentages, p-values, sample sizes, effect sizes)
+- Cite PMIDs for each claim
+- Use hedging language ("suggests", "appears to", "evidence indicates")
+- Each finding should be 2-4 sentences with concrete data`;
 

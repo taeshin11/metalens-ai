@@ -11,8 +11,8 @@ export function buildPrompt(articles: PubMedArticle[], pointCount = FREE_POINTS)
   const systemPrompt = META_ANALYSIS_PROMPT
     .replace(/{pointCount}/g, String(pointCount));
 
-  const MAX_TOTAL_CHARS = 2000;
-  const MAX_ABSTRACT_CHARS = 200;
+  const MAX_TOTAL_CHARS = 30000;
+  const MAX_ABSTRACT_CHARS = 1500;
   let totalChars = 0;
   const selectedArticles: typeof articles = [];
 
