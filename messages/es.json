@@ -155,13 +155,18 @@
   "auth": {
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión",
-    "loginTitle": "Inicia sesión para continuar",
-    "loginDesc": "Crea una cuenta gratuita para desbloquear análisis ilimitados.",
-    "continueWithGoogle": "Continuar con Google",
+    "loginTitle": "Regístrate gratis",
+    "loginDesc": "Ingresa tu nombre y correo para desbloquear análisis ilimitados.",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "Tu nombre",
+    "emailLabel": "Correo",
+    "emailPlaceholder": "ejemplo@email.com",
+    "startFree": "Comenzar gratis",
+    "loginError": "Algo salió mal. Inténtalo de nuevo.",
     "benefit1": "Búsquedas ilimitadas por día",
     "benefit2": "Guarda tu historial de búsqueda",
     "benefit3": "Accede a funciones avanzadas",
-    "termsNote": "Al iniciar sesión, aceptas nuestros Términos de Servicio y Política de Privacidad."
+    "termsNote": "Al registrarte, aceptas nuestros Términos de Servicio y Política de Privacidad."
   },
   "errors": {
     "noResults": "No se encontraron artículos para estas palabras clave. Prueba con términos diferentes o más amplios.",

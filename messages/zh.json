@@ -155,13 +155,18 @@
   "auth": {
     "signIn": "登录",
     "signOut": "退出",
-    "loginTitle": "登录以继续",
-    "loginDesc": "创建免费账户，解锁无限医学研究分析。",
-    "continueWithGoogle": "使用Google继续",
+    "loginTitle": "免费注册",
+    "loginDesc": "输入姓名和邮箱，即可解锁无限医学研究分析。",
+    "nameLabel": "姓名",
+    "namePlaceholder": "请输入姓名",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "example@email.com",
+    "startFree": "免费开始",
+    "loginError": "出了点问题，请重试。",
     "benefit1": "每日无限搜索",
     "benefit2": "保存搜索历史",
     "benefit3": "使用高级功能",
-    "termsNote": "登录即表示您同意我们的服务条款和隐私政策。"
+    "termsNote": "注册即表示您同意我们的服务条款和隐私政策。"
   },
   "errors": {
     "noResults": "未找到与这些关键词相关的论文。请尝试不同或更宽泛的搜索词。",

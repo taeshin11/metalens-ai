@@ -150,13 +150,18 @@
   "auth": {
     "signIn": "Se connecter",
     "signOut": "Se déconnecter",
-    "loginTitle": "Connectez-vous pour continuer",
-    "loginDesc": "Créez un compte gratuit pour des analyses médicales illimitées.",
-    "continueWithGoogle": "Continuer avec Google",
+    "loginTitle": "Inscription gratuite",
+    "loginDesc": "Entrez votre nom et e-mail pour débloquer des analyses illimitées.",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Votre nom",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "exemple@email.com",
+    "startFree": "Commencer gratuitement",
+    "loginError": "Un problème est survenu. Veuillez réessayer.",
     "benefit1": "Recherches illimitées par jour",
     "benefit2": "Sauvegardez votre historique",
     "benefit3": "Accédez aux fonctions avancées",
-    "termsNote": "En vous connectant, vous acceptez nos Conditions d'utilisation et Politique de confidentialité."
+    "termsNote": "En vous inscrivant, vous acceptez nos Conditions d'utilisation et Politique de confidentialité."
   },
   "errors": {
     "noResults": "Aucun article trouvé pour ces mots-clés. Essayez des termes différents ou plus généraux.",

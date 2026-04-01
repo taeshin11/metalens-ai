@@ -234,13 +234,18 @@
   "auth": {
     "signIn": "Sign In",
     "signOut": "Sign Out",
-    "loginTitle": "Sign in to continue",
-    "loginDesc": "Create a free account to unlock unlimited medical research analyses.",
-    "continueWithGoogle": "Continue with Google",
+    "loginTitle": "Sign up for free",
+    "loginDesc": "Enter your name and email to unlock unlimited medical research analyses.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "startFree": "Start Free",
+    "loginError": "Something went wrong. Please try again.",
     "benefit1": "Unlimited searches per day",
     "benefit2": "Save your search history",
     "benefit3": "Access advanced features",
-    "termsNote": "By signing in, you agree to our Terms of Service and Privacy Policy."
+    "termsNote": "By signing up, you agree to our Terms of Service and Privacy Policy."
   },
   "errors": {
     "noResults": "No papers found for these keywords. Try different or broader terms.",

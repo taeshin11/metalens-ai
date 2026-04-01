@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from 'next-intl';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/components/AuthProvider';
 import { motion } from 'framer-motion';
 import KeywordInput, { SearchFilters } from '@/components/KeywordInput';
 import ResultsCard from '@/components/ResultsCard';
@@ -24,7 +24,7 @@ export default function HomePage() {
   const t = useTranslations('hero');
   const tErr = useTranslations('errors');
   const locale = useLocale();
-  const { data: session } = useSession();
+  const { user } = useAuth();
 
   const searchParams = useSearchParams();
 
@@ -48,7 +48,7 @@ export default function HomePage() {
 
   const handleAnalyze = async (kw: string, filters?: SearchFilters) => {
     // Check if login required (after FREE_SEARCHES without session)
-    if (!session?.user) {
+    if (!user) {
       const count = parseInt(sessionStorage.getItem('searchCount') || '0', 10);
       if (count >= FREE_SEARCHES) {
         setShowLogin(true);

@@ -155,13 +155,18 @@
   "auth": {
     "signIn": "Anmelden",
     "signOut": "Abmelden",
-    "loginTitle": "Anmelden um fortzufahren",
-    "loginDesc": "Erstellen Sie ein kostenloses Konto für unbegrenzte medizinische Analysen.",
-    "continueWithGoogle": "Mit Google fortfahren",
+    "loginTitle": "Kostenlos registrieren",
+    "loginDesc": "Geben Sie Ihren Namen und Ihre E-Mail ein, um unbegrenzte Analysen freizuschalten.",
+    "nameLabel": "Name",
+    "namePlaceholder": "Ihr Name",
+    "emailLabel": "E-Mail",
+    "emailPlaceholder": "beispiel@email.com",
+    "startFree": "Kostenlos starten",
+    "loginError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "benefit1": "Unbegrenzte Suchen pro Tag",
     "benefit2": "Suchverlauf speichern",
     "benefit3": "Erweiterte Funktionen nutzen",
-    "termsNote": "Mit der Anmeldung stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu."
+    "termsNote": "Mit der Registrierung stimmen Sie unseren Nutzungsbedingungen und Datenschutzrichtlinien zu."
   },
   "errors": {
     "noResults": "Für diese Schlüsselwörter wurden keine Artikel gefunden. Versuchen Sie andere oder allgemeinere Begriffe.",
