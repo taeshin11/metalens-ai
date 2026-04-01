@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import KeywordInput from '@/components/KeywordInput';
+import KeywordInput, { SearchFilters } from '@/components/KeywordInput';
 import ResultsCard from '@/components/ResultsCard';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import FeedbackButton from '@/components/FeedbackButton';
@@ -12,6 +12,7 @@ import { searchAndFetch, PubMedArticle } from '@/lib/pubmed';
 import { synthesizeWithAI, SynthesisResult } from '@/lib/synthesis';
 import { collectData } from '@/lib/analytics';
 import { translateForPubMed } from '@/lib/translate';
+import { buildPubMedQuery } from '@/lib/pubmed-filters';
 
 type Stage = 'idle' | 'searching' | 'synthesizing' | 'done' | 'error';
 
@@ -39,7 +40,7 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, autoTriggered, stage]);
 
-  const handleAnalyze = async (kw: string) => {
+  const handleAnalyze = async (kw: string, filters?: SearchFilters) => {
     setKeywords(kw);
     setStage('searching');
     setError('');
@@ -48,7 +49,8 @@ export default function HomePage() {
     try {
       // Translate non-English keywords to English for PubMed search
       const englishKeywords = await translateForPubMed(kw);
-      const papers = await searchAndFetch(englishKeywords, 20);
+      const query = filters ? buildPubMedQuery(englishKeywords, filters) : englishKeywords;
+      const papers = await searchAndFetch(query, 20);
 
       if (papers.length === 0) {
         setStage('error');
