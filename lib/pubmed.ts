@@ -34,11 +34,45 @@ async function fetchWithRetry(url: string, retries = 2): Promise<Response> {
   throw new Error('PubMed request failed after retries');
 }
 
+// Words that hurt PubMed search when used as plain text
+const NOISE_WORDS = new Set([
+  'vs', 'vs.', 'versus', 'compared', 'comparison', 'meta-analysis', 'meta analysis',
+  'metaanalysis', 'systematic review', 'systematic-review', 'efficacy', 'effectiveness',
+  'treatment', 'therapy', 'outcomes', 'outcome', 'effect', 'effects', 'study', 'studies',
+  'clinical', 'patients', 'analysis', 'review', 'research', 'evidence',
+]);
+
+function cleanKeywords(raw: string): string {
+  // Split on commas or spaces, remove noise, rejoin
+  const tokens = raw
+    .split(/[,\s]+/)
+    .map(t => t.trim().toLowerCase())
+    .filter(t => t.length > 0 && !NOISE_WORDS.has(t));
+
+  // If we stripped too much, fall back to original
+  if (tokens.length < 2) return raw;
+  return tokens.join(' ');
+}
+
 export async function searchPubMed(keywords: string, maxResults = 20): Promise<string[]> {
+  // Try original query first
   const url = `${BASE_URL}/esearch.fcgi?db=pubmed&term=${encodeURIComponent(keywords)}&retmax=${maxResults}&retmode=json&sort=relevance`;
   const res = await fetchWithRetry(url);
   const data = await res.json();
-  return data.esearchresult?.idlist || [];
+  const ids = data.esearchresult?.idlist || [];
+
+  // If no results, retry with cleaned keywords (remove noise words)
+  if (ids.length === 0) {
+    const cleaned = cleanKeywords(keywords);
+    if (cleaned !== keywords.toLowerCase().trim()) {
+      const retryUrl = `${BASE_URL}/esearch.fcgi?db=pubmed&term=${encodeURIComponent(cleaned)}&retmax=${maxResults}&retmode=json&sort=relevance`;
+      const retryRes = await fetchWithRetry(retryUrl);
+      const retryData = await retryRes.json();
+      return retryData.esearchresult?.idlist || [];
+    }
+  }
+
+  return ids;
 }
 
 export async function fetchAbstracts(pmids: string[]): Promise<PubMedArticle[]> {

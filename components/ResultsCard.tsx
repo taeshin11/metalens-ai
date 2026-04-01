@@ -11,6 +11,7 @@ import { extractDataFromArticles, ExtractionResult } from '@/lib/data-extraction
 import { poolStudies, PooledResult } from '@/lib/meta-stats';
 import DataTable from './DataTable';
 import ForestPlot from './ForestPlot';
+import FunnelPlot from './FunnelPlot';
 import UpgradeGate from './UpgradeGate';
 import ShareButtons from './ShareButtons';
 import UpsellBanner from './UpsellBanner';
@@ -268,6 +269,22 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
                   🌲 Forest Plot
                 </h3>
                 <ForestPlot studies={extraction.data} pooled={pooled} />
+              </div>
+            )}
+
+            {/* Funnel Plot (Publication Bias) */}
+            {pooled && extraction && (
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
+                <h3
+                  className="text-lg font-semibold text-[var(--color-text-primary)] mb-2 flex items-center gap-2"
+                  style={{ fontFamily: 'Outfit, sans-serif' }}
+                >
+                  🔻 Funnel Plot
+                </h3>
+                <p className="text-xs text-[var(--color-text-muted)] mb-4">
+                  Assesses publication bias by plotting effect size vs. precision. Asymmetry may indicate selective reporting.
+                </p>
+                <FunnelPlot studies={extraction.data} pooled={pooled} />
               </div>
             )}
           </div>

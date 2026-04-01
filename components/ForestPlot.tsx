@@ -281,6 +281,16 @@ export default function ForestPlot({ studies, pooled }: ForestPlotProps) {
       <p className="text-[10px] text-[var(--color-text-muted)] text-center mt-2">
         PNG for presentations and documents — SVG for high-quality publication figures
       </p>
+
+      {/* Disclaimer */}
+      <div className="mt-4 p-3 bg-[var(--color-warning)]/10 rounded-xl border border-[var(--color-warning)]/30">
+        <p className="text-[10px] text-[var(--color-text-secondary)] leading-relaxed text-center">
+          <strong>Note:</strong> This forest plot is generated from PubMed abstract data using AI extraction. Effect sizes and confidence intervals
+          may be approximate. For publication-quality meta-analyses, verify all values against full-text articles and use dedicated
+          statistical software (e.g., RevMan, R meta package). This tool is designed for preliminary research screening, not as a
+          replacement for formal systematic review methodology.
+        </p>
+      </div>
     </div>
   );
 }
