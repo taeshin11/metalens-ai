@@ -27,6 +27,7 @@ interface ResultsCardProps {
 
 export default function ResultsCard({ result, articles, keywords, onNewSearch, mode = 'meta-analysis' }: ResultsCardProps) {
   const t = useTranslations('results');
+  const tt = useTranslations('tools');
   const { user } = useAuth();
   const tier = user?.tier || 'free';
 
@@ -396,118 +397,62 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
           {/* Abstract Generator */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
             <div className="flex items-center justify-between mb-4">
-              <h3
-                className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2"
-                style={{ fontFamily: 'Outfit, sans-serif' }}
-              >
-                📝 Abstract Draft Generator
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                📝 {tt('abstractTitle')}
               </h3>
               {!abstractDraft && (
-                <button
-                  onClick={() => handleGenerateTools('abstract')}
-                  disabled={toolsLoading}
-                  className="px-4 py-2 text-xs font-semibold text-white bg-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors disabled:opacity-50"
-                >
-                  {toolsLoading ? (
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Generating...
-                    </span>
-                  ) : 'Generate Abstract'}
+                <button onClick={() => handleGenerateTools('abstract')} disabled={toolsLoading}
+                  className="px-4 py-2 text-xs font-semibold text-white bg-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors disabled:opacity-50">
+                  {toolsLoading ? <span className="flex items-center gap-1.5"><span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />{tt('generating')}</span> : tt('abstractBtn')}
                 </button>
               )}
             </div>
-            <p className="text-xs text-[var(--color-text-muted)] mb-4">
-              AI generates a structured IMRAD abstract draft based on your meta-analysis results and source papers.
-            </p>
-
+            <p className="text-xs text-[var(--color-text-muted)] mb-4">{tt('abstractDesc')}</p>
             {abstractDraft ? (
               <div>
-                <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-primary)] rounded-xl p-5 border border-[var(--color-border)]">
-                  {abstractDraft}
-                </div>
+                <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-primary)] rounded-xl p-5 border border-[var(--color-border)]">{abstractDraft}</div>
                 <div className="flex items-center gap-3 mt-3">
-                  <button
-                    onClick={() => navigator.clipboard.writeText(abstractDraft)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-lg hover:bg-[var(--color-primary)]/20 transition-colors"
-                  >
+                  <button onClick={() => navigator.clipboard.writeText(abstractDraft)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-lg hover:bg-[var(--color-primary)]/20 transition-colors">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                    Copy
+                    {tt('copy')}
                   </button>
-                  <button
-                    onClick={() => { setAbstractDraft(''); handleGenerateTools('abstract'); }}
-                    className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
-                  >
-                    Regenerate
-                  </button>
+                  <button onClick={() => { setAbstractDraft(''); handleGenerateTools('abstract'); }} className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]">{tt('regenerate')}</button>
                 </div>
-                <p className="text-[10px] text-[var(--color-text-muted)] mt-2">
-                  This is an AI-generated draft. Review and edit before submission. Verify all statistics against source papers.
-                </p>
+                <p className="text-[10px] text-[var(--color-text-muted)] mt-2">{tt('abstractDisclaimer')}</p>
               </div>
             ) : !toolsLoading ? (
-              <div className="text-center py-6 text-sm text-[var(--color-text-muted)]">
-                Click &quot;Generate Abstract&quot; to create a structured draft based on your analysis.
-              </div>
+              <div className="text-center py-6 text-sm text-[var(--color-text-muted)]">{tt('abstractHint')}</div>
             ) : null}
           </div>
 
           {/* Journal Recommendation */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
             <div className="flex items-center justify-between mb-4">
-              <h3
-                className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2"
-                style={{ fontFamily: 'Outfit, sans-serif' }}
-              >
-                🎯 SCI Journal Recommendation
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                🎯 {tt('journalTitle')}
               </h3>
               {!journalRecs && (
-                <button
-                  onClick={() => handleGenerateTools('journal')}
-                  disabled={toolsLoading}
-                  className="px-4 py-2 text-xs font-semibold text-white bg-[var(--color-accent)] rounded-lg hover:bg-[var(--color-accent)]/90 transition-colors disabled:opacity-50"
-                >
-                  {toolsLoading ? (
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Analyzing...
-                    </span>
-                  ) : 'Find Journals'}
+                <button onClick={() => handleGenerateTools('journal')} disabled={toolsLoading}
+                  className="px-4 py-2 text-xs font-semibold text-white bg-[var(--color-accent)] rounded-lg hover:bg-[var(--color-accent)]/90 transition-colors disabled:opacity-50">
+                  {toolsLoading ? <span className="flex items-center gap-1.5"><span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />{tt('analyzing')}</span> : tt('journalBtn')}
                 </button>
               )}
             </div>
-            <p className="text-xs text-[var(--color-text-muted)] mb-4">
-              AI recommends the best SCI/SCIE journals for your topic based on keyword matching and source journal analysis.
-            </p>
-
+            <p className="text-xs text-[var(--color-text-muted)] mb-4">{tt('journalDesc')}</p>
             {journalRecs ? (
               <div>
-                <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-primary)] rounded-xl p-5 border border-[var(--color-border)]">
-                  {journalRecs}
-                </div>
+                <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-primary)] rounded-xl p-5 border border-[var(--color-border)]">{journalRecs}</div>
                 <div className="flex items-center gap-3 mt-3">
-                  <button
-                    onClick={() => navigator.clipboard.writeText(journalRecs)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-lg hover:bg-[var(--color-primary)]/20 transition-colors"
-                  >
+                  <button onClick={() => navigator.clipboard.writeText(journalRecs)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-lg hover:bg-[var(--color-primary)]/20 transition-colors">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                    Copy
+                    {tt('copy')}
                   </button>
-                  <button
-                    onClick={() => { setJournalRecs(''); handleGenerateTools('journal'); }}
-                    className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
-                  >
-                    Regenerate
-                  </button>
+                  <button onClick={() => { setJournalRecs(''); handleGenerateTools('journal'); }} className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]">{tt('regenerate')}</button>
                 </div>
-                <p className="text-[10px] text-[var(--color-text-muted)] mt-2">
-                  Impact factors are approximate. Verify current IF and submission guidelines on the journal&apos;s official website.
-                </p>
+                <p className="text-[10px] text-[var(--color-text-muted)] mt-2">{tt('journalDisclaimer')}</p>
               </div>
             ) : !toolsLoading ? (
-              <div className="text-center py-6 text-sm text-[var(--color-text-muted)]">
-                Click &quot;Find Journals&quot; to get personalized SCI journal recommendations.
-              </div>
+              <div className="text-center py-6 text-sm text-[var(--color-text-muted)]">{tt('journalHint')}</div>
             ) : null}
           </div>
         </div>

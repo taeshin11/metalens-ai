@@ -52,6 +52,22 @@
     "historyTitle": "Recent Searches",
     "historyClear": "Clear History"
   },
+  "tools": {
+    "abstractTitle": "Abstract Draft Generator",
+    "abstractDesc": "AI generates a structured IMRAD abstract draft based on your meta-analysis results and source papers.",
+    "abstractBtn": "Generate Abstract",
+    "abstractHint": "Click \"Generate Abstract\" to create a structured draft based on your analysis.",
+    "abstractDisclaimer": "This is an AI-generated draft. Review and edit before submission. Verify all statistics against source papers.",
+    "journalTitle": "SCI Journal Recommendation",
+    "journalDesc": "AI recommends the best SCI/SCIE journals for your topic based on keyword matching and source journal analysis.",
+    "journalBtn": "Find Journals",
+    "journalHint": "Click \"Find Journals\" to get personalized SCI journal recommendations.",
+    "journalDisclaimer": "Impact factors are approximate. Verify current IF and submission guidelines on the journal's official website.",
+    "generating": "Generating...",
+    "analyzing": "Analyzing...",
+    "copy": "Copy",
+    "regenerate": "Regenerate"
+  },
   "results": {
     "title": "Analysis Results",
     "papersFound": "papers found",
