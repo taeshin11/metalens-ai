@@ -30,8 +30,8 @@ export default function Header() {
           href={`/${locale}`}
           onClick={(e) => {
             e.preventDefault();
+            window.dispatchEvent(new Event('metalens:home'));
             router.push(`/${locale}`);
-            router.refresh();
           }}
           className="flex items-center gap-2 group"
         >

@@ -138,7 +138,15 @@ export default function HomePage() {
     setArticles([]);
     setKeywords('');
     setError('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Allow Header logo click to reset to home
+  useEffect(() => {
+    const handler = () => handleNewSearch();
+    window.addEventListener('metalens:home', handler);
+    return () => window.removeEventListener('metalens:home', handler);
+  });
 
   return (
     <>
