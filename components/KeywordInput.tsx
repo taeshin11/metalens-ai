@@ -60,9 +60,6 @@ export default function KeywordInput({ onSubmit, isLoading, initialValue }: Keyw
             className="w-full px-5 py-4 text-base bg-white border-2 border-[var(--color-border)] rounded-2xl focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all placeholder:text-[var(--color-text-muted)] text-[var(--color-text-primary)] disabled:opacity-60"
             aria-label="Enter medical keywords"
           />
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]">
-            🔍
-          </span>
         </div>
         <button
           type="submit"
