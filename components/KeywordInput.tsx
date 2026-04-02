@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+export type SearchMode = 'meta-analysis' | 'gap-finder';
+
 export interface SearchFilters {
   studyType: string;
   dateRange: string;
@@ -11,7 +13,7 @@ export interface SearchFilters {
 }
 
 interface KeywordInputProps {
-  onSubmit: (keywords: string, filters: SearchFilters) => void;
+  onSubmit: (keywords: string, filters: SearchFilters, mode: SearchMode) => void;
   isLoading: boolean;
   initialValue?: string;
 }
@@ -27,13 +29,14 @@ export default function KeywordInput({ onSubmit, isLoading, initialValue }: Keyw
   const [keywords, setKeywords] = useState(initialValue || '');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
+  const [mode, setMode] = useState<SearchMode>('meta-analysis');
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (keywords.trim() && !isLoading) {
-      onSubmit(keywords.trim(), filters);
+      onSubmit(keywords.trim(), filters, mode);
     }
   };
 
@@ -49,13 +52,41 @@ export default function KeywordInput({ onSubmit, isLoading, initialValue }: Keyw
       transition={{ delay: 0.3, duration: 0.5 }}
       className="w-full max-w-2xl mx-auto"
     >
+      {/* Mode Toggle */}
+      <div className="flex justify-center mb-3">
+        <div className="inline-flex items-center gap-1 bg-[var(--color-bg-secondary)] rounded-full p-1">
+          <button
+            type="button"
+            onClick={() => setMode('meta-analysis')}
+            className={`px-4 py-1.5 text-xs font-medium rounded-full transition-all ${
+              mode === 'meta-analysis'
+                ? 'bg-white text-[var(--color-text-primary)] shadow-sm'
+                : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]'
+            }`}
+          >
+            {t('modeMeta')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('gap-finder')}
+            className={`px-4 py-1.5 text-xs font-medium rounded-full transition-all ${
+              mode === 'gap-finder'
+                ? 'bg-white text-[var(--color-text-primary)] shadow-sm'
+                : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]'
+            }`}
+          >
+            {t('modeGap')}
+          </button>
+        </div>
+      </div>
+
       <div className="relative flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <input
             type="text"
             value={keywords}
             onChange={(e) => setKeywords(e.target.value)}
-            placeholder={t('placeholder')}
+            placeholder={mode === 'meta-analysis' ? t('placeholder') : t('placeholderGap')}
             disabled={isLoading}
             className="w-full px-5 py-4 text-base bg-white border-2 border-[var(--color-border)] rounded-2xl focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all placeholder:text-[var(--color-text-muted)] text-[var(--color-text-primary)] disabled:opacity-60"
             aria-label="Enter medical keywords"

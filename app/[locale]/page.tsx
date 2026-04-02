@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/AuthProvider';
 import { motion } from 'framer-motion';
-import KeywordInput, { SearchFilters } from '@/components/KeywordInput';
+import KeywordInput, { SearchFilters, SearchMode } from '@/components/KeywordInput';
 import ResultsCard from '@/components/ResultsCard';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import FeedbackButton from '@/components/FeedbackButton';
@@ -37,6 +37,7 @@ export default function HomePage() {
   const [autoTriggered, setAutoTriggered] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [remaining, setRemaining] = useState<number | null>(null);
+  const [searchMode, setSearchMode] = useState<SearchMode>('meta-analysis');
 
   const tier = user?.tier || 'free';
   const tierConfig = TIER_CONFIG[tier];
@@ -51,7 +52,8 @@ export default function HomePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, autoTriggered, stage]);
 
-  const handleAnalyze = async (kw: string, filters?: SearchFilters) => {
+  const handleAnalyze = async (kw: string, filters?: SearchFilters, mode?: SearchMode) => {
+    if (mode) setSearchMode(mode);
     // Check if login required (after FREE_SEARCHES without session)
     if (!user) {
       const count = parseInt(sessionStorage.getItem('searchCount') || '0', 10);
@@ -90,7 +92,7 @@ export default function HomePage() {
       };
       const language = langMap[locale] || 'English';
 
-      const synthesisResult = await synthesizeWithAI(papers, language, tierConfig.pointCount);
+      const synthesisResult = await synthesizeWithAI(papers, language, tierConfig.pointCount, mode || searchMode);
 
       // Track remaining from server response
       if (synthesisResult.remaining !== undefined) {
@@ -251,6 +253,7 @@ export default function HomePage() {
             articles={articles}
             keywords={keywords}
             onNewSearch={handleNewSearch}
+            mode={searchMode}
           />
         </div>
       )}

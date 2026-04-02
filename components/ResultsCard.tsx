@@ -22,9 +22,10 @@ interface ResultsCardProps {
   articles: PubMedArticle[];
   keywords: string;
   onNewSearch: () => void;
+  mode?: 'meta-analysis' | 'gap-finder';
 }
 
-export default function ResultsCard({ result, articles, keywords, onNewSearch }: ResultsCardProps) {
+export default function ResultsCard({ result, articles, keywords, onNewSearch, mode = 'meta-analysis' }: ResultsCardProps) {
   const t = useTranslations('results');
   const { user } = useAuth();
   const tier = user?.tier || 'free';
@@ -84,7 +85,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
             className="text-2xl font-bold text-[var(--color-text-primary)]"
             style={{ fontFamily: 'Outfit, sans-serif' }}
           >
-            {t('title')}
+            {mode === 'gap-finder' ? t('gapTitle') : t('title')}
           </h2>
           <span className="flex items-center gap-1.5 px-3 py-1 bg-[var(--color-primary)]/10 text-[var(--color-primary-dark)] rounded-full text-sm font-medium">
             📄 {articles.length} {t('papersFound')}
@@ -151,7 +152,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
               style={{ fontFamily: 'Outfit, sans-serif' }}
             >
               <span className="text-[var(--color-success)]">✦</span>
-              {result.translated ? t('originalFindings') : t('keyFindings')}
+              {mode === 'gap-finder' ? t('gapFindings') : result.translated ? t('originalFindings') : t('keyFindings')}
             </h3>
             <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap break-words overflow-hidden">
               {result.english}

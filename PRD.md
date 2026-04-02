@@ -725,18 +725,26 @@ These constraints MUST be followed throughout development:
 
 The architecture should support easy addition of these premium features:
 
-### Pro Tier ($4.49/mo)
+### Pro Tier ($4.99/mo)
 - Unlimited daily analyses (free tier: 5/day)
-- Extended 5-7 point summaries (free: 3 points)
+- Extended 7-point summaries
 - Advanced filters: date range, study type (RCT, cohort, etc.), journal
 - PDF report export with formatted citations
 - Search history saved to account
-- Drug comparison mode (side-by-side)
-- Consensus meter visualization
+- Research Gap Finder mode (prior research analysis)
+- AI-generated structured abstract drafts
+- SCI journal recommendation (keyword-based matching)
+
+### Ultra Tier ($9.99/mo)
+- Everything in Pro
+- Introduction/Discussion draft generation
+- Differentiation analysis vs existing literature
+- Statistical analysis report (Forest Plot, Funnel Plot, pooled effects)
+- Full research report PDF export
 - Priority API queue (faster results)
 
 ### Team Tier ($4.99/seat/mo)
-- Everything in Pro
+- Everything in Ultra
 - Shared team workspace
 - Collaborative search history
 - Team analytics dashboard

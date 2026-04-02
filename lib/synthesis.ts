@@ -1,5 +1,5 @@
 import { PubMedArticle } from './pubmed';
-import { META_ANALYSIS_PROMPT, FREE_POINTS, TIER_CONFIG } from './constants';
+import { META_ANALYSIS_PROMPT, GAP_FINDER_PROMPT, FREE_POINTS, TIER_CONFIG } from './constants';
 import type { Tier } from './constants';
 
 export interface SynthesisResult {
@@ -9,9 +9,9 @@ export interface SynthesisResult {
   remaining?: number;
 }
 
-export function buildPrompt(articles: PubMedArticle[], pointCount: number = FREE_POINTS): string {
-  const systemPrompt = META_ANALYSIS_PROMPT
-    .replace(/{pointCount}/g, String(pointCount));
+export function buildPrompt(articles: PubMedArticle[], pointCount: number = FREE_POINTS, mode: 'meta-analysis' | 'gap-finder' = 'meta-analysis'): string {
+  const template = mode === 'gap-finder' ? GAP_FINDER_PROMPT : META_ANALYSIS_PROMPT;
+  const systemPrompt = template.replace(/{pointCount}/g, String(pointCount));
 
   const MAX_TOTAL_CHARS = 30000;
   const MAX_ABSTRACT_CHARS = 1500;
@@ -103,8 +103,9 @@ export async function synthesizeWithAI(
   articles: PubMedArticle[],
   language: string,
   pointCount?: number,
+  mode: 'meta-analysis' | 'gap-finder' = 'meta-analysis',
 ): Promise<SynthesisResult> {
-  const prompt = buildPrompt(articles, pointCount);
+  const prompt = buildPrompt(articles, pointCount, mode);
   let englishResult = '';
   let remaining: number | undefined;
 

@@ -75,3 +75,23 @@ Rules:
 - Each finding should be 2-4 sentences with concrete data
 - If a guideline or review article contradicts individual studies, note the guideline position first`;
 
+export const GAP_FINDER_PROMPT = `You are a research gap analyst. Analyze these PubMed abstracts to help a researcher determine if their research idea is novel.
+
+Your output should have exactly {pointCount} sections, formatted as **N. Section Title** — content.
+
+REQUIRED SECTIONS (in this order):
+1) **Existing Research Landscape** — What study designs exist on this topic? (RCTs, cohort, case-control, meta-analyses, reviews, case reports). List study types with counts and key PMIDs.
+2) **Key Findings So Far** — What is already established/known? Summarize the consensus from the literature with specific data.
+3) **Research Gaps Identified** — What has NOT been studied? What study designs are MISSING? What populations, outcomes, or comparisons are unexplored? This is the most important section.
+4) **Suggested Research Directions** — Based on the gaps, propose 2-3 specific study ideas. Include: study design (RCT, prospective cohort, etc.), target population, primary outcome, estimated sample size if inferrable.
+5) **Novelty Assessment** — If the researcher were to conduct a new study on this topic, how novel would it be? Rate as: "Highly Novel" (no similar studies), "Moderately Novel" (few studies, different design needed), or "Low Novelty" (well-studied area, need unique angle).
+6) **Similar Existing Studies** — List the most directly relevant existing studies with PMIDs, designs, and sample sizes.
+7) **Recommended Next Steps** — What should the researcher do next? (e.g., "Focus on prospective design since all existing studies are retrospective", "Consider pediatric population as it is understudied")
+
+Rules:
+- Be specific about what EXISTS vs what DOES NOT EXIST
+- Cite PMIDs for every claim about existing studies
+- When identifying gaps, explain WHY the gap matters clinically
+- If the topic is well-studied, be honest — suggest unique angles instead
+- Use evidence hierarchy: systematic reviews > RCTs > cohort > case-control > case series`;
+
