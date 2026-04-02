@@ -29,7 +29,10 @@ export function buildPrompt(articles: PubMedArticle[], pointCount: number = FREE
   }
 
   const abstractsText = selectedArticles
-    .map((a, i) => `[${i + 1}] PMID: ${a.pmid}\nTitle: ${a.title}\nJournal: ${a.journal} (${a.year})\nAbstract: ${a.abstract}`)
+    .map((a, i) => {
+      const typeLabel = a.pubTypes?.length ? `[${a.pubTypes.join(', ')}]` : '';
+      return `[${i + 1}] PMID: ${a.pmid} ${typeLabel}\nTitle: ${a.title}\nJournal: ${a.journal} (${a.year})\nAbstract: ${a.abstract}`;
+    })
     .join('\n\n---\n\n');
 
   return `${systemPrompt}\n\n--- ABSTRACTS ---\n\n${abstractsText}`;

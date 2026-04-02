@@ -8,6 +8,7 @@ export interface PubMedArticle {
   journal: string;
   year: string;
   doi?: string;
+  pubTypes: string[]; // e.g. "Review", "Guideline", "Meta-Analysis", "Randomized Controlled Trial"
 }
 
 async function fetchWithRetry(url: string, retries = 2): Promise<Response> {
@@ -98,8 +99,10 @@ function parseArticlesFromXml(xml: string): PubMedArticle[] {
     const authors = extractAuthors(block);
     const doi = extractDoi(block);
 
+    const pubTypes = extractPubTypes(block);
+
     if (abstract) {
-      articles.push({ pmid, title, abstract, authors, journal, year, doi });
+      articles.push({ pmid, title, abstract, authors, journal, year, doi, pubTypes });
     }
   }
 
@@ -140,7 +143,42 @@ function extractDoi(xml: string): string | undefined {
   return match ? match[1] : undefined;
 }
 
+function extractPubTypes(xml: string): string[] {
+  const types: string[] = [];
+  const re = /<PublicationType[^>]*>([^<]+)<\/PublicationType>/g;
+  let m;
+  while ((m = re.exec(xml)) !== null) {
+    types.push(m[1].trim());
+  }
+  return types;
+}
+
+// Priority score for sorting: guidelines & reviews first
+function articlePriority(article: PubMedArticle): number {
+  const types = article.pubTypes.map(t => t.toLowerCase());
+  const title = article.title.toLowerCase();
+
+  // Highest priority: practice guidelines
+  if (types.some(t => t.includes('practice guideline') || t.includes('guideline'))) return 0;
+  // Clinical consensus
+  if (types.some(t => t.includes('consensus'))) return 1;
+  // Systematic reviews & meta-analyses
+  if (types.some(t => t.includes('systematic review') || t.includes('meta-analysis'))) return 2;
+  if (title.includes('systematic review') || title.includes('meta-analysis')) return 2;
+  // Review articles
+  if (types.some(t => t === 'review')) return 3;
+  // RCTs
+  if (types.some(t => t.includes('randomized controlled trial') || t.includes('clinical trial'))) return 4;
+  // Everything else
+  return 5;
+}
+
 export async function searchAndFetch(keywords: string, maxResults = 20): Promise<PubMedArticle[]> {
   const pmids = await searchPubMed(keywords, maxResults);
-  return fetchAbstracts(pmids);
+  const articles = await fetchAbstracts(pmids);
+
+  // Sort: guidelines → systematic reviews → reviews → RCTs → others
+  articles.sort((a, b) => articlePriority(a) - articlePriority(b));
+
+  return articles;
 }
