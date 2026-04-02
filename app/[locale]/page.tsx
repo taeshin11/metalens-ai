@@ -38,6 +38,15 @@ export default function HomePage() {
   const [showLogin, setShowLogin] = useState(false);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [searchMode, setSearchMode] = useState<SearchMode>('meta-analysis');
+  const [history, setHistory] = useState<{ keywords: string; paperCount: number; timestamp: number; mode: string }[]>([]);
+
+  // Load history from localStorage
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('metalens_history');
+      if (saved) setHistory(JSON.parse(saved));
+    } catch { /* ignore */ }
+  }, []);
 
   const tier = user?.tier || 'free';
   const tierConfig = TIER_CONFIG[tier];
@@ -101,6 +110,12 @@ export default function HomePage() {
 
       setResult(synthesisResult);
       setStage('done');
+
+      // Save to history
+      const entry = { keywords: kw, paperCount: papers.length, timestamp: Date.now(), mode: mode || searchMode };
+      const updated = [entry, ...history.filter(h => h.keywords !== kw)].slice(0, 20);
+      setHistory(updated);
+      try { localStorage.setItem('metalens_history', JSON.stringify(updated)); } catch { /* ignore */ }
     } catch (err) {
       setStage('error');
       // Check for rate limit
@@ -261,6 +276,43 @@ export default function HomePage() {
       {/* Below-the-fold content (only when idle) */}
       {stage === 'idle' && (
         <>
+          {/* Search History */}
+          {history.length > 0 && (
+            <section className="bg-white border-t border-[var(--color-border)]">
+              <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-12">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-[var(--color-text-primary)]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                    {t('historyTitle')}
+                  </h2>
+                  <button
+                    onClick={() => { setHistory([]); localStorage.removeItem('metalens_history'); }}
+                    className="text-xs text-[var(--color-text-muted)] hover:text-red-500 transition-colors"
+                  >
+                    {t('historyClear')}
+                  </button>
+                </div>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {history.slice(0, 6).map((h, i) => (
+                    <button
+                      key={i}
+                      onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); handleAnalyze(h.keywords, undefined, h.mode as SearchMode); }}
+                      className="text-left p-4 bg-[var(--color-bg-primary)] rounded-xl border border-[var(--color-border)] hover:border-[var(--color-primary-light)] hover:shadow-sm transition-all group"
+                    >
+                      <p className="text-sm font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors line-clamp-1">
+                        {h.keywords}
+                      </p>
+                      <div className="flex items-center gap-3 mt-1.5 text-[10px] text-[var(--color-text-muted)]">
+                        <span>📄 {h.paperCount} papers</span>
+                        <span>{h.mode === 'gap-finder' ? '🔍 Gap' : '📊 Meta'}</span>
+                        <span>{new Date(h.timestamp).toLocaleDateString()}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* How It Works */}
           <section className="bg-white border-t border-[var(--color-border)]">
             <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-16 sm:py-20">

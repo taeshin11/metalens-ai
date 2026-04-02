@@ -48,7 +48,9 @@
     "forStudents": "의대생",
     "forPharmacists": "약사",
     "forResearchers": "연구자",
-    "forClinicians": "임상의"
+    "forClinicians": "임상의",
+    "historyTitle": "최근 검색",
+    "historyClear": "기록 삭제"
   },
   "results": {
     "title": "분석 결과",

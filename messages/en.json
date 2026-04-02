@@ -48,7 +48,9 @@
     "forStudents": "Medical Students",
     "forPharmacists": "Pharmacists",
     "forResearchers": "Researchers",
-    "forClinicians": "Clinicians"
+    "forClinicians": "Clinicians",
+    "historyTitle": "Recent Searches",
+    "historyClear": "Clear History"
   },
   "results": {
     "title": "Analysis Results",
