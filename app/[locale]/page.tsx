@@ -71,7 +71,7 @@ export default function HomePage() {
       // Translate non-English keywords to English for PubMed search
       const englishKeywords = await translateForPubMed(kw);
       const query = filters ? buildPubMedQuery(englishKeywords, filters) : englishKeywords;
-      const papers = await searchAndFetch(query, 20);
+      const papers = await searchAndFetch(query, 50);
 
       if (papers.length === 0) {
         setStage('error');

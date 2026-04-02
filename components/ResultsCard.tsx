@@ -337,7 +337,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
           📚 {t('sources')}
         </h3>
         <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
-          {articles.slice(0, 10).map((article) => (
+          {articles.map((article) => (
             <div
               key={article.pmid}
               className="p-3 rounded-xl bg-[var(--color-bg-primary)] border border-[var(--color-border)] hover:border-[var(--color-primary-light)] transition-colors"

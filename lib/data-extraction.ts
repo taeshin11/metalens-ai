@@ -52,7 +52,7 @@ export async function extractDataFromArticles(
   articles: PubMedArticle[],
 ): Promise<ExtractionResult> {
   const abstractsText = articles
-    .slice(0, 20)
+    .slice(0, 30)
     .map((a, i) => `[${i + 1}] PMID: ${a.pmid}\nTitle: ${a.title}\nAbstract: ${a.abstract.slice(0, 1000)}`)
     .join('\n\n---\n\n');
 
