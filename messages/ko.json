@@ -68,6 +68,20 @@
     "copy": "복사",
     "regenerate": "다시 생성"
   },
+  "dataTable": {
+    "title": "추출된 연구 데이터",
+    "desc": "각 논문 초록에서 AI가 추출한 수치 데이터입니다. 표본 크기, 효과 크기, 신뢰구간, p-값을 포함합니다.",
+    "noData": "이 초록들에서 수치 데이터를 추출할 수 없습니다.",
+    "study": "연구",
+    "effect": "효과",
+    "type": "유형",
+    "ci": "95% CI",
+    "pvalue": "p-값",
+    "outcome": "결과",
+    "exportCsv": "CSV 내보내기",
+    "copyTable": "표 복사",
+    "exportHint": "CSV는 Excel/Google Sheets에서 열립니다 — 복사는 Word/Docs에 바로 붙여넣기 가능"
+  },
   "results": {
     "title": "분석 결과",
     "papersFound": "건의 논문 발견",

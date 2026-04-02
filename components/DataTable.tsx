@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { ExtractedData } from '@/lib/data-extraction';
 import { PUBMED_BASE } from '@/lib/constants';
 
@@ -54,12 +55,13 @@ function copyTable(data: ExtractedData[]) {
 }
 
 export default function DataTable({ data }: DataTableProps) {
+  const t = useTranslations('dataTable');
   const hasData = data.some(d => d.effectSize !== null || d.sampleSize !== null);
 
   if (!hasData) {
     return (
       <div className="text-center py-8 text-sm text-[var(--color-text-muted)]">
-        No numerical data could be extracted from these abstracts.
+        {t('noData')}
       </div>
     );
   }
@@ -70,13 +72,13 @@ export default function DataTable({ data }: DataTableProps) {
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="border-b-2 border-[var(--color-border)]">
-              <th className="text-left py-2 pr-3 font-medium text-[var(--color-text-secondary)]">Study</th>
+              <th className="text-left py-2 pr-3 font-medium text-[var(--color-text-secondary)]">{t('study')}</th>
               <th className="text-right py-2 px-2 font-medium text-[var(--color-text-secondary)]">N</th>
-              <th className="text-right py-2 px-2 font-medium text-[var(--color-text-secondary)]">Effect</th>
-              <th className="text-right py-2 px-2 font-medium text-[var(--color-text-secondary)]">Type</th>
-              <th className="text-right py-2 px-2 font-medium text-[var(--color-text-secondary)]">95% CI</th>
-              <th className="text-right py-2 px-2 font-medium text-[var(--color-text-secondary)]">p-value</th>
-              <th className="text-left py-2 pl-3 font-medium text-[var(--color-text-secondary)]">Outcome</th>
+              <th className="text-right py-2 px-2 font-medium text-[var(--color-text-secondary)]">{t('effect')}</th>
+              <th className="text-right py-2 px-2 font-medium text-[var(--color-text-secondary)]">{t('type')}</th>
+              <th className="text-right py-2 px-2 font-medium text-[var(--color-text-secondary)]">{t('ci')}</th>
+              <th className="text-right py-2 px-2 font-medium text-[var(--color-text-secondary)]">{t('pvalue')}</th>
+              <th className="text-left py-2 pl-3 font-medium text-[var(--color-text-secondary)]">{t('outcome')}</th>
             </tr>
           </thead>
           <tbody>
@@ -133,18 +135,18 @@ export default function DataTable({ data }: DataTableProps) {
           className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          Export CSV
+          {t('exportCsv')}
         </button>
         <button
           onClick={() => { copyTable(data); }}
           className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-lg hover:bg-[var(--color-primary)]/20 transition-colors"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          Copy Table
+          {t('copyTable')}
         </button>
       </div>
       <p className="text-[10px] text-[var(--color-text-muted)] text-center mt-2">
-        CSV opens in Excel/Google Sheets — Copy pastes directly into Word/Docs
+        {t('exportHint')}
       </p>
     </div>
   );

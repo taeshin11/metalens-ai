@@ -68,6 +68,20 @@
     "copy": "Copy",
     "regenerate": "Regenerate"
   },
+  "dataTable": {
+    "title": "Extracted Study Data",
+    "desc": "AI-extracted numerical data from each paper's abstract. Includes sample sizes, effect sizes, confidence intervals, and p-values.",
+    "noData": "No numerical data could be extracted from these abstracts.",
+    "study": "Study",
+    "effect": "Effect",
+    "type": "Type",
+    "ci": "95% CI",
+    "pvalue": "p-value",
+    "outcome": "Outcome",
+    "exportCsv": "Export CSV",
+    "copyTable": "Copy Table",
+    "exportHint": "CSV opens in Excel/Google Sheets — Copy pastes directly into Word/Docs"
+  },
   "results": {
     "title": "Analysis Results",
     "papersFound": "papers found",
