@@ -55,22 +55,48 @@ function cleanKeywords(raw: string): string {
   return tokens.join(' ');
 }
 
-export async function searchPubMed(keywords: string, maxResults = 20): Promise<string[]> {
-  // Try original query first
-  const url = `${BASE_URL}/esearch.fcgi?db=pubmed&term=${encodeURIComponent(keywords)}&retmax=${maxResults}&retmode=json&sort=relevance`;
+async function esearch(term: string, maxResults: number): Promise<string[]> {
+  const url = `${BASE_URL}/esearch.fcgi?db=pubmed&term=${encodeURIComponent(term)}&retmax=${maxResults}&retmode=json&sort=relevance`;
   const res = await fetchWithRetry(url);
   const data = await res.json();
-  const ids = data.esearchresult?.idlist || [];
+  return data.esearchresult?.idlist || [];
+}
 
-  // If no results, retry with cleaned keywords (remove noise words)
-  if (ids.length === 0) {
-    const cleaned = cleanKeywords(keywords);
-    if (cleaned !== keywords.toLowerCase().trim()) {
-      const retryUrl = `${BASE_URL}/esearch.fcgi?db=pubmed&term=${encodeURIComponent(cleaned)}&retmax=${maxResults}&retmode=json&sort=relevance`;
-      const retryRes = await fetchWithRetry(retryUrl);
-      const retryData = await retryRes.json();
-      return retryData.esearchresult?.idlist || [];
+export async function searchPubMed(keywords: string, maxResults = 20): Promise<string[]> {
+  // Strategy 1: Try original query
+  let ids = await esearch(keywords, maxResults);
+  if (ids.length >= 3) return ids;
+
+  // Strategy 2: Clean noise words and retry
+  const cleaned = cleanKeywords(keywords);
+  if (cleaned !== keywords.toLowerCase().trim()) {
+    ids = await esearch(cleaned, maxResults);
+    if (ids.length >= 3) return ids;
+  }
+
+  // Strategy 3: Progressive relaxation — drop keywords one at a time from the end
+  // "TNF, EGFR, chronic sinusitis, nasal polyp, antibiotics" → try without "antibiotics", etc.
+  const tokens = cleaned.split(/[,\s]+/).filter(t => t.trim().length > 0);
+  if (tokens.length > 3) {
+    for (let drop = 1; drop < tokens.length - 2; drop++) {
+      const relaxed = tokens.slice(0, tokens.length - drop).join(' ');
+      ids = await esearch(relaxed, maxResults);
+      if (ids.length >= 3) return ids;
     }
+  }
+
+  // Strategy 4: Try OR instead of AND for multi-keyword queries
+  if (tokens.length >= 3) {
+    // Keep the first 2-3 most important terms as AND, rest as OR
+    const core = tokens.slice(0, 2).join(' AND ');
+    const rest = tokens.slice(2).join(' OR ');
+    const orQuery = `(${core}) AND (${rest})`;
+    ids = await esearch(orQuery, maxResults);
+    if (ids.length >= 3) return ids;
+
+    // Last resort: just the core terms
+    ids = await esearch(core, maxResults);
+    if (ids.length > 0) return ids;
   }
 
   return ids;
