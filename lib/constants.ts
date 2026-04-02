@@ -23,18 +23,18 @@ export const TIER_CONFIG = {
   pro: {
     dailyLimit: 50,
     pointCount: 7,
-    model: 'gemini-2.0-flash-lite', // cheapest paid Gemini
+    model: 'gemini-2.5-flash',
     label: 'Pro',
-    price: 2.99,
-    yearlyPrice: 29.99,
+    price: 4.99,
+    yearlyPrice: 49.99,
   },
   ultra: {
     dailyLimit: 200,
     pointCount: 10,
-    model: 'gemini-2.5-flash',     // best Gemini model (paid quota)
+    model: 'gemini-2.5-flash',
     label: 'Ultra',
-    price: 6.99,
-    yearlyPrice: 69.99,
+    price: 9.99,
+    yearlyPrice: 99.99,
   },
 } as const;
 

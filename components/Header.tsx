@@ -17,7 +17,7 @@ export default function Header() {
   const links = [
     { href: `/${locale}`, label: t('home') },
     { href: `/${locale}/how-it-works`, label: t('howItWorks') },
-    // { href: `/${locale}/pricing`, label: 'Pricing' },  // TEMP: hidden until payments are set up
+    { href: `/${locale}/pricing`, label: t('pricing') },
     { href: `/${locale}/about`, label: t('about') },
     { href: `/${locale}/faq`, label: t('faq') },
     { href: `/${locale}/blog`, label: t('blog') },

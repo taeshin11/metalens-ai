@@ -62,7 +62,7 @@ async function synthesize(prompt: string, tier: Tier): Promise<string | null> {
   }
 
   // Strategy 2: Gemini fallback (Flash-Lite is cheapest)
-  if (geminiKey && tierModel !== 'gemini-2.0-flash-lite') {
+  if (geminiKey) {
     try {
       const result = await callGemini(prompt, geminiKey, 'gemini-2.0-flash-lite');
       if (result && result.trim()) return result;

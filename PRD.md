@@ -743,13 +743,10 @@ The architecture should support easy addition of these premium features:
 - Full research report PDF export
 - Priority API queue (faster results)
 
-### Team Tier ($4.99/seat/mo)
-- Everything in Ultra
-- Shared team workspace
-- Collaborative search history
-- Team analytics dashboard
-- Admin controls
-- Priority support
+### Team Tier (Future — only if demand exists)
+- Consider adding only after individual user base is established
+- Would require: database, permission system, invite flows
+- Not worth building until Pro/Ultra tiers are validated
 
 ### Technical Preparation for Paid Features
 - Design the API routes to accept a `tier` parameter
