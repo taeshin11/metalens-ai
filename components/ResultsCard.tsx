@@ -28,6 +28,7 @@ interface ResultsCardProps {
 export default function ResultsCard({ result, articles, keywords, onNewSearch, mode = 'meta-analysis' }: ResultsCardProps) {
   const t = useTranslations('results');
   const tt = useTranslations('tools');
+  const td = useTranslations('dataTable');
   const { user } = useAuth();
   const tier = user?.tier || 'free';
 
@@ -233,11 +234,11 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
               className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2"
               style={{ fontFamily: 'Outfit, sans-serif' }}
             >
-              <span>📊</span> Extracted Study Data
+              <span>📊</span> {td('title')}
               {/* PRO badge hidden during beta */}
             </h3>
             <p className="text-xs text-[var(--color-text-muted)] mb-4">
-              AI-extracted numerical data from each paper&apos;s abstract. Includes sample sizes, effect sizes, confidence intervals, and p-values.
+              {td('desc')}
             </p>
 
             {extracting ? (

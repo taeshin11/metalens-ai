@@ -20,32 +20,27 @@ export interface ExtractionResult {
   commonEffectType: string | null;
 }
 
-const EXTRACTION_PROMPT = `You are a medical data extraction AI. Your job is to extract as much quantitative data as possible from each abstract.
+const EXTRACTION_PROMPT = `Extract numerical data from each PubMed abstract. Return a JSON array.
 
-For EACH paper, extract ONE row with these fields:
-- pmid: the PMID (string)
-- sampleSize: total N participants/subjects (integer or null)
-- effectSize: the PRIMARY numerical result (number or null). Extract ANY of these:
-  * Odds Ratio (OR), Risk Ratio (RR), Hazard Ratio (HR)
-  * Mean Difference (MD), Standardized Mean Difference (SMD)
-  * Percentage difference, relative risk reduction, absolute risk difference
-  * If only percentages are reported (e.g., "response rate 65% vs 42%"), calculate the difference (e.g., 23) or ratio
-  * If OR/RR/HR is not stated but raw event counts are given, calculate OR from them
-- effectType: one of "OR", "RR", "HR", "MD", "SMD", "%", "other"
-- ciLower: lower 95% CI bound (number or null). If CI is written as "1.2 (0.8-1.6)", extract 0.8
-- ciUpper: upper 95% CI bound (number or null). If CI is written as "1.2 (0.8-1.6)", extract 1.6
-- pValue: p-value as decimal (number or null). Convert "p<0.001" to 0.001, "p=0.04" to 0.04
-- outcome: brief description of outcome (max 10 words)
+For EACH paper, extract:
+- pmid (string)
+- sampleSize (integer or null): total N, number of patients/participants/subjects/cases
+- effectSize (number or null): the MAIN quantitative result. Look for ANY number:
+  * OR, RR, HR, MD, SMD if explicitly stated
+  * Percentage: "response rate 65% vs 42%" → effectSize=23, effectType="%"
+  * Mean values: "score 5.2 vs 4.8" → effectSize=0.4, effectType="MD"
+  * Rates: "incidence 12.5% vs 8.3%" → effectSize=4.2, effectType="%"
+  * Counts: "15/100 vs 8/100" → calculate OR=2.03, effectType="OR"
+  * ANY comparison number from the abstract — do NOT return null if there are numbers
+- effectType: "OR"|"RR"|"HR"|"MD"|"SMD"|"%"|"other"
+- ciLower (number or null): lower 95% CI
+- ciUpper (number or null): upper 95% CI
+- pValue (number or null): "p<0.001"→0.001, "p=0.04"→0.04, "significant"→0.05, "NS"→0.5
+- outcome (string): what was measured, max 10 words
 
-IMPORTANT RULES:
-1. Try HARD to extract effectSize from every paper. Most abstracts contain at least one quantitative result.
-2. If the abstract reports group means (e.g., "Group A: 5.2±1.1 vs Group B: 4.8±1.3"), calculate MD = 5.2 - 4.8 = 0.4 and use effectType "MD"
-3. If percentages are compared (e.g., "45% vs 32%"), use the difference (13) with effectType "%" or calculate OR
-4. When CI is not explicitly stated but SD and N are available, estimate SE = SD/sqrt(N) and CI = effect ± 1.96*SE
-5. ALL papers should have effectType consistent where possible — prefer ONE type across all studies
-6. Only use null for effectSize if absolutely no numerical comparison exists in the abstract
+CRITICAL: Do NOT return all nulls. Every abstract has SOME numbers — sample sizes, percentages, means, counts. Extract them. If you cannot find effect size, at minimum extract sampleSize and pValue.
 
-Output ONLY a valid JSON array. No explanation, no markdown, no code fences. Example:
+Output ONLY valid JSON array. No markdown, no explanation.
 [{"pmid":"12345","sampleSize":120,"effectSize":1.5,"effectType":"OR","ciLower":1.1,"ciUpper":2.0,"pValue":0.03,"outcome":"mortality rate"}]`;
 
 export async function extractDataFromArticles(
