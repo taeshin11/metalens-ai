@@ -223,6 +223,27 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
               {result.english}
             </div>
           </div>
+
+          {/* Explore other tabs hint */}
+          <div className="grid sm:grid-cols-3 gap-3">
+            {[
+              { tab: 'data' as const, icon: '📊', title: t('tabDataTitle'), desc: t('tabDataDesc') },
+              { tab: 'meta' as const, icon: '🔬', title: t('tabMetaTitle'), desc: t('tabMetaDesc') },
+              { tab: 'tools' as const, icon: '✍️', title: t('tabToolsTitle'), desc: t('tabToolsDesc') },
+            ].map((item) => (
+              <button
+                key={item.tab}
+                onClick={() => setActiveTab(item.tab)}
+                className="text-left p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-primary)] hover:border-[var(--color-primary-light)] hover:shadow-sm transition-all group"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  <span>{item.icon}</span>
+                  <span className="text-sm font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors">{item.title}</span>
+                </div>
+                <p className="text-[11px] text-[var(--color-text-muted)] leading-relaxed">{item.desc}</p>
+              </button>
+            ))}
+          </div>
         </>
       )}
 
