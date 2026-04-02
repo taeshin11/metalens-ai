@@ -30,11 +30,14 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   const { user } = useAuth();
   const tier = user?.tier || 'free';
 
-  const [activeTab, setActiveTab] = useState<'summary' | 'data' | 'meta'>('summary');
+  const [activeTab, setActiveTab] = useState<'summary' | 'data' | 'meta' | 'tools'>('summary');
   const [extraction, setExtraction] = useState<ExtractionResult | null>(null);
   const [pooled, setPooled] = useState<PooledResult | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState('');
+  const [abstractDraft, setAbstractDraft] = useState('');
+  const [journalRecs, setJournalRecs] = useState('');
+  const [toolsLoading, setToolsLoading] = useState(false);
 
   // Auto-extract data when switching to data/meta tab
   useEffect(() => {
@@ -67,9 +70,69 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
 
   const tabs = [
     { key: 'summary' as const, label: 'AI Summary', icon: '✦', minTier: 0 },
-    { key: 'data' as const, label: 'Data Table', icon: '📊', minTier: 1 },
-    { key: 'meta' as const, label: 'Meta-Analysis', icon: '🔬', minTier: 2 },
+    { key: 'data' as const, label: 'Data Table', icon: '📊', minTier: 0 },
+    { key: 'meta' as const, label: 'Meta-Analysis', icon: '🔬', minTier: 0 },
+    { key: 'tools' as const, label: 'Writing Tools', icon: '✍️', minTier: 0 },
   ];
+
+  const handleGenerateTools = async (tool: 'abstract' | 'journal') => {
+    setToolsLoading(true);
+    try {
+      const summaryText = result.english;
+      const paperCount = articles.length;
+      const articleList = articles.slice(0, 10).map(a => `${a.title} (${a.journal}, ${a.year}, PMID:${a.pmid})`).join('\n');
+
+      let prompt = '';
+      if (tool === 'abstract') {
+        prompt = `Based on the following meta-analysis findings and ${paperCount} PubMed papers, generate a structured research abstract draft.
+
+The abstract should follow the standard IMRAD format:
+- **Background**: Why this topic matters, current knowledge gaps
+- **Objective**: What this analysis aimed to investigate
+- **Methods**: "A systematic search of PubMed was conducted..." with study selection criteria
+- **Results**: Key quantitative findings with specific numbers, effect sizes, confidence intervals
+- **Conclusion**: Clinical implications and recommendations
+
+Keywords analyzed: ${keywords}
+
+Meta-analysis findings:
+${summaryText}
+
+Key source papers:
+${articleList}
+
+Output ONLY the abstract text with section headers in bold. Target length: 250-350 words. Use formal academic language.`;
+      } else {
+        prompt = `Based on the following meta-analysis topic and ${paperCount} PubMed papers, recommend the most suitable SCI/SCIE journals for submission.
+
+For each journal, provide:
+1. **Journal Name** — Full name
+2. **Impact Factor** — Approximate IF (use your knowledge, state if estimated)
+3. **Scope Match** — Why this journal fits this topic (1-2 sentences)
+4. **Review Speed** — Typical review timeline if known
+5. **Open Access** — Whether OA option is available
+
+Keywords: ${keywords}
+
+Source papers were published in: ${[...new Set(articles.map(a => a.journal))].slice(0, 10).join(', ')}
+
+Recommend exactly 5 journals, ordered by fit (best match first). Include a mix of high-impact and realistic options. Output in structured format with bold headers.`;
+      }
+
+      const response = await fetch('/api/synthesize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (tool === 'abstract') setAbstractDraft(data.result || '');
+        else setJournalRecs(data.result || '');
+      }
+    } catch { /* silent */ }
+    setToolsLoading(false);
+  };
 
   return (
     <motion.div
@@ -325,6 +388,129 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
             )}
           </div>
         </UpgradeGate>
+      )}
+
+      {/* Tab Content: Writing Tools */}
+      {activeTab === 'tools' && (
+        <div className="space-y-6">
+          {/* Abstract Generator */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
+            <div className="flex items-center justify-between mb-4">
+              <h3
+                className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2"
+                style={{ fontFamily: 'Outfit, sans-serif' }}
+              >
+                📝 Abstract Draft Generator
+              </h3>
+              {!abstractDraft && (
+                <button
+                  onClick={() => handleGenerateTools('abstract')}
+                  disabled={toolsLoading}
+                  className="px-4 py-2 text-xs font-semibold text-white bg-[var(--color-primary)] rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors disabled:opacity-50"
+                >
+                  {toolsLoading ? (
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Generating...
+                    </span>
+                  ) : 'Generate Abstract'}
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-[var(--color-text-muted)] mb-4">
+              AI generates a structured IMRAD abstract draft based on your meta-analysis results and source papers.
+            </p>
+
+            {abstractDraft ? (
+              <div>
+                <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-primary)] rounded-xl p-5 border border-[var(--color-border)]">
+                  {abstractDraft}
+                </div>
+                <div className="flex items-center gap-3 mt-3">
+                  <button
+                    onClick={() => navigator.clipboard.writeText(abstractDraft)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-lg hover:bg-[var(--color-primary)]/20 transition-colors"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                  </button>
+                  <button
+                    onClick={() => { setAbstractDraft(''); handleGenerateTools('abstract'); }}
+                    className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+                  >
+                    Regenerate
+                  </button>
+                </div>
+                <p className="text-[10px] text-[var(--color-text-muted)] mt-2">
+                  This is an AI-generated draft. Review and edit before submission. Verify all statistics against source papers.
+                </p>
+              </div>
+            ) : !toolsLoading ? (
+              <div className="text-center py-6 text-sm text-[var(--color-text-muted)]">
+                Click &quot;Generate Abstract&quot; to create a structured draft based on your analysis.
+              </div>
+            ) : null}
+          </div>
+
+          {/* Journal Recommendation */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
+            <div className="flex items-center justify-between mb-4">
+              <h3
+                className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2"
+                style={{ fontFamily: 'Outfit, sans-serif' }}
+              >
+                🎯 SCI Journal Recommendation
+              </h3>
+              {!journalRecs && (
+                <button
+                  onClick={() => handleGenerateTools('journal')}
+                  disabled={toolsLoading}
+                  className="px-4 py-2 text-xs font-semibold text-white bg-[var(--color-accent)] rounded-lg hover:bg-[var(--color-accent)]/90 transition-colors disabled:opacity-50"
+                >
+                  {toolsLoading ? (
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Analyzing...
+                    </span>
+                  ) : 'Find Journals'}
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-[var(--color-text-muted)] mb-4">
+              AI recommends the best SCI/SCIE journals for your topic based on keyword matching and source journal analysis.
+            </p>
+
+            {journalRecs ? (
+              <div>
+                <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-primary)] rounded-xl p-5 border border-[var(--color-border)]">
+                  {journalRecs}
+                </div>
+                <div className="flex items-center gap-3 mt-3">
+                  <button
+                    onClick={() => navigator.clipboard.writeText(journalRecs)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-lg hover:bg-[var(--color-primary)]/20 transition-colors"
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    Copy
+                  </button>
+                  <button
+                    onClick={() => { setJournalRecs(''); handleGenerateTools('journal'); }}
+                    className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]"
+                  >
+                    Regenerate
+                  </button>
+                </div>
+                <p className="text-[10px] text-[var(--color-text-muted)] mt-2">
+                  Impact factors are approximate. Verify current IF and submission guidelines on the journal&apos;s official website.
+                </p>
+              </div>
+            ) : !toolsLoading ? (
+              <div className="text-center py-6 text-sm text-[var(--color-text-muted)]">
+                Click &quot;Find Journals&quot; to get personalized SCI journal recommendations.
+              </div>
+            ) : null}
+          </div>
+        </div>
       )}
 
       {/* Upsell Banner hidden during beta */}
