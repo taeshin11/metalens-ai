@@ -287,6 +287,41 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch }:
                 <FunnelPlot studies={extraction.data} pooled={pooled} />
               </div>
             )}
+
+            {/* Overall Meta-Analysis Summary */}
+            {pooled && extraction && (
+              <div className="bg-gradient-to-br from-[var(--color-primary)]/5 to-[var(--color-info)]/5 rounded-2xl p-6 border border-[var(--color-primary)]/20">
+                <h3
+                  className="text-lg font-semibold text-[var(--color-primary-dark)] mb-3 flex items-center gap-2"
+                  style={{ fontFamily: 'Outfit, sans-serif' }}
+                >
+                  📋 Meta-Analysis Summary
+                </h3>
+                <div className="space-y-3 text-sm text-[var(--color-text-primary)] leading-relaxed">
+                  <p>
+                    <strong>Pooled Effect:</strong> The combined {pooled.effectType} across {pooled.numStudies} studies
+                    {pooled.totalN > 0 && ` (total N = ${pooled.totalN.toLocaleString()})`} was <strong>{pooled.pooledEffect.toFixed(2)}</strong> (95%
+                    CI: {pooled.ciLower.toFixed(2)} to {pooled.ciUpper.toFixed(2)}),
+                    which was {pooled.pValue < 0.05 ? 'statistically significant' : 'not statistically significant'} (p {pooled.pValue < 0.001 ? '< 0.001' : `= ${pooled.pValue}`}).
+                  </p>
+                  <p>
+                    <strong>Heterogeneity:</strong> I² = {pooled.iSquared}%,
+                    indicating {pooled.iSquared > 75 ? 'high' : pooled.iSquared > 50 ? 'moderate' : pooled.iSquared > 25 ? 'low-to-moderate' : 'low'} heterogeneity
+                    between studies. {pooled.iSquared > 50 ? 'A random-effects model may be more appropriate given this level of heterogeneity.' : 'The fixed-effect model used here appears reasonable.'}
+                  </p>
+                  <p>
+                    <strong>Data Coverage:</strong> {extraction.data.filter(d => d.effectSize !== null).length} of {extraction.data.length} papers
+                    had extractable quantitative data.
+                    {extraction.data.length - extraction.data.filter(d => d.effectSize !== null).length > 0 &&
+                      ` ${extraction.data.length - extraction.data.filter(d => d.effectSize !== null).length} papers lacked numerical effect sizes in their abstracts.`}
+                  </p>
+                  <p className="text-xs text-[var(--color-text-muted)] pt-2 border-t border-[var(--color-border)]">
+                    This analysis is based on abstract-level data using a fixed-effect inverse-variance model.
+                    Results should be interpreted as preliminary and verified with full-text data before clinical application.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </UpgradeGate>
       )}
