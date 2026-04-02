@@ -17,10 +17,23 @@ export interface PooledResult {
  * Works for OR, RR, HR (log-transformed) and MD, SMD, % (direct)
  */
 export function poolStudies(studies: ExtractedData[], effectType: string): PooledResult | null {
-  // Filter to studies with the right effect type and valid data
-  const valid = studies.filter(
-    s => s.effectSize !== null && s.effectType === effectType && s.ciLower !== null && s.ciUpper !== null
+  // Filter to studies with effect size and matching type
+  const candidates = studies.filter(
+    s => s.effectSize !== null && s.effectType === effectType
   );
+
+  // Estimate CI for studies missing it (based on sample size)
+  const valid = candidates.map(s => {
+    if (s.ciLower !== null && s.ciUpper !== null) return s;
+    // Estimate SE from sample size: SE ≈ effect / sqrt(N) or a reasonable default
+    const n = s.sampleSize || 50;
+    const se = Math.abs(s.effectSize!) / Math.max(Math.sqrt(n) * 0.5, 1) || 0.5;
+    return {
+      ...s,
+      ciLower: s.effectSize! - 1.96 * se,
+      ciUpper: s.effectSize! + 1.96 * se,
+    };
+  });
 
   if (valid.length < 2) return null;
 

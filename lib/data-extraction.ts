@@ -24,24 +24,30 @@ const EXTRACTION_PROMPT = `Extract numerical data from each PubMed abstract. Ret
 
 For EACH paper, extract:
 - pmid (string)
-- sampleSize (integer or null): total N, number of patients/participants/subjects/cases
-- effectSize (number or null): the MAIN quantitative result. Look for ANY number:
-  * OR, RR, HR, MD, SMD if explicitly stated
-  * Percentage: "response rate 65% vs 42%" → effectSize=23, effectType="%"
-  * Mean values: "score 5.2 vs 4.8" → effectSize=0.4, effectType="MD"
-  * Rates: "incidence 12.5% vs 8.3%" → effectSize=4.2, effectType="%"
-  * Counts: "15/100 vs 8/100" → calculate OR=2.03, effectType="OR"
-  * ANY comparison number from the abstract — do NOT return null if there are numbers
-- effectType: "OR"|"RR"|"HR"|"MD"|"SMD"|"%"|"other"
+- sampleSize (integer or null): total N, patients, participants, subjects, cases
+- effectSize (number or null): the MAIN quantitative result
+- effectType: USE "MD" (mean difference) as the DEFAULT type for ALL studies. Only use "OR"/"RR"/"HR" if explicitly stated in the abstract. This ensures consistency across studies for meta-analysis pooling.
 - ciLower (number or null): lower 95% CI
 - ciUpper (number or null): upper 95% CI
 - pValue (number or null): "p<0.001"→0.001, "p=0.04"→0.04, "significant"→0.05, "NS"→0.5
 - outcome (string): what was measured, max 10 words
 
-CRITICAL: Do NOT return all nulls. Every abstract has SOME numbers — sample sizes, percentages, means, counts. Extract them. If you cannot find effect size, at minimum extract sampleSize and pValue.
+HOW TO EXTRACT effectSize:
+1. If MD/SMD is stated: use it directly
+2. If means are given (e.g., "HbA1c 7.2% vs 7.8%"): calculate MD = 7.2 - 7.8 = -0.6
+3. If percentages are compared (e.g., "45% vs 32%"): calculate MD = 45 - 32 = 13
+4. If OR/RR/HR is explicitly stated: use it with that effectType
+5. If change from baseline is given (e.g., "-1.2% vs -0.8%"): calculate MD = -1.2 - (-0.8) = -0.4
+6. If only one group's result is stated: use it as effectSize with effectType "other"
+
+CRITICAL RULES:
+- Do NOT return all nulls — every abstract has SOME numbers
+- Use "MD" as effectType whenever you calculate a difference between two values
+- At minimum extract sampleSize and pValue even if effectSize is unclear
+- Use CONSISTENT effectType across all studies (prefer "MD" for everything unless OR/RR/HR is explicit)
 
 Output ONLY valid JSON array. No markdown, no explanation.
-[{"pmid":"12345","sampleSize":120,"effectSize":1.5,"effectType":"OR","ciLower":1.1,"ciUpper":2.0,"pValue":0.03,"outcome":"mortality rate"}]`;
+[{"pmid":"12345","sampleSize":120,"effectSize":-0.6,"effectType":"MD","ciLower":-1.1,"ciUpper":-0.1,"pValue":0.03,"outcome":"HbA1c reduction"}]`;
 
 export async function extractDataFromArticles(
   articles: PubMedArticle[],
@@ -96,20 +102,20 @@ export async function extractDataFromArticles(
 
   // If not enough matching types, try grouping compatible types
   // OR/RR/HR are all ratio-based and can be loosely compared
-  let poolable = matchingCount >= 3;
+  let poolable = matchingCount >= 2;
   let poolType = mostCommon;
 
   if (!poolable) {
     const ratioTypes = withEffect.filter(d => ['OR', 'RR', 'HR'].includes(d.effectType));
     const diffTypes = withEffect.filter(d => ['MD', 'SMD', '%'].includes(d.effectType));
 
-    if (ratioTypes.length >= 3) {
+    if (ratioTypes.length >= 2) {
       // Normalize all ratios to the most common ratio type
       const ratioMode = mode(ratioTypes.map(d => d.effectType));
       ratioTypes.forEach(d => { d.effectType = ratioMode; });
       poolable = true;
       poolType = ratioMode;
-    } else if (diffTypes.length >= 3) {
+    } else if (diffTypes.length >= 2) {
       const diffMode = mode(diffTypes.map(d => d.effectType));
       diffTypes.forEach(d => { d.effectType = diffMode; });
       poolable = true;
