@@ -78,6 +78,11 @@ export default function HomePage() {
     setError('');
     setResult(null);
 
+    // Smooth scroll to loading area
+    setTimeout(() => {
+      document.getElementById('loading-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+
     try {
       // Translate non-English keywords to English for PubMed search
       const englishKeywords = await translateForPubMed(kw);
@@ -229,7 +234,7 @@ export default function HomePage() {
 
       {/* Loading */}
       {(stage === 'searching' || stage === 'synthesizing') && (
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 pb-16">
+        <div id="loading-area" className="max-w-[1200px] mx-auto px-4 sm:px-6 pb-16">
           <LoadingSkeleton stage={stage} />
         </div>
       )}
