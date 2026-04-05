@@ -15,8 +15,7 @@ export default function UpsellBanner({ tier, paperCount }: UpsellBannerProps) {
   const locale = params.locale as string;
   const [dismissed, setDismissed] = useState(false);
 
-  // TEMP: Hidden during beta (until payments are set up)
-  return null;
+  if (tier !== 'free' || dismissed) return null;
 
   return (
     <AnimatePresence>

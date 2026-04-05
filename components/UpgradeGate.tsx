@@ -39,8 +39,7 @@ export default function UpgradeGate({ requiredTier, currentTier, feature, featur
     setTrialUsed(getTrialCount(featureKey) >= MAX_TRIALS);
   }, [featureKey]);
 
-  // TEMP: All features free during beta (until payments are set up)
-  return <>{children}</>;
+  if (hasAccess || trialActive) return <>{children}</>;
 
   const tierLabel = requiredTier === 'pro' ? 'Pro' : 'Ultra';
   const tierPrice = requiredTier === 'pro' ? '$2.99' : '$6.99';

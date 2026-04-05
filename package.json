@@ -9,8 +9,10 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.0.8",
     "@google/genai": "^1.47.0",
     "@lemonsqueezy/lemonsqueezy.js": "^4.0.0",
+    "@upstash/redis": "^1.37.0",
     "framer-motion": "^12.38.0",
     "jose": "^6.2.2",
     "next": "16.2.1",
