@@ -9,8 +9,8 @@ const intlMiddleware = createIntlMiddleware(routing);
 const isProtectedRoute = createRouteMatcher([
   '/(en|ko|ja|zh|es|pt|de|fr)/account(.*)',
   '/(en|ko|ja|zh|es|pt|de|fr)/admin(.*)',
-  '/api/stripe/checkout(.*)',
-  '/api/stripe/portal(.*)',
+  '/api/lemonsqueezy/checkout(.*)',
+  '/api/lemonsqueezy/portal(.*)',
 ]);
 
 const clerkHandler = clerkMiddleware(async (auth, req: NextRequest) => {

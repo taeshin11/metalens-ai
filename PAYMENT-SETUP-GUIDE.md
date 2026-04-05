@@ -57,7 +57,7 @@ LS_VARIANT_ULTRA_YEARLY=variant_id_here
 
 In Lemon Squeezy dashboard → Settings → Webhooks → Add Webhook:
 
-- **URL**: `https://metalens-ai.vercel.app/api/stripe/webhook`
+- **URL**: `https://metalens-ai.vercel.app/api/lemonsqueezy/webhook`
 - **Secret**: Generate one and copy it → set as `LEMONSQUEEZY_WEBHOOK_SECRET`
 - **Events to listen for**:
   - `subscription_created`
@@ -67,22 +67,18 @@ In Lemon Squeezy dashboard → Settings → Webhooks → Add Webhook:
 
 ---
 
-## 4. Re-enable Paid Features in Code
+## 4. Paid Features Status
 
-The paid tier code is already built but hidden. To re-enable:
-
-1. In `components/Header.tsx` — uncomment the Pricing link
-2. In `components/UpsellBanner.tsx` — re-enable the component
-3. In `components/UpgradeGate.tsx` — re-enable the component
-4. In the homepage and results pages — restore upgrade prompts
-5. In `lib/constants.ts` — the tier config is already defined (free/pro/ultra)
+모든 유료화 코드가 활성화된 상태. 별도 조치 불필요:
+- Clerk auth 통합 완료 (publicMetadata.tier로 플랜 관리)
+- UpgradeGate / UpsellBanner 활성화
+- Upstash Redis rate limiting 활성화
 
 All payment-related code lives in:
 - `lib/payments.ts` — Lemon Squeezy SDK integration
-- `lib/stripe.ts` — Re-exports from payments.ts
-- `app/api/stripe/checkout/route.ts` — Creates checkout sessions
-- `app/api/stripe/webhook/route.ts` — Handles subscription events
-- `app/api/stripe/portal/route.ts` — Customer portal
+- `app/api/lemonsqueezy/checkout/route.ts` — Creates checkout sessions
+- `app/api/lemonsqueezy/webhook/route.ts` — Handles subscription events
+- `app/api/lemonsqueezy/portal/route.ts` — Customer portal
 - `app/[locale]/pricing/page.tsx` — Pricing page UI
 - `lib/rate-limit.ts` — Rate limiting by tier
 - `lib/usage-tracker.ts` — Usage tracking
