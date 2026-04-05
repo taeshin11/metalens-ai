@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+/**
+ * Clerk 기반 AuthProvider
+ * - ClerkProvider를 래핑하고, 기존 useAuth() 인터페이스를 유지
+ * - user.email / user.name / user.tier 를 Clerk publicMetadata에서 가져옴
+ */
+import { ClerkProvider, useUser, useClerk } from '@clerk/nextjs';
+import { createContext, useContext, useMemo } from 'react';
 import type { Tier } from '@/lib/constants';
 
 interface User {
@@ -12,66 +18,49 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, name: string) => Promise<boolean>;
+  openSignIn: () => void;
   logout: () => Promise<void>;
-  refreshSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  login: async () => false,
+  openSignIn: () => {},
   logout: async () => {},
-  refreshSession: async () => {},
 });
 
 export function useAuth() {
   return useContext(AuthContext);
 }
 
-export default function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+function AuthBridge({ children }: { children: React.ReactNode }) {
+  const { user: clerkUser, isLoaded } = useUser();
+  const { openSignIn, signOut } = useClerk();
 
-  const fetchSession = useCallback(async () => {
-    try {
-      const res = await fetch('/api/auth/session');
-      const data = await res.json();
-      setUser(data.user || null);
-    } catch {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const user = useMemo<User | null>(() => {
+    if (!clerkUser) return null;
+    return {
+      email: clerkUser.emailAddresses[0]?.emailAddress || '',
+      name: clerkUser.fullName || clerkUser.firstName || clerkUser.emailAddresses[0]?.emailAddress || '',
+      tier: (clerkUser.publicMetadata?.tier as Tier) || 'free',
+    };
+  }, [clerkUser]);
 
-  useEffect(() => { fetchSession(); }, [fetchSession]);
-
-  const login = useCallback(async (email: string, name: string) => {
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name }),
-      });
-      if (res.ok) {
-        setUser({ email, name, tier: 'free' });
-        return true;
-      }
-      return false;
-    } catch {
-      return false;
-    }
-  }, []);
-
-  const logout = useCallback(async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setUser(null);
-  }, []);
+  const logout = async () => {
+    await signOut();
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshSession: fetchSession }}>
+    <AuthContext.Provider value={{ user, loading: !isLoaded, openSignIn, logout }}>
       {children}
     </AuthContext.Provider>
+  );
+}
+
+export default function AuthProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <ClerkProvider>
+      <AuthBridge>{children}</AuthBridge>
+    </ClerkProvider>
   );
 }

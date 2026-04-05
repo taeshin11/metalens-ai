@@ -1,12 +1,31 @@
-import createMiddleware from 'next-intl/middleware';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import createIntlMiddleware from 'next-intl/middleware';
 import { routing } from './i18n/routing';
+import { NextRequest, NextFetchEvent } from 'next/server';
 
-const intlMiddleware = createMiddleware(routing);
+const intlMiddleware = createIntlMiddleware(routing);
 
-export function proxy(request: Parameters<typeof intlMiddleware>[0]) {
-  return intlMiddleware(request);
+// 로그인 필요 라우트
+const isProtectedRoute = createRouteMatcher([
+  '/(en|ko|ja|zh|es|pt|de|fr)/account(.*)',
+  '/(en|ko|ja|zh|es|pt|de|fr)/admin(.*)',
+  '/api/stripe/checkout(.*)',
+  '/api/stripe/portal(.*)',
+]);
+
+const clerkHandler = clerkMiddleware(async (auth, req: NextRequest) => {
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
+  return intlMiddleware(req);
+});
+
+export function proxy(request: NextRequest, event: NextFetchEvent) {
+  return clerkHandler(request, event);
 }
 
 export const config = {
-  matcher: ['/', '/(en|ko|ja|zh|es|pt|de|fr)/:path*'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|json)).*)',
+  ],
 };

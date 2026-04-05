@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { variantIdToPlanKey, planKeyToTier } from '@/lib/payments';
+import { findClerkUserByEmail, setUserTier } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
-
-// In-memory tier store (MVP) — maps email → tier
-const tierStore = new Map<string, 'pro' | 'ultra'>();
-
-export function getTierForEmail(email: string): 'free' | 'pro' | 'ultra' {
-  return tierStore.get(email.toLowerCase()) || 'free';
-}
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -43,8 +37,13 @@ export async function POST(request: NextRequest) {
         const planKey = variantIdToPlanKey(variantId);
         if (planKey) {
           const tier = planKeyToTier(planKey);
-          tierStore.set(email.toLowerCase(), tier);
-          console.log(`[LS] ${email} → ${tier}`);
+          const clerkId = await findClerkUserByEmail(email);
+          if (clerkId) {
+            await setUserTier(clerkId, tier);
+            console.log(`[LS] ${email} (${clerkId}) → ${tier}`);
+          } else {
+            console.warn(`[LS] Clerk user not found for ${email}`);
+          }
         }
       }
       break;
@@ -53,8 +52,11 @@ export async function POST(request: NextRequest) {
     case 'subscription_cancelled':
     case 'subscription_expired': {
       if (email) {
-        tierStore.delete(email.toLowerCase());
-        console.log(`[LS] ${email} → free`);
+        const clerkId = await findClerkUserByEmail(email);
+        if (clerkId) {
+          await setUserTier(clerkId, 'free');
+          console.log(`[LS] ${email} → free`);
+        }
       }
       break;
     }

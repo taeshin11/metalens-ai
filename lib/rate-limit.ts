@@ -1,43 +1,57 @@
+/**
+ * Upstash Redis 기반 Rate Limiter
+ * - 서버 재시작해도 카운트 유지
+ * - UTC 자정 기준 일별 리셋
+ */
+import { Redis } from '@upstash/redis';
 import type { Tier } from './constants';
 import { TIER_CONFIG } from './constants';
 
-// In-memory rate limiter (resets on server restart; good enough for MVP)
-// Key: email or IP, Value: { count, resetAt }
-const store = new Map<string, { count: number; resetAt: number }>();
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
 
-// Clean up expired entries periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, val] of store) {
-    if (now > val.resetAt) store.delete(key);
-  }
-}, 60_000);
+function getUtcMidnightTtl(): number {
+  const now = new Date();
+  const midnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+  return Math.floor((midnight.getTime() - now.getTime()) / 1000);
+}
 
-export function checkRateLimit(
+function rateLimitKey(identifier: string): string {
+  const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+  return `rl:${date}:${identifier}`;
+}
+
+export async function checkRateLimit(
   identifier: string,
   tier: Tier,
-): { allowed: boolean; remaining: number; limit: number } {
+): Promise<{ allowed: boolean; remaining: number; limit: number }> {
   const limit = TIER_CONFIG[tier].dailyLimit;
-  const now = Date.now();
-  const entry = store.get(identifier);
+  const key = rateLimitKey(identifier);
+  const ttl = getUtcMidnightTtl();
 
-  if (!entry || now > entry.resetAt) {
-    // New window (midnight reset)
-    const resetAt = getEndOfDay();
-    store.set(identifier, { count: 1, resetAt });
-    return { allowed: true, remaining: limit - 1, limit };
+  // INCR: 없으면 1로 생성, 있으면 +1
+  const count = await redis.incr(key);
+
+  // 첫 증가 시 TTL 설정
+  if (count === 1) {
+    await redis.expire(key, ttl);
   }
 
-  if (entry.count >= limit) {
+  if (count > limit) {
     return { allowed: false, remaining: 0, limit };
   }
 
-  entry.count++;
-  return { allowed: true, remaining: limit - entry.count, limit };
+  return { allowed: true, remaining: limit - count, limit };
 }
 
-function getEndOfDay(): number {
-  const d = new Date();
-  d.setHours(23, 59, 59, 999);
-  return d.getTime();
+export async function getRateLimitStatus(
+  identifier: string,
+  tier: Tier,
+): Promise<{ count: number; remaining: number; limit: number }> {
+  const limit = TIER_CONFIG[tier].dailyLimit;
+  const key = rateLimitKey(identifier);
+  const count = (await redis.get<number>(key)) || 0;
+  return { count, remaining: Math.max(0, limit - count), limit };
 }

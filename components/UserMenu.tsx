@@ -1,39 +1,32 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { useState, useRef, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { SignInButton, UserButton, useUser } from '@clerk/nextjs';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useAuth } from './AuthProvider';
-import { isAdmin } from '@/lib/admin';
 import { TIER_CONFIG } from '@/lib/constants';
+import type { Tier } from '@/lib/constants';
 
 export default function UserMenu() {
-  const { user } = useAuth();
+  const { isLoaded, isSignedIn, user } = useUser();
   const t = useTranslations('auth');
   const params = useParams();
   const locale = params.locale as string;
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
+  if (!isLoaded) return <div className="w-8 h-8 rounded-full bg-gray-100 animate-pulse" />;
 
-  if (!user) {
-    return null;
+  if (!isSignedIn) {
+    return (
+      <SignInButton mode="modal">
+        <button className="px-4 py-1.5 text-sm font-semibold text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] rounded-full transition-colors">
+          {t('signIn')}
+        </button>
+      </SignInButton>
+    );
   }
 
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    window.location.reload();
-  };
-
-  const tierLabel = TIER_CONFIG[user.tier]?.label || 'Free';
+  const tier = (user.publicMetadata?.tier as Tier) || 'free';
+  const tierLabel = TIER_CONFIG[tier]?.label || 'Free';
   const tierColors: Record<string, string> = {
     free: 'bg-gray-100 text-gray-600',
     pro: 'bg-[var(--color-primary)]/10 text-[var(--color-primary-dark)]',
@@ -41,70 +34,32 @@ export default function UserMenu() {
   };
 
   return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-[var(--color-bg-secondary)] transition-colors"
-      >
-        <div className="w-7 h-7 rounded-full bg-[var(--color-primary)] text-white flex items-center justify-center text-xs font-bold">
-          {user.name.charAt(0).toUpperCase()}
-        </div>
-        <span className="hidden sm:inline text-sm text-[var(--color-text-primary)] font-medium max-w-[120px] truncate">
-          {user.name}
-        </span>
-        <span className={`hidden sm:inline text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${tierColors[user.tier] || tierColors.free}`}>
-          {tierLabel}
-        </span>
-      </button>
+    <div className="flex items-center gap-2">
+      {/* Tier badge */}
+      <span className={`hidden sm:inline text-[10px] px-2 py-0.5 rounded-full font-semibold ${tierColors[tier] || tierColors.free}`}>
+        {tierLabel}
+      </span>
 
-      {open && (
-        <div className="absolute right-0 top-full mt-2 w-52 bg-white border border-[var(--color-border)] rounded-xl shadow-lg py-2 z-50">
-          <div className="px-4 py-2 border-b border-[var(--color-border)]">
-            <div className="flex items-center gap-2">
-              <p className="text-xs font-medium text-[var(--color-text-primary)] truncate">{user.name}</p>
-              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${tierColors[user.tier] || tierColors.free}`}>
-                {tierLabel}
-              </span>
-            </div>
-            <p className="text-[10px] text-[var(--color-text-muted)] truncate">{user.email}</p>
-          </div>
-
-          <Link
-            href={`/${locale}/account`}
-            onClick={() => setOpen(false)}
-            className="block px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] transition-colors"
-          >
-            My Account
-          </Link>
-
-          {user.tier === 'free' && (
-            <Link
-              href={`/${locale}/pricing`}
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2 text-sm text-[var(--color-primary)] hover:bg-[var(--color-bg-secondary)] transition-colors font-medium"
-            >
-              Upgrade Plan
-            </Link>
-          )}
-
-          {isAdmin(user.email) && (
-            <Link
-              href={`/${locale}/admin`}
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2 text-sm text-[var(--color-accent)] hover:bg-[var(--color-bg-secondary)] transition-colors font-medium"
-            >
-              CEO Dashboard
-            </Link>
-          )}
-
-          <button
-            onClick={handleLogout}
-            className="w-full text-left px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] transition-colors"
-          >
-            {t('signOut')}
-          </button>
-        </div>
+      {tier === 'free' && (
+        <Link
+          href={`/${locale}/pricing`}
+          className="hidden sm:inline-block text-xs font-semibold text-[var(--color-primary)] hover:underline"
+        >
+          Upgrade
+        </Link>
       )}
+
+      {/* Clerk's built-in user button (avatar + dropdown) */}
+      <UserButton
+        appearance={{
+          elements: {
+            avatarBox: 'w-8 h-8',
+          },
+        }}
+        userProfileProps={{
+          additionalOAuthScopes: {},
+        }}
+      />
     </div>
   );
 }

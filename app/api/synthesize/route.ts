@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
     const tier: Tier = session?.tier || 'free';
     const identifier = session?.email || request.headers.get('x-forwarded-for') || 'anon';
 
-    // Server-side rate limit
-    const rl = checkRateLimit(identifier, tier);
+    // Server-side rate limit (Upstash Redis)
+    const rl = await checkRateLimit(identifier, tier);
     if (!rl.allowed) {
       return NextResponse.json(
         { error: 'Daily limit reached', limit: rl.limit, tier },
