@@ -40,9 +40,6 @@ export async function POST(request: NextRequest) {
           const clerkId = await findClerkUserByEmail(email);
           if (clerkId) {
             await setUserTier(clerkId, tier);
-            console.log(`[LS] ${email} (${clerkId}) → ${tier}`);
-          } else {
-            console.warn(`[LS] Clerk user not found for ${email}`);
           }
         }
       }
@@ -55,7 +52,6 @@ export async function POST(request: NextRequest) {
         const clerkId = await findClerkUserByEmail(email);
         if (clerkId) {
           await setUserTier(clerkId, 'free');
-          console.log(`[LS] ${email} → free`);
         }
       }
       break;
