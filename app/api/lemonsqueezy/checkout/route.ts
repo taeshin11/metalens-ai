@@ -10,11 +10,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Login required' }, { status: 401 });
     }
 
-    const { plan } = await request.json() as { plan: PlanKey };
-    const variantId = VARIANT_IDS[plan];
+    const { plan } = await request.json() as { plan: string };
+    const variantId = VARIANT_IDS[plan as PlanKey];
 
     if (!variantId) {
-      return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
+      return NextResponse.json({ error: `Invalid plan: ${plan}. Valid: ${Object.keys(VARIANT_IDS).join(', ')}` }, { status: 400 });
     }
 
     const url = await createCheckoutUrl(
