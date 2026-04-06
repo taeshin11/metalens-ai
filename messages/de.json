@@ -245,7 +245,8 @@
     "f_journal": "SCI-Journal-Empfehlung",
     "f_pdf": "PDF-Report-Export",
     "f_draft": "Entwurf Einleitung/Diskussion",
-    "f_diff": "Literatur-Differenzierungsanalyse"
+    "f_diff": "Literatur-Differenzierungsanalyse",
+    "subscribe": "Jetzt abonnieren"
   },
   "errors": {
     "noResults": "Für diese Schlüsselwörter wurden keine Artikel gefunden. Versuchen Sie andere oder allgemeinere Begriffe.",

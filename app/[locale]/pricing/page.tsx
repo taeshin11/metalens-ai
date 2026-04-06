@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/components/AuthProvider';
 import { TIER_CONFIG } from '@/lib/constants';
 
 type Billing = 'monthly' | 'yearly';
@@ -89,6 +90,33 @@ export default function PricingPage() {
   const [billing, setBilling] = useState<Billing>('monthly');
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const { user, openSignIn } = useAuth();
+
+  const handleCheckout = async (planKey: string) => {
+    if (!user) {
+      openSignIn();
+      return;
+    }
+    setCheckoutLoading(planKey);
+    try {
+      const res = await fetch('/api/lemonsqueezy/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: planKey }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Checkout failed');
+      }
+    } catch {
+      alert('Checkout failed. Please try again.');
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
 
   const handleNotify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -194,9 +222,27 @@ export default function PricingPage() {
                   {t('startFree')}
                 </a>
               ) : (
-                <div className={`py-3 text-center text-sm font-semibold rounded-xl ${plan.popular ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary-dark)]' : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)]'}`}>
-                  {t('comingSoon')}
-                </div>
+                <button
+                  onClick={() => {
+                    const planKey = `${plan.key}_${billing}` as string;
+                    handleCheckout(planKey);
+                  }}
+                  disabled={checkoutLoading !== null}
+                  className={`w-full py-3 text-center text-sm font-semibold rounded-xl transition-colors cursor-pointer ${
+                    plan.popular
+                      ? 'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]'
+                      : 'bg-[var(--color-text-primary)] text-white hover:opacity-90'
+                  } disabled:opacity-50`}
+                >
+                  {checkoutLoading === `${plan.key}_${billing}` ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ...
+                    </span>
+                  ) : (
+                    t('subscribe')
+                  )}
+                </button>
               )}
             </motion.div>
           );

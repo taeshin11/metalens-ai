@@ -245,7 +245,8 @@
     "f_journal": "Recomendação de periódicos SCI",
     "f_pdf": "Exportação de relatório PDF",
     "f_draft": "Rascunho de introdução/discussão",
-    "f_diff": "Análise de diferenciação literária"
+    "f_diff": "Análise de diferenciação literária",
+    "subscribe": "Assinar Agora"
   },
   "errors": {
     "noResults": "Nenhum artigo encontrado para estas palavras-chave. Tente termos diferentes ou mais abrangentes.",
