@@ -38,7 +38,7 @@ export default function HomePage() {
   const [showLogin, setShowLogin] = useState(false);
   const [remaining, setRemaining] = useState<number | null>(null);
   const [searchMode, setSearchMode] = useState<SearchMode>('meta-analysis');
-  const [history, setHistory] = useState<{ keywords: string; paperCount: number; timestamp: number; mode: string }[]>([]);
+  const [history, setHistory] = useState<{ keywords: string; paperCount: number; timestamp: number; mode: string; resultId?: string }[]>([]);
 
   // Load history from localStorage
   useEffect(() => {
@@ -116,11 +116,18 @@ export default function HomePage() {
       setResult(synthesisResult);
       setStage('done');
 
-      // Save to history
-      const entry = { keywords: kw, paperCount: papers.length, timestamp: Date.now(), mode: mode || searchMode };
+      // Save to history + cache results
+      const resultId = String(Date.now());
+      const entry = { keywords: kw, paperCount: papers.length, timestamp: Date.now(), mode: mode || searchMode, resultId };
       const updated = [entry, ...history.filter(h => h.keywords !== kw)].slice(0, 20);
       setHistory(updated);
-      try { localStorage.setItem('metalens_history', JSON.stringify(updated)); } catch { /* ignore */ }
+      try {
+        localStorage.setItem('metalens_history', JSON.stringify(updated));
+        localStorage.setItem(`metalens_result_${resultId}`, JSON.stringify({ result: synthesisResult, articles: papers }));
+        // Keep only the 20 most recent cached results
+        const oldEntry = history.find(h => h.keywords === kw);
+        if (oldEntry?.resultId) localStorage.removeItem(`metalens_result_${oldEntry.resultId}`);
+      } catch { /* ignore */ }
     } catch (err) {
       setStage('error');
       // Check for rate limit
@@ -298,7 +305,11 @@ export default function HomePage() {
                     {t('historyTitle')}
                   </h2>
                   <button
-                    onClick={() => { setHistory([]); localStorage.removeItem('metalens_history'); }}
+                    onClick={() => {
+                      history.forEach(h => { if (h.resultId) localStorage.removeItem(`metalens_result_${h.resultId}`); });
+                      setHistory([]);
+                      localStorage.removeItem('metalens_history');
+                    }}
                     className="text-xs text-[var(--color-text-muted)] hover:text-red-500 transition-colors"
                   >
                     {t('historyClear')}
@@ -308,7 +319,25 @@ export default function HomePage() {
                   {history.slice(0, 6).map((h, i) => (
                     <button
                       key={i}
-                      onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); handleAnalyze(h.keywords, undefined, h.mode as SearchMode); }}
+                      onClick={() => {
+                        if (h.resultId) {
+                          try {
+                            const cached = localStorage.getItem(`metalens_result_${h.resultId}`);
+                            if (cached) {
+                              const { result: cachedResult, articles: cachedArticles } = JSON.parse(cached);
+                              setKeywords(h.keywords);
+                              setSearchMode(h.mode as SearchMode);
+                              setResult(cachedResult);
+                              setArticles(cachedArticles);
+                              setStage('done');
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                              return;
+                            }
+                          } catch { /* fall through to re-search */ }
+                        }
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        handleAnalyze(h.keywords, undefined, h.mode as SearchMode);
+                      }}
                       className="text-left p-4 bg-[var(--color-bg-primary)] rounded-xl border border-[var(--color-border)] hover:border-[var(--color-primary-light)] hover:shadow-sm transition-all group"
                     >
                       <p className="text-sm font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors line-clamp-1">
