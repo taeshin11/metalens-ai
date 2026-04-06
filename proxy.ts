@@ -17,6 +17,10 @@ const clerkHandler = clerkMiddleware(async (auth, req: NextRequest) => {
   if (isProtectedRoute(req)) {
     await auth.protect();
   }
+  // Skip intl middleware for API routes — next-intl would redirect /api/... to /en/api/... which breaks API calls
+  if (req.nextUrl.pathname.startsWith('/api/')) {
+    return;
+  }
   return intlMiddleware(req);
 });
 
