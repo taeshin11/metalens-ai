@@ -245,7 +245,8 @@
     "f_journal": "Recomendación de revistas SCI",
     "f_pdf": "Exportación de informe PDF",
     "f_draft": "Borrador de introducción/discusión",
-    "f_diff": "Análisis de diferenciación literaria"
+    "f_diff": "Análisis de diferenciación literaria",
+    "subscribe": "Suscribirse"
   },
   "errors": {
     "noResults": "No se encontraron artículos para estas palabras clave. Prueba con términos diferentes o más amplios.",

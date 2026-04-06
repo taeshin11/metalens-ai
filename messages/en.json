@@ -362,7 +362,8 @@
     "f_journal": "SCI journal recommendation",
     "f_pdf": "PDF report export",
     "f_draft": "Paper introduction/discussion draft",
-    "f_diff": "Literature differentiation analysis"
+    "f_diff": "Literature differentiation analysis",
+    "subscribe": "Subscribe Now"
   },
   "errors": {
     "noResults": "No papers found for these keywords. Try different or broader terms.",

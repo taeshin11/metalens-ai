@@ -240,7 +240,8 @@
     "f_journal": "Recommandation de revues SCI",
     "f_pdf": "Export de rapport PDF",
     "f_draft": "Brouillon introduction/discussion",
-    "f_diff": "Analyse de différenciation littéraire"
+    "f_diff": "Analyse de différenciation littéraire",
+    "subscribe": "S'abonner"
   },
   "errors": {
     "noResults": "Aucun article trouvé pour ces mots-clés. Essayez des termes différents ou plus généraux.",
