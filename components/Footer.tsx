@@ -19,7 +19,7 @@ export default function Footer() {
             <span className="text-lg">🔬</span>
             <span className="text-sm text-[var(--color-text-secondary)]">
               {t('builtBy')}{' '}
-              <span className="font-semibold text-[var(--color-primary-dark)]">{BRAND_NAME}</span>
+              <a href="http://www.spinai.net" target="_blank" rel="noopener noreferrer" className="font-semibold text-[var(--color-primary-dark)] hover:underline">{BRAND_NAME}</a>
             </span>
           </div>
 
