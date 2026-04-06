@@ -6,6 +6,9 @@ export async function GET(request: NextRequest) {
   if (!keywords) {
     return NextResponse.json({ error: 'Missing keywords' }, { status: 400 });
   }
+  if (keywords.length > 500) {
+    return NextResponse.json({ error: 'Query too long' }, { status: 400 });
+  }
 
   try {
     const articles = await searchAndFetch(keywords, 50);

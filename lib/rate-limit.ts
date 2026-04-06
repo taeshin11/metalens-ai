@@ -31,12 +31,13 @@ export async function checkRateLimit(
   const key = rateLimitKey(identifier);
   const ttl = getUtcMidnightTtl();
 
-  // INCR: 없으면 1로 생성, 있으면 +1
-  const count = await redis.incr(key);
-
-  // 첫 증가 시 TTL 설정
-  if (count === 1) {
-    await redis.expire(key, ttl);
+  let count: number;
+  try {
+    count = await redis.incr(key);
+    if (count === 1) await redis.expire(key, ttl);
+  } catch {
+    // Redis unavailable — allow request with conservative remaining
+    return { allowed: true, remaining: 1, limit };
   }
 
   if (count > limit) {

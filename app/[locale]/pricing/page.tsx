@@ -91,6 +91,7 @@ export default function PricingPage() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const { user, openSignIn } = useAuth();
 
   const handleCheckout = async (planKey: string) => {
@@ -99,6 +100,7 @@ export default function PricingPage() {
       return;
     }
     setCheckoutLoading(planKey);
+    setCheckoutError(null);
     try {
       const res = await fetch('/api/lemonsqueezy/checkout', {
         method: 'POST',
@@ -109,10 +111,10 @@ export default function PricingPage() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || 'Checkout failed');
+        setCheckoutError(data.error || 'Checkout failed. Please try again.');
       }
     } catch {
-      alert('Checkout failed. Please try again.');
+      setCheckoutError('Checkout failed. Please try again.');
     } finally {
       setCheckoutLoading(null);
     }
@@ -169,6 +171,13 @@ export default function PricingPage() {
           </div>
         </div>
       </div>
+
+      {/* Checkout error */}
+      {checkoutError && (
+        <div className="max-w-md mx-auto mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 text-center">
+          {checkoutError}
+        </div>
+      )}
 
       {/* Plan Cards */}
       <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
