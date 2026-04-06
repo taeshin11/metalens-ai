@@ -13,9 +13,9 @@ export type Tier = 'free' | 'pro' | 'ultra';
 
 export const TIER_CONFIG = {
   free: {
-    dailyLimit: 999,              // TEMP: unlimited during beta
-    pointCount: 7,                // TEMP: same as Pro during beta
-    model: 'gemini-2.5-flash',    // free tier of Gemini
+    dailyLimit: 5,
+    pointCount: 3,
+    model: 'gemini-2.5-flash',
     label: 'Free',
     price: 0,
     yearlyPrice: 0,
@@ -25,16 +25,16 @@ export const TIER_CONFIG = {
     pointCount: 7,
     model: 'gemini-2.5-flash',
     label: 'Pro',
-    price: 4.99,
-    yearlyPrice: 49.99,
+    price: 2.99,
+    yearlyPrice: 29.99,
   },
   ultra: {
     dailyLimit: 200,
     pointCount: 10,
     model: 'gemini-2.5-flash',
     label: 'Ultra',
-    price: 9.99,
-    yearlyPrice: 99.99,
+    price: 6.99,
+    yearlyPrice: 69.99,
   },
 } as const;
 

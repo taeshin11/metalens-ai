@@ -47,7 +47,7 @@ export async function createCheckoutUrl(
   const storeId = process.env.LEMONSQUEEZY_STORE_ID;
   if (!storeId) throw new Error('LEMONSQUEEZY_STORE_ID not set');
 
-  const { data, error } = await createCheckout(storeId, variantId, {
+  const { data, error } = await createCheckout(Number(storeId), Number(variantId), {
     checkoutData: {
       email,
       custom: { email },
