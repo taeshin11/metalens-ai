@@ -95,7 +95,74 @@ export default function HomeJsonLd() {
     url: SITE_URL,
     email: CONTACT_EMAIL,
     description: 'AI-powered tools for medical research accessibility',
+    logo: `${SITE_URL}/icon.svg`,
+    contactPoint: {
+      '@type': 'ContactPoint',
+      email: CONTACT_EMAIL,
+      contactType: 'customer support',
+      availableLanguage: ['English', 'Korean', 'Japanese', 'Chinese', 'Spanish', 'Portuguese', 'German', 'French'],
+    },
     sameAs: [],
+  };
+
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: SITE_URL,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'About',
+        item: `${SITE_URL}/en/about`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'How It Works',
+        item: `${SITE_URL}/en/how-it-works`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 4,
+        name: 'Pricing',
+        item: `${SITE_URL}/en/pricing`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 5,
+        name: 'FAQ',
+        item: `${SITE_URL}/en/faq`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 6,
+        name: 'Blog',
+        item: `${SITE_URL}/en/blog`,
+      },
+    ],
+  };
+
+  const webSite = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: SITE_DESCRIPTION,
+    inLanguage: ['en', 'ko', 'ja', 'zh', 'es', 'pt', 'de', 'fr'],
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${SITE_URL}/en?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
   };
 
   return (
@@ -111,6 +178,14 @@ export default function HomeJsonLd() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(org) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webSite) }}
       />
     </>
   );

@@ -519,17 +519,8 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
         </div>
       </div>
 
-      {/* Ad Banner */}
-      {process.env.NEXT_PUBLIC_ADSTERRA_AD_KEY && (
-        <div className="flex justify-center">
-          <AdBanner
-            adKey={process.env.NEXT_PUBLIC_ADSTERRA_AD_KEY}
-            width={728}
-            height={90}
-            className="rounded-xl opacity-80 hover:opacity-100 transition-opacity"
-          />
-        </div>
-      )}
+      {/* Ad Banner — shown only for free-tier users */}
+      <AdBanner variant="banner" className="rounded-xl opacity-80 hover:opacity-100 transition-opacity" />
 
       {/* Disclaimer */}
       <div className="bg-[var(--color-warning)]/10 rounded-2xl p-4 border border-[var(--color-warning)]/30">

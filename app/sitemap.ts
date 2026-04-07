@@ -40,13 +40,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
   const entries: MetadataRoute.Sitemap = [];
 
+  const priorityMap: Record<string, number> = {
+    '': 1.0,
+    '/about': 0.8,
+    '/pricing': 0.8,
+    '/how-it-works': 0.7,
+    '/faq': 0.7,
+    '/blog': 0.7,
+    '/use-cases': 0.6,
+    '/privacy': 0.4,
+    '/terms': 0.4,
+  };
+
+  const freqMap: Record<string, 'daily' | 'weekly' | 'monthly'> = {
+    '': 'daily',
+    '/blog': 'weekly',
+    '/pricing': 'weekly',
+  };
+
   for (const locale of SUPPORTED_LOCALES) {
     for (const page of pages) {
       entries.push({
         url: `${SITE_URL}/${locale}${page}`,
         lastModified: new Date(),
-        changeFrequency: page === '' ? 'daily' : 'monthly',
-        priority: page === '' ? 1 : 0.7,
+        changeFrequency: freqMap[page] || 'monthly',
+        priority: priorityMap[page] ?? 0.6,
       });
     }
   }
