@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
-const POLLINATIONS_URL = 'https://text.pollinations.ai/openai/chat/completions';
-
 export async function POST(request: NextRequest) {
   try {
     const { text, language } = await request.json();
@@ -32,7 +30,6 @@ EXAMPLE OUTPUT FORMAT:
 
 Write ONLY the numbered lines. Nothing else.`;
 
-    // Try Gemini first, then Pollinations
     const translated = await translate(text, systemPrompt);
 
     if (!translated) {
@@ -47,68 +44,33 @@ Write ONLY the numbered lines. Nothing else.`;
 
 async function translate(text: string, systemPrompt: string): Promise<string | null> {
   const geminiKey = process.env.GEMINI_API_KEY;
+  if (!geminiKey) return null;
 
-  if (geminiKey) {
-    // Try free tier first
-    try {
-      const { GoogleGenAI } = await import('@google/genai');
-      const ai = new GoogleGenAI({ apiKey: geminiKey });
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: [{ role: 'user', parts: [{ text }] }],
-        config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 4000 },
-      });
-      const result = response.text?.trim();
-      if (result) return result;
-    } catch { /* free tier exhausted */ }
-
-    // Try cheapest paid model
-    try {
-      const { GoogleGenAI } = await import('@google/genai');
-      const ai = new GoogleGenAI({ apiKey: geminiKey });
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash-lite',
-        contents: [{ role: 'user', parts: [{ text }] }],
-        config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 4000 },
-      });
-      const result = response.text?.trim();
-      if (result) return result;
-    } catch { /* fall through to Pollinations */ }
-  }
-
-  // Fallback: Pollinations
+  // Try primary model
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 25000);
-    const response = await fetch(POLLINATIONS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      signal: controller.signal,
-      body: JSON.stringify({
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: text },
-        ],
-        model: 'openai',
-        temperature: 0.1,
-        seed: Math.floor(Math.random() * 100000),
-      }),
+    const { GoogleGenAI } = await import('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: geminiKey });
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: [{ role: 'user', parts: [{ text }] }],
+      config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 4000 },
     });
-    clearTimeout(timeout);
-    if (!response.ok) return null;
-    const data = await response.json();
-    let raw = '';
-    // Direct message object: {"role":"assistant","content":"..."}
-    if (data?.role === 'assistant' && typeof data?.content === 'string') {
-      raw = data.content;
-    } else {
-      const msg = data?.choices?.[0]?.message;
-      raw = (typeof msg?.content === 'string' && msg.content.trim()) ? msg.content : '';
-    }
-    // Never use reasoning_content — it's internal AI thinking
-    // Strip Pollinations ads
-    return raw.trim().replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '').trim() || null;
-  } catch {
-    return null;
-  }
+    const result = response.text?.trim();
+    if (result) return result;
+  } catch { /* primary failed */ }
+
+  // Try fallback model
+  try {
+    const { GoogleGenAI } = await import('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: geminiKey });
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.0-flash-lite',
+      contents: [{ role: 'user', parts: [{ text }] }],
+      config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 4000 },
+    });
+    const result = response.text?.trim();
+    if (result) return result;
+  } catch { /* fallback failed */ }
+
+  return null;
 }
