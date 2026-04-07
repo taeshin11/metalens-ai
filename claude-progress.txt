@@ -7,7 +7,6 @@ Session 1 — 2026-03-31
 - Installed deps: next-intl, framer-motion, next-sitemap
 - Created design system with soft color palette (warm teal, cream, coral accents)
 - Built PubMed API client (esearch + efetch with XML parsing)
-- Built AI synthesis engine using Pollinations.ai (free, no API key, no login)
 - Created landing page with hero section, keyword input, gradient mesh background
 - Built results display with key findings, source links, paper citations
 - Implemented loading skeletons and error handling
@@ -19,7 +18,6 @@ Session 1 — 2026-03-31
 - Added FAQ structured data (JSON-LD) and WebApplication JSON-LD
 - Set up silent analytics data collection (Google Sheets webhook)
 - Added auto-translation for non-English keywords (Korean → English for PubMed)
-- Replaced Puter.js with Pollinations.ai (Puter.js required login popup)
 - Translated all hardcoded English strings across 8 languages
 - Expanded privacy policy and terms of service (7 clauses each)
 - Added custom 404 page
@@ -65,7 +63,6 @@ Session 3 — 2026-03-31
 - Improved translate-result API with retry logic
 - Added PubMed API retry logic (handles 429/5xx errors)
 - MAJOR FIX: Moved AI synthesis to client-side to eliminate Vercel server rate limiting
-  - Pollinations.ai was rate-limiting Vercel's server IPs (~60% failure rate)
   - Now all AI calls happen directly from user's browser
   - Added model fallback (openai → mistral)
   - Added random seed to prevent caching

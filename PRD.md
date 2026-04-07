@@ -170,25 +170,18 @@ npm test 2>/dev/null || echo "No tests yet"
   - `esearch.fcgi` — search for paper IDs by keywords
   - `efetch.fcgi` — fetch abstracts and metadata
   - Rate: 3 req/sec without key, 10/sec with free key (just email registration)
-- **AI Synthesis — Gemini 2.5 Flash + Pollinations Fallback**:
 
-  We use **Google Gemini 2.5 Flash** as the primary AI provider (via the `@google/genai` npm package), with **Pollinations.ai** as a free fallback that requires no API key. This gives us high-quality server-side AI synthesis with a resilient fallback if the Gemini API is unavailable.
 
   | Tier | Method | Model | API Key? | Cost to Dev |
   |------|--------|-------|----------|-------------|
   | **Free users** | Gemini API (server-side) | `gemini-2.5-flash` | `GEMINI_API_KEY` (free tier available) | **$0** (within free tier limits) |
-  | **Fallback** | Pollinations.ai (server-side) | `openai` (routed by Pollinations) | **NO KEY NEEDED** | **$0** |
   | **Pro users** | Anthropic Claude API (server-side) | `claude-sonnet-4-20250514` | Server-side key | Funded by subscriptions |
 
   **How the AI pipeline works**:
   - Server-side API route receives abstracts and language
   - Tries Gemini 2.5 Flash first (fast, high quality, generous free tier)
-  - If Gemini fails or key is missing, falls through to Pollinations.ai (free, no key)
-  - Pollinations response is cleaned of any appended ads/watermarks
 
-  **Implementation (Free tier — Gemini primary, Pollinations fallback)**:
   ```typescript
-  // Server-side: tries Gemini first, then Pollinations
   import { GoogleGenAI } from '@google/genai';
 
   async function synthesize(abstracts: string[], language: string): Promise<string | null> {
@@ -206,11 +199,8 @@ npm test 2>/dev/null || echo "No tests yet"
         });
         const result = response.text?.trim();
         if (result) return result;
-      } catch { /* fall through to Pollinations */ }
     }
 
-    // Fallback: Pollinations.ai (no key needed)
-    const response = await fetch('https://text.pollinations.ai/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -245,7 +235,6 @@ npm test 2>/dev/null || echo "No tests yet"
 
   **Key advantages of this approach**:
   - Gemini 2.5 Flash free tier is generous (sufficient for MVP traffic)
-  - Pollinations fallback ensures AI always works even if Gemini is down or key is missing
   - Server-side calls keep prompts and logic private
   - Pro users use server-side Claude = better quality justifies subscription
 
@@ -260,7 +249,6 @@ npm test 2>/dev/null || echo "No tests yet"
 - Vercel free tier for hosting & serverless functions — **$0**
 - PubMed E-utilities API (free, no key needed) — **$0**
 - Gemini 2.5 Flash API (generous free tier: 500 req/day) — **$0** (within free tier)
-- Pollinations.ai fallback (free, no key needed) — **$0**
 - Google Sheets + Apps Script (free) — **$0**
 - GitHub (free public or private repo) — **$0**
 - **Total monthly operating cost: $0** (within Gemini free tier limits)
@@ -702,7 +690,6 @@ git push origin main
 
 These constraints MUST be followed throughout development:
 
-1. **Near-zero cost infrastructure**: Vercel free tier, PubMed free API, Gemini free tier, Pollinations free fallback, Google Sheets free webhook, GitHub free repo
 2. **CLI-first automation**: If it can be done via CLI, do it via CLI. No manual GUI steps.
 3. **Responsive mobile-first**: Every component designed for 375px minimum
 4. **Soft color palette**: Warm, calming tones — NO stark white backgrounds
