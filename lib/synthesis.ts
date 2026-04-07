@@ -55,52 +55,7 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: nu
 }
 
 /**
- * Client-side fallback: call Pollinations GET API directly from browser
- * GET endpoint avoids 301 redirect issues that POST has in browsers
- */
-async function callPollinationsClient(prompt: string): Promise<string> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 60000);
-
-  try {
-    const encoded = encodeURIComponent(prompt);
-    const seed = Math.floor(Math.random() * 100000);
-    const url = `https://text.pollinations.ai/${encoded}?model=openai&seed=${seed}`;
-
-    const response = await fetch(url, { signal: controller.signal });
-
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    let text = await response.text();
-
-    // Handle JSON responses (Pollinations may return OpenAI-compatible JSON)
-    try {
-      const parsed = JSON.parse(text);
-      if (parsed && typeof parsed === 'object') {
-        // Direct message object: {"role":"assistant","content":"..."}
-        if (parsed.role === 'assistant' && typeof parsed.content === 'string') {
-          text = parsed.content.trim();
-        } else if (typeof parsed.content === 'string') {
-          text = parsed.content.trim();
-        } else if (Array.isArray(parsed.choices) && parsed.choices[0]?.message) {
-          const msg = parsed.choices[0].message;
-          if (typeof msg.content === 'string' && msg.content.trim()) {
-            text = msg.content.trim();
-          }
-          // Never use reasoning_content — it's internal AI thinking
-        }
-      }
-    } catch { /* not JSON, use as-is */ }
-
-    // Strip Pollinations ads
-    text = text.replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '');
-    return text.trim();
-  } finally {
-    clearTimeout(timeout);
-  }
-}
-
-/**
- * Hybrid synthesis: try server (Gemini) first, fall back to client-side Pollinations
+ * Synthesis: call server API (Gemini)
  */
 export async function synthesizeWithAI(
   articles: PubMedArticle[],
@@ -112,42 +67,24 @@ export async function synthesizeWithAI(
   let englishResult = '';
   let remaining: number | undefined;
 
-  // Strategy 1: Server-side (Gemini → Pollinations fallback)
-  try {
-    const synthesisResponse = await fetchWithTimeout('/api/synthesize', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt }),
-    }, 55000);
+  const synthesisResponse = await fetchWithTimeout('/api/synthesize', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+  }, 55000);
 
-    if (synthesisResponse.status === 429) {
-      throw new Error('429: Daily limit reached');
-    }
-
-    if (synthesisResponse.ok) {
-      const data = await synthesisResponse.json();
-      if (data.result && data.result.trim()) englishResult = data.result;
-      if (data.remaining !== undefined) remaining = data.remaining;
-    }
-  } catch (err) {
-    if (err instanceof Error && err.message.includes('429')) throw err;
-    // Server failed or timed out — fall through to client-side
+  if (synthesisResponse.status === 429) {
+    throw new Error('429: Daily limit reached');
   }
 
-  // Strategy 2: Client-side Pollinations (direct from browser, no CORS issue)
-  if (!englishResult) {
-    try {
-      const result = await callPollinationsClient(prompt);
-      if (result && result.trim().length > 50) {
-        englishResult = result;
-      }
-    } catch {
-      // openai model failed
-    }
+  if (synthesisResponse.ok) {
+    const data = await synthesisResponse.json();
+    if (data.result && data.result.trim()) englishResult = data.result;
+    if (data.remaining !== undefined) remaining = data.remaining;
   }
 
   if (!englishResult) {
-    throw new Error('AI synthesis failed after all attempts');
+    throw new Error('AI synthesis failed. Please try again.');
   }
 
   // Translate if not English
@@ -166,18 +103,7 @@ export async function synthesizeWithAI(
         }
       }
     } catch {
-      // Translation failed — try client-side
-    }
-
-    // Client-side translation fallback
-    try {
-      const translatePrompt = `Translate the following medical analysis into ${language}. Keep the numbered format and all PMID references. Output ONLY the translation:\n\n${englishResult}`;
-      const translated = await callPollinationsClient(translatePrompt);
-      if (translated && translated.trim().length > 50) {
-        return { english: englishResult, translated, language, remaining };
-      }
-    } catch {
-      // Return English only
+      // Translation failed — return English only
     }
   }
 

@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const maxDuration = 60;
 
-const POLLINATIONS_URL = 'https://text.pollinations.ai/openai/chat/completions';
-
 export async function POST(request: NextRequest) {
   let keywords = '';
   try {
@@ -29,59 +27,36 @@ Examples:
 
 Input: ${keywords}`;
 
-    // Try Gemini first, then Pollinations
     const geminiKey = process.env.GEMINI_API_KEY;
+    if (!geminiKey) return NextResponse.json({ translated: keywords });
 
-    if (geminiKey) {
-      // Try free tier first
-      try {
-        const { GoogleGenAI } = await import('@google/genai');
-        const ai = new GoogleGenAI({ apiKey: geminiKey });
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          config: { temperature: 0, maxOutputTokens: 200 },
-        });
-        const translated = response.text?.trim().replace(/^["']|["']$/g, '');
-        if (translated) return NextResponse.json({ translated });
-      } catch { /* free tier exhausted */ }
+    // Try primary model
+    try {
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey: geminiKey });
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: { temperature: 0, maxOutputTokens: 200 },
+      });
+      const translated = response.text?.trim().replace(/^["']|["']$/g, '');
+      if (translated) return NextResponse.json({ translated });
+    } catch { /* primary failed */ }
 
-      // Try cheapest paid model
-      try {
-        const { GoogleGenAI } = await import('@google/genai');
-        const ai = new GoogleGenAI({ apiKey: geminiKey });
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.0-flash-lite',
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          config: { temperature: 0, maxOutputTokens: 200 },
-        });
-        const translated = response.text?.trim().replace(/^["']|["']$/g, '');
-        if (translated) return NextResponse.json({ translated });
-      } catch { /* fall through to Pollinations */ }
-    }
+    // Try fallback model
+    try {
+      const { GoogleGenAI } = await import('@google/genai');
+      const ai = new GoogleGenAI({ apiKey: geminiKey });
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.0-flash-lite',
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        config: { temperature: 0, maxOutputTokens: 200 },
+      });
+      const translated = response.text?.trim().replace(/^["']|["']$/g, '');
+      if (translated) return NextResponse.json({ translated });
+    } catch { /* fallback failed */ }
 
-    // Fallback: Pollinations
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
-    const response = await fetch(POLLINATIONS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      signal: controller.signal,
-      body: JSON.stringify({
-        messages: [{ role: 'user', content: prompt }],
-        model: 'openai',
-        temperature: 0,
-        seed: Math.floor(Math.random() * 100000),
-      }),
-    });
-    clearTimeout(timeout);
-
-    if (!response.ok) return NextResponse.json({ translated: keywords });
-    const data = await response.json();
-    const msg = data?.choices?.[0]?.message;
-    const translated = msg?.content || msg?.reasoning_content || '';
-    const cleaned = translated.trim().replace(/^["']|["']$/g, '');
-    return NextResponse.json({ translated: cleaned || keywords });
+    return NextResponse.json({ translated: keywords });
   } catch {
     return NextResponse.json({ translated: keywords });
   }

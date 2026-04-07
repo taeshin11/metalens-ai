@@ -3,7 +3,7 @@
     { "id": 1, "name": "Project Setup & Scaffold", "priority": "P0", "status": "complete" },
     { "id": 2, "name": "Landing Page & Hero", "priority": "P0", "status": "complete" },
     { "id": 3, "name": "PubMed API Integration", "priority": "P0", "status": "complete" },
-    { "id": 4, "name": "AI Synthesis Engine (Pollinations.ai)", "priority": "P0", "status": "complete" },
+    { "id": 4, "name": "AI Synthesis Engine (Gemini)", "priority": "P0", "status": "complete" },
     { "id": 5, "name": "Results Display", "priority": "P0", "status": "complete" },
     { "id": 6, "name": "Responsive Design", "priority": "P0", "status": "complete" },
     { "id": 7, "name": "Soft Color Theme", "priority": "P0", "status": "complete" },
