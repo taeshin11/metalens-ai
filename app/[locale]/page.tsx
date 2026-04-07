@@ -19,7 +19,7 @@ import { TIER_CONFIG } from '@/lib/constants';
 
 type Stage = 'idle' | 'searching' | 'synthesizing' | 'done' | 'error';
 
-const FREE_SEARCHES = 1;
+const GUEST_SEARCHES = 1; // Allow 1 search before requiring login
 
 export default function HomePage() {
   const t = useTranslations('hero');
@@ -63,14 +63,14 @@ export default function HomePage() {
 
   const handleAnalyze = async (kw: string, filters?: SearchFilters, mode?: SearchMode) => {
     if (mode) setSearchMode(mode);
-    // Check if login required (after FREE_SEARCHES without session)
+    // Guest: allow 1 search, then require login. Logged-in users: server rate limit handles daily cap.
     if (!user) {
-      const count = parseInt(sessionStorage.getItem('searchCount') || '0', 10);
-      if (count >= FREE_SEARCHES) {
+      const count = parseInt(sessionStorage.getItem('guestSearchCount') || '0', 10);
+      if (count >= GUEST_SEARCHES) {
         setShowLogin(true);
         return;
       }
-      sessionStorage.setItem('searchCount', String(count + 1));
+      sessionStorage.setItem('guestSearchCount', String(count + 1));
     }
 
     setKeywords(kw);
