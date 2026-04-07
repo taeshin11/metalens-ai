@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import { useAuth } from '@/components/AuthProvider';
+import { ADMIN_EMAILS } from '@/lib/admin';
 import type { Tier } from '@/lib/constants';
 
 interface UpgradeGateProps {
@@ -28,6 +30,11 @@ function useTrial(key: string) {
 export default function UpgradeGate({ requiredTier, currentTier, feature, featureKey, children }: UpgradeGateProps) {
   const params = useParams();
   const locale = params.locale as string;
+  const { user } = useAuth();
+
+  // Admin users bypass all tier restrictions
+  const isAdminUser = user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
+  if (isAdminUser) return <>{children}</>;
 
   const tierOrder: Record<Tier, number> = { free: 0, pro: 1, ultra: 2 };
   const hasAccess = tierOrder[currentTier] >= tierOrder[requiredTier];

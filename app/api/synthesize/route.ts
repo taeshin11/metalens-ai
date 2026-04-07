@@ -3,6 +3,7 @@ import { getSession } from '@/lib/auth';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { TIER_CONFIG } from '@/lib/constants';
 import { trackUsage } from '@/lib/usage-tracker';
+import { ADMIN_EMAILS } from '@/lib/admin';
 import type { Tier } from '@/lib/constants';
 
 // Allow up to 60s for AI synthesis on Vercel
@@ -13,16 +14,21 @@ const SYSTEM_MSG = 'You are a medical research analyst. Output ONLY your final s
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
-    const tier: Tier = session?.tier || 'free';
+    const isAdmin = session?.email && ADMIN_EMAILS.includes(session.email.toLowerCase());
+    const tier: Tier = isAdmin ? 'ultra' : (session?.tier || 'free');
     const identifier = session?.email || request.headers.get('x-forwarded-for') || 'anon';
 
-    // Server-side rate limit (Upstash Redis)
-    const rl = await checkRateLimit(identifier, tier);
-    if (!rl.allowed) {
-      return NextResponse.json(
-        { error: 'Daily limit reached', limit: rl.limit, tier },
-        { status: 429 },
-      );
+    // Admin users skip rate limit
+    let remaining = 999;
+    if (!isAdmin) {
+      const rl = await checkRateLimit(identifier, tier);
+      if (!rl.allowed) {
+        return NextResponse.json(
+          { error: 'Daily limit reached', limit: rl.limit, tier },
+          { status: 429 },
+        );
+      }
+      remaining = rl.remaining;
     }
 
     const { prompt } = await request.json();
@@ -38,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     trackUsage(identifier, tier, TIER_CONFIG[tier].model);
 
-    return NextResponse.json({ result, remaining: rl.remaining });
+    return NextResponse.json({ result, remaining });
   } catch {
     return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
   }
