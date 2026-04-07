@@ -76,14 +76,17 @@ async function callPollinationsClient(prompt: string): Promise<string> {
     try {
       const parsed = JSON.parse(text);
       if (parsed && typeof parsed === 'object') {
-        if (typeof parsed.content === 'string') {
+        // Direct message object: {"role":"assistant","content":"..."}
+        if (parsed.role === 'assistant' && typeof parsed.content === 'string') {
+          text = parsed.content.trim();
+        } else if (typeof parsed.content === 'string') {
           text = parsed.content.trim();
         } else if (Array.isArray(parsed.choices) && parsed.choices[0]?.message) {
           const msg = parsed.choices[0].message;
-          const extracted = msg.content || msg.reasoning_content || '';
-          if (typeof extracted === 'string' && extracted.trim()) {
-            text = extracted.trim();
+          if (typeof msg.content === 'string' && msg.content.trim()) {
+            text = msg.content.trim();
           }
+          // Never use reasoning_content — it's internal AI thinking
         }
       }
     } catch { /* not JSON, use as-is */ }
