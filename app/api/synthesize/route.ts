@@ -143,25 +143,32 @@ function cleanResponse(raw: string): string {
   try {
     const parsed = JSON.parse(text);
     if (parsed && typeof parsed === 'object') {
-      if (typeof parsed.content === 'string') {
+      // Direct message object: {"role":"assistant","content":"..."}
+      if (parsed.role === 'assistant' && typeof parsed.content === 'string') {
+        text = parsed.content.trim();
+      } else if (typeof parsed.content === 'string') {
         text = parsed.content.trim();
       } else if (Array.isArray(parsed.choices) && parsed.choices[0]?.message) {
         const msg = parsed.choices[0].message;
-        // Prefer content, fall back to reasoning_content (some models put output there)
-        const extracted = msg.content || msg.reasoning_content || '';
-        if (typeof extracted === 'string' && extracted.trim()) {
-          text = extracted.trim();
+        if (typeof msg.content === 'string' && msg.content.trim()) {
+          text = msg.content.trim();
         }
+        // Never use reasoning_content — it's internal AI thinking, not the answer
       }
     }
   } catch { /* not JSON */ }
+
+  // Detect if entire text is raw JSON with reasoning_content (not parsed above)
+  if (text.startsWith('{"role"') || text.startsWith('"reasoning_content"')) {
+    return '';
+  }
 
   // Strip reasoning preamble
   const findingsPattern = /^(\d+)\.\s*\*\*/m;
   const match = text.match(findingsPattern);
   if (match && match.index !== undefined && match.index > 0) {
     const preamble = text.substring(0, match.index);
-    if (/We need|Let's|Let me|I need|Must use/i.test(preamble)) {
+    if (/We need|Let's|Let me|I need|Must use|translate|translation/i.test(preamble)) {
       text = text.substring(match.index);
     }
   }

@@ -97,8 +97,15 @@ async function translate(text: string, systemPrompt: string): Promise<string | n
     clearTimeout(timeout);
     if (!response.ok) return null;
     const data = await response.json();
-    const msg = data?.choices?.[0]?.message;
-    const raw = msg?.content || msg?.reasoning_content || '';
+    let raw = '';
+    // Direct message object: {"role":"assistant","content":"..."}
+    if (data?.role === 'assistant' && typeof data?.content === 'string') {
+      raw = data.content;
+    } else {
+      const msg = data?.choices?.[0]?.message;
+      raw = (typeof msg?.content === 'string' && msg.content.trim()) ? msg.content : '';
+    }
+    // Never use reasoning_content — it's internal AI thinking
     // Strip Pollinations ads
     return raw.trim().replace(/\n---\s*\n+(\*?\*?Support Pollinations|🌸|Powered by Pollinations)[\s\S]*/i, '').trim() || null;
   } catch {
