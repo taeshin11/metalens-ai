@@ -17,6 +17,63 @@ import ShareButtons from './ShareButtons';
 import UpsellBanner from './UpsellBanner';
 import AdBanner from './AdBanner';
 
+const EXTRACT_STEPS = ['extractStep0', 'extractStep1', 'extractStep2', 'extractStep3', 'extractStep4'] as const;
+
+function ExtractionLoader({ count, elapsed, step, color, t }: {
+  count: number;
+  elapsed: number;
+  step: number;
+  color: string;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const mins = Math.floor(elapsed / 60);
+  const secs = elapsed % 60;
+  const elapsedStr = mins > 0 ? `${mins}:${String(secs).padStart(2, '0')}` : `${secs}s`;
+  const batchCount = Math.ceil(count / 20);
+  const stepKey = EXTRACT_STEPS[Math.min(step, EXTRACT_STEPS.length - 1)];
+
+  return (
+    <div className="flex flex-col items-center justify-center gap-4 py-14">
+      {/* Spinner + elapsed */}
+      <div className="relative flex items-center justify-center w-16 h-16">
+        <div
+          className="absolute inset-0 rounded-full border-4 border-transparent animate-spin"
+          style={{ borderTopColor: color, borderRightColor: color + '40' }}
+        />
+        <span className="text-xs font-mono text-[var(--color-text-muted)]">{elapsedStr}</span>
+      </div>
+
+      {/* Step message */}
+      <p className="text-sm font-medium text-[var(--color-text-primary)] text-center max-w-xs">
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        {(t as any)(stepKey, { count, batches: batchCount })}
+      </p>
+
+      {/* Progress dots */}
+      <div className="flex gap-2">
+        {EXTRACT_STEPS.map((_, i) => (
+          <div
+            key={i}
+            className="w-2 h-2 rounded-full transition-all duration-500"
+            style={{
+              backgroundColor: i <= step ? color : 'var(--color-border)',
+              transform: i === step ? 'scale(1.4)' : 'scale(1)',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Estimated time hint — shown for first 5 seconds */}
+      {elapsed < 5 && (
+        <p className="text-xs text-[var(--color-text-muted)] text-center max-w-xs">
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          {(t as any)('extractEstimate', { batches: batchCount })}
+        </p>
+      )}
+    </div>
+  );
+}
+
 interface ResultsCardProps {
   result: SynthesisResult;
   articles: PubMedArticle[];
@@ -37,6 +94,8 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   const [pooled, setPooled] = useState<PooledResult | null>(null);
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState('');
+  const [extractElapsed, setExtractElapsed] = useState(0);
+  const [extractStep, setExtractStep] = useState(0);
   const [abstractDraft, setAbstractDraft] = useState('');
   const [journalRecs, setJournalRecs] = useState('');
   const [toolsLoading, setToolsLoading] = useState(false);
@@ -51,6 +110,21 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   const handleExtract = async () => {
     setExtracting(true);
     setExtractError('');
+    setExtractElapsed(0);
+    setExtractStep(0);
+
+    const startTime = Date.now();
+    const elapsedTimer = setInterval(() => {
+      setExtractElapsed(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+
+    const stepMessages = [0, 1, 2, 3, 4]; // indices into t('extractSteps') array
+    let stepIdx = 0;
+    const stepTimer = setInterval(() => {
+      stepIdx = Math.min(stepIdx + 1, stepMessages.length - 1);
+      setExtractStep(stepIdx);
+    }, 7000);
+
     try {
       const result = await extractDataFromArticles(articles);
       setExtraction(result);
@@ -61,8 +135,10 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
         setPooled(poolResult);
       }
     } catch {
-      setExtractError('Data extraction failed. Try again.');
+      setExtractError('extraction_failed');
     } finally {
+      clearInterval(elapsedTimer);
+      clearInterval(stepTimer);
       setExtracting(false);
     }
   };
@@ -71,10 +147,10 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   const userTierNum = tierOrder[tier] || 0;
 
   const tabs = [
-    { key: 'summary' as const, label: 'AI Summary', icon: '✦', minTier: 0 },
-    { key: 'data' as const, label: 'Data Table', icon: '📊', minTier: 0 },
-    { key: 'meta' as const, label: 'Meta-Analysis', icon: '🔬', minTier: 0 },
-    { key: 'tools' as const, label: 'Writing Tools', icon: '✍️', minTier: 0 },
+    { key: 'summary' as const, label: t('tabAISummary'), icon: '✦', minTier: 0 },
+    { key: 'data' as const, label: t('tabData'), icon: '📊', minTier: 0 },
+    { key: 'meta' as const, label: t('tabMeta'), icon: '🔬', minTier: 0 },
+    { key: 'tools' as const, label: t('tabTools'), icon: '✍️', minTier: 0 },
   ];
 
   const handleGenerateTools = async (tool: 'abstract' | 'journal') => {
@@ -157,7 +233,7 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
           </span>
         </div>
         <p className="text-sm text-[var(--color-text-muted)]">
-          Keywords: <span className="font-medium text-[var(--color-text-secondary)]">{keywords}</span>
+          {t('keywords')}: <span className="font-medium text-[var(--color-text-secondary)]">{keywords}</span>
         </p>
         <div className="mt-3 pt-3 border-t border-[var(--color-border)]">
           <ShareButtons keywords={keywords} paperCount={articles.length} />
@@ -263,15 +339,18 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
             </p>
 
             {extracting ? (
-              <div className="flex items-center justify-center gap-3 py-12">
-                <div className="w-5 h-5 border-2 border-[var(--color-primary)]/30 border-t-[var(--color-primary)] rounded-full animate-spin" />
-                <span className="text-sm text-[var(--color-text-muted)]">Extracting data from {articles.length} papers...</span>
-              </div>
+              <ExtractionLoader
+                count={articles.length}
+                elapsed={extractElapsed}
+                step={extractStep}
+                color="var(--color-primary)"
+                t={t}
+              />
             ) : extractError ? (
               <div className="text-center py-8">
-                <p className="text-sm text-red-500 mb-3">{extractError}</p>
+                <p className="text-sm text-red-500 mb-3">{t('extractionFailed')}</p>
                 <button onClick={handleExtract} className="text-sm text-[var(--color-primary)] hover:underline">
-                  Try again
+                  {t('tryAgain')}
                 </button>
               </div>
             ) : extraction ? (
@@ -291,30 +370,33 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
                 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2"
                 style={{ fontFamily: 'Outfit, sans-serif' }}
               >
-                <span>🔬</span> Statistical Meta-Analysis
+                <span>🔬</span> {t('statMetaTitle')}
                 {/* ULTRA badge hidden during beta */}
               </h3>
 
               {extracting ? (
-                <div className="flex items-center justify-center gap-3 py-12">
-                  <div className="w-5 h-5 border-2 border-[var(--color-accent)]/30 border-t-[var(--color-accent)] rounded-full animate-spin" />
-                  <span className="text-sm text-[var(--color-text-muted)]">Running meta-analysis on {articles.length} papers...</span>
-                </div>
+                <ExtractionLoader
+                  count={articles.length}
+                  elapsed={extractElapsed}
+                  step={extractStep}
+                  color="var(--color-accent)"
+                  t={t}
+                />
               ) : pooled ? (
                 <div className="space-y-4">
                   {/* Pooled Stats Grid */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <StatBox label="Pooled Effect" value={`${pooled.pooledEffect}`} sub={pooled.effectType} />
+                    <StatBox label={t('pooledEffect')} value={`${pooled.pooledEffect}`} sub={pooled.effectType} />
                     <StatBox label="95% CI" value={`${pooled.ciLower} – ${pooled.ciUpper}`} />
                     <StatBox
-                      label="p-value"
+                      label={t('pvalue')}
                       value={pooled.pValue < 0.001 ? '<0.001' : String(pooled.pValue)}
                       highlight={pooled.pValue < 0.05}
                     />
                     <StatBox
-                      label="I² Heterogeneity"
+                      label={`I² ${t('heterogeneity')}`}
                       value={`${pooled.iSquared}%`}
-                      sub={pooled.iSquared > 75 ? 'High' : pooled.iSquared > 50 ? 'Moderate' : 'Low'}
+                      sub={pooled.iSquared > 75 ? t('hetHigh') : pooled.iSquared > 50 ? t('hetModerate') : t('hetLow')}
                     />
                   </div>
 
@@ -326,21 +408,20 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
                   </div>
 
                   <p className="text-[10px] text-[var(--color-text-muted)] text-center">
-                    Based on {pooled.numStudies} studies (N={pooled.totalN}). Fixed-effect inverse-variance model.
+                    {t('basedOn', { numStudies: pooled.numStudies, totalN: pooled.totalN })}
                   </p>
                 </div>
               ) : extraction && !extraction.poolable ? (
                 <div className="text-center py-8">
                   <p className="text-sm text-[var(--color-text-muted)]">
-                    Not enough studies with comparable effect sizes to perform statistical pooling.
-                    <br />At least 3 studies with the same effect type (OR, RR, MD, etc.) are needed.
+                    {t('notEnoughStudies')}
                   </p>
                 </div>
               ) : extractError ? (
                 <div className="text-center py-8">
-                  <p className="text-sm text-red-500 mb-3">{extractError}</p>
+                  <p className="text-sm text-red-500 mb-3">{t('extractionFailed')}</p>
                   <button onClick={handleExtract} className="text-sm text-[var(--color-primary)] hover:underline">
-                    Try again
+                    {t('tryAgain')}
                   </button>
                 </div>
               ) : null}
@@ -353,7 +434,7 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
                   className="text-lg font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2"
                   style={{ fontFamily: 'Outfit, sans-serif' }}
                 >
-                  🌲 Forest Plot
+                  🌲 {t('forestPlotTitle')}
                 </h3>
                 <ForestPlot studies={extraction.data} pooled={pooled} />
               </div>
@@ -366,10 +447,10 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
                   className="text-lg font-semibold text-[var(--color-text-primary)] mb-2 flex items-center gap-2"
                   style={{ fontFamily: 'Outfit, sans-serif' }}
                 >
-                  🔻 Funnel Plot
+                  🔻 {t('funnelPlotTitle')}
                 </h3>
                 <p className="text-xs text-[var(--color-text-muted)] mb-4">
-                  Assesses publication bias by plotting effect size vs. precision. Asymmetry may indicate selective reporting.
+                  {t('funnelPlotDesc')}
                 </p>
                 <FunnelPlot studies={extraction.data} pooled={pooled} />
               </div>
@@ -382,29 +463,27 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
                   className="text-lg font-semibold text-[var(--color-primary-dark)] mb-3 flex items-center gap-2"
                   style={{ fontFamily: 'Outfit, sans-serif' }}
                 >
-                  📋 Meta-Analysis Summary
+                  📋 {t('metaSummaryTitle')}
                 </h3>
                 <div className="space-y-3 text-sm text-[var(--color-text-primary)] leading-relaxed">
                   <p>
-                    <strong>Pooled Effect:</strong> The combined {pooled.effectType} across {pooled.numStudies} studies
-                    {pooled.totalN > 0 && ` (total N = ${pooled.totalN.toLocaleString()})`} was <strong>{pooled.pooledEffect.toFixed(2)}</strong> (95%
+                    <strong>{t('pooledEffect')}:</strong> {t('summaryPooled', { effectType: pooled.effectType, numStudies: pooled.numStudies })}
+                    {pooled.totalN > 0 && t('summaryTotalN', { totalN: pooled.totalN.toLocaleString() })} was <strong>{pooled.pooledEffect.toFixed(2)}</strong> (95%
                     CI: {pooled.ciLower.toFixed(2)} to {pooled.ciUpper.toFixed(2)}),
-                    which was {pooled.pValue < 0.05 ? 'statistically significant' : 'not statistically significant'} (p {pooled.pValue < 0.001 ? '< 0.001' : `= ${pooled.pValue}`}).
+                    {pooled.pValue < 0.05 ? t('summarySig') : t('summaryNotSig')} (p {pooled.pValue < 0.001 ? '< 0.001' : `= ${pooled.pValue}`}).
                   </p>
                   <p>
-                    <strong>Heterogeneity:</strong> I² = {pooled.iSquared}%,
-                    indicating {pooled.iSquared > 75 ? 'high' : pooled.iSquared > 50 ? 'moderate' : pooled.iSquared > 25 ? 'low-to-moderate' : 'low'} heterogeneity
-                    between studies. {pooled.iSquared > 50 ? 'A random-effects model may be more appropriate given this level of heterogeneity.' : 'The fixed-effect model used here appears reasonable.'}
+                    <strong>{t('heterogeneity')}:</strong> I² = {pooled.iSquared}%,
+                    {pooled.iSquared > 75 ? t('summaryHetHigh') : pooled.iSquared > 50 ? t('summaryHetMod') : pooled.iSquared > 25 ? t('summaryHetLowMod') : t('summaryHetLow')}.
+                    {pooled.iSquared > 50 ? ` ${t('summaryRandomNote')}` : ` ${t('summaryFixedNote')}`}
                   </p>
                   <p>
-                    <strong>Data Coverage:</strong> {extraction.data.filter(d => d.effectSize !== null).length} of {extraction.data.length} papers
-                    had extractable quantitative data.
+                    <strong>{t('dataCoverage')}:</strong> {t('dataCoverageText', { withData: extraction.data.filter(d => d.effectSize !== null).length, total: extraction.data.length })}
                     {extraction.data.length - extraction.data.filter(d => d.effectSize !== null).length > 0 &&
-                      ` ${extraction.data.length - extraction.data.filter(d => d.effectSize !== null).length} papers lacked numerical effect sizes in their abstracts.`}
+                      ` ${t('dataCoverageMissing', { missing: extraction.data.length - extraction.data.filter(d => d.effectSize !== null).length })}`}
                   </p>
                   <p className="text-xs text-[var(--color-text-muted)] pt-2 border-t border-[var(--color-border)]">
-                    This analysis is based on abstract-level data using a fixed-effect inverse-variance model.
-                    Results should be interpreted as preliminary and verified with full-text data before clinical application.
+                    {t('summaryDisclaimer')}
                   </p>
                 </div>
               </div>
