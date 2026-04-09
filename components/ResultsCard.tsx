@@ -28,8 +28,9 @@ function ExtractionLoader({ count, elapsed, step, color, t }: {
 }) {
   const mins = Math.floor(elapsed / 60);
   const secs = elapsed % 60;
-  const elapsedStr = mins > 0 ? `${mins}:${String(secs).padStart(2, '0')}` : `${secs}s`;
-  const batchCount = Math.ceil(count / 20);
+  const elapsedStr = mins > 0
+    ? `${mins}:${String(secs).padStart(2, '0')}`
+    : `${secs}${(t as any)('extractSeconds')}`;
   const stepKey = EXTRACT_STEPS[Math.min(step, EXTRACT_STEPS.length - 1)];
 
   return (
@@ -46,7 +47,7 @@ function ExtractionLoader({ count, elapsed, step, color, t }: {
       {/* Step message */}
       <p className="text-sm font-medium text-[var(--color-text-primary)] text-center max-w-xs">
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-        {(t as any)(stepKey, { count, batches: batchCount })}
+        {(t as any)(stepKey, { count })}
       </p>
 
       {/* Progress dots */}
@@ -67,7 +68,7 @@ function ExtractionLoader({ count, elapsed, step, color, t }: {
       {elapsed < 5 && (
         <p className="text-xs text-[var(--color-text-muted)] text-center max-w-xs">
           {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {(t as any)('extractEstimate', { batches: batchCount })}
+          {(t as any)('extractEstimate')}
         </p>
       )}
     </div>
