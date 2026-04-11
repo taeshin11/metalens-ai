@@ -8,21 +8,23 @@ import { SITE_NAME, SITE_URL, SUPPORTED_LOCALES } from '@/lib/constants';
 // Google Analytics Measurement ID — replace with your actual GA4 ID
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
 
-// Map locales to BCP-47 hreflang codes
+// Map locales to BCP-47 hreflang codes.
+// Naver prefers ko-KR, Baidu prefers zh-CN, Yandex prefers ru (we don't have ru yet).
 const HREFLANG_MAP: Record<string, string> = {
   en: 'en',
-  ko: 'ko',
-  ja: 'ja',
-  zh: 'zh-Hans',
+  ko: 'ko-KR',
+  ja: 'ja-JP',
+  zh: 'zh-CN',
   es: 'es',
   pt: 'pt',
-  de: 'de',
-  fr: 'fr',
+  de: 'de-DE',
+  fr: 'fr-FR',
 };
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import HomeJsonLd from '@/components/HomeJsonLd';
 import AuthProvider from '@/components/AuthProvider';
+import KakaoWebviewGuard from '@/components/KakaoWebviewGuard';
 import '../globals.css';
 
 export async function generateMetadata({
@@ -75,7 +77,19 @@ export async function generateMetadata({
     creator: 'SPINAI',
     publisher: 'SPINAI',
     verification: {
-      google: 'WddgcbVJsL2BGHNAje5m6DK56IcR0Mw5UOqozI2Xtrc',
+      google: ['WddgcbVJsL2BGHNAje5m6DK56IcR0Mw5UOqozI2Xtrc', 'aNnJOiFANf2bXdlGMVZmhPQ-qTyTn6KDE7Pig6AVYRA'],
+      yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || undefined,
+      other: {
+        ...(process.env.NEXT_PUBLIC_NAVER_VERIFICATION && {
+          'naver-site-verification': process.env.NEXT_PUBLIC_NAVER_VERIFICATION,
+        }),
+        ...(process.env.NEXT_PUBLIC_BAIDU_VERIFICATION && {
+          'baidu-site-verification': process.env.NEXT_PUBLIC_BAIDU_VERIFICATION,
+        }),
+        ...(process.env.NEXT_PUBLIC_BING_VERIFICATION && {
+          'msvalidate.01': process.env.NEXT_PUBLIC_BING_VERIFICATION,
+        }),
+      },
     },
     alternates: {
       canonical: localeUrl,
@@ -136,6 +150,21 @@ export default async function LocaleLayout({
         {/* — RSS feed — */}
         <link rel="alternate" type="application/rss+xml" title="MetaLens AI Blog" href="/feed.xml" />
 
+        {/* — Portal-friendly meta tags (Naver/Bing/Baidu) — */}
+        <meta httpEquiv="content-language" content={HREFLANG_MAP[locale] || locale} />
+        <meta name="author" content="SPINAI" />
+        <meta name="copyright" content="SPINAI" />
+        <meta name="distribution" content="global" />
+        <meta name="rating" content="general" />
+        <meta name="revisit-after" content="3 days" />
+        <meta name="referrer" content="no-referrer-when-downgrade" />
+        {/* Naver-specific link preview optimization */}
+        <meta property="me2:post_tag" content="meta-analysis,medical-research,pubmed,ai" />
+        {/* Baidu — disable translation prompt on Chinese version */}
+        {locale === 'zh' && <meta name="google" content="notranslate" />}
+        {/* Baidu — prevent transcoding of mobile pages */}
+        <meta httpEquiv="Cache-Control" content="no-transform" />
+
         {/* — Preconnect hints for external domains — */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -153,6 +182,7 @@ export default async function LocaleLayout({
       <body className="min-h-full flex flex-col" style={{ fontFamily: "'Source Sans 3', sans-serif" }}>
         <AuthProvider>
           <NextIntlClientProvider messages={messages}>
+            <KakaoWebviewGuard />
             <HomeJsonLd />
             <Header />
             <main className="flex-1">{children}</main>
