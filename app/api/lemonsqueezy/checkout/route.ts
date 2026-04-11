@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Login required' }, { status: 401 });
     }
 
-    const { plan } = await request.json() as { plan: string };
+    const { plan, locale } = await request.json() as { plan: string; locale?: string };
     const variantId = VARIANT_IDS[plan as PlanKey];
 
     if (!variantId) {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const url = await createCheckoutUrl(
       variantId,
       session.email,
-      `${SITE_URL}/en/pricing?success=true`,
+      `${SITE_URL}/${locale || 'en'}/pricing?success=true`,
     );
 
     if (!url) {

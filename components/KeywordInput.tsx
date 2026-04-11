@@ -33,10 +33,13 @@ export default function KeywordInput({ onSubmit, isLoading, initialValue }: Keyw
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
+  const MAX_KEYWORD_LENGTH = 500;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (keywords.trim() && !isLoading) {
-      onSubmit(keywords.trim(), filters, mode);
+      // Guard: PubMed query URLs break beyond 500 chars
+      onSubmit(keywords.trim().slice(0, MAX_KEYWORD_LENGTH), filters, mode);
     }
   };
 
@@ -88,6 +91,7 @@ export default function KeywordInput({ onSubmit, isLoading, initialValue }: Keyw
             onChange={(e) => setKeywords(e.target.value)}
             placeholder={mode === 'meta-analysis' ? t('placeholder') : t('placeholderGap')}
             disabled={isLoading}
+            maxLength={500}
             className="w-full px-5 py-4 text-base bg-white border-2 border-[var(--color-border)] rounded-2xl focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all placeholder:text-[var(--color-text-muted)] text-[var(--color-text-primary)] disabled:opacity-60"
             aria-label="Enter medical keywords"
           />

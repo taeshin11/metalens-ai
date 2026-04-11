@@ -20,14 +20,12 @@ function init() {
 export const VARIANT_IDS = {
   pro_monthly: process.env.LS_VARIANT_PRO_MONTHLY || '',
   pro_yearly: process.env.LS_VARIANT_PRO_YEARLY || '',
-  ultra_monthly: process.env.LS_VARIANT_ULTRA_MONTHLY || '',
-  ultra_yearly: process.env.LS_VARIANT_ULTRA_YEARLY || '',
 } as const;
 
 export type PlanKey = keyof typeof VARIANT_IDS;
 
 export function planKeyToTier(key: string): 'pro' | 'ultra' {
-  return key.startsWith('ultra') ? 'ultra' : 'pro';
+  return 'pro';
 }
 
 export function variantIdToPlanKey(variantId: string): PlanKey | null {

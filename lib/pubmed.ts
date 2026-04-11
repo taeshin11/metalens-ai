@@ -14,7 +14,10 @@ export interface PubMedArticle {
 async function fetchWithRetry(url: string, retries = 2): Promise<Response> {
   for (let i = 0; i < retries; i++) {
     try {
-      const res = await fetch(url, { cache: 'no-store' });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15_000);
+      const res = await fetch(url, { cache: 'no-store', signal: controller.signal });
+      clearTimeout(timeoutId);
       if (res.ok) return res;
       // PubMed rate limit (429) or server error — retry
       if (res.status === 429 || res.status >= 500) {

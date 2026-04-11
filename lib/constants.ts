@@ -1,6 +1,6 @@
 export const SITE_NAME = 'MetaLens AI';
 export const SITE_DESCRIPTION = 'Enter medical keywords and get instant AI-powered meta-analysis summaries from 40M+ PubMed papers. Free tool by SPINAI.';
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://metalens-ai.vercel.app';
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://metalens-ai.com';
 export const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'taeshinkim11@gmail.com';
 export const BRAND_NAME = 'SPINAI';
 
@@ -9,11 +9,11 @@ export type Locale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
 // === Tier System ===
-export type Tier = 'free' | 'pro' | 'ultra';
+export type Tier = 'free' | 'pro' | 'ultra'; // 'ultra' = legacy value from old subscriptions, treated as 'pro'
 
 export const TIER_CONFIG = {
   free: {
-    dailyLimit: 5,
+    dailyLimit: 3,       // lifetime total limit for free tier
     pointCount: 3,
     model: 'gemini-2.5-flash',
     label: 'Free',
@@ -21,20 +21,21 @@ export const TIER_CONFIG = {
     yearlyPrice: 0,
   },
   pro: {
-    dailyLimit: 50,
-    pointCount: 7,
-    model: 'gemini-2.5-flash',
-    label: 'Pro',
-    price: 2.99,
-    yearlyPrice: 29.99,
-  },
-  ultra: {
     dailyLimit: 200,
     pointCount: 10,
     model: 'gemini-2.5-flash',
-    label: 'Ultra',
-    price: 6.99,
-    yearlyPrice: 69.99,
+    label: 'Pro',
+    price: 4.99,
+    yearlyPrice: 39.99,
+  },
+  ultra: {
+    // Legacy alias — treated same as pro
+    dailyLimit: 200,
+    pointCount: 10,
+    model: 'gemini-2.5-flash',
+    label: 'Pro',
+    price: 4.99,
+    yearlyPrice: 39.99,
   },
 } as const;
 
@@ -42,8 +43,6 @@ export const TIER_CONFIG = {
 export const LS_VARIANTS = {
   pro_monthly: process.env.LS_VARIANT_PRO_MONTHLY || '',
   pro_yearly: process.env.LS_VARIANT_PRO_YEARLY || '',
-  ultra_monthly: process.env.LS_VARIANT_ULTRA_MONTHLY || '',
-  ultra_yearly: process.env.LS_VARIANT_ULTRA_YEARLY || '',
 };
 
 // Legacy compat

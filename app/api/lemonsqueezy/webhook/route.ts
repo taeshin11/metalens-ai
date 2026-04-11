@@ -10,12 +10,15 @@ export async function POST(request: NextRequest) {
   const sig = request.headers.get('x-signature') || '';
   const secret = process.env.LEMONSQUEEZY_WEBHOOK_SECRET || '';
 
-  // Verify signature
-  if (secret) {
-    const hmac = crypto.createHmac('sha256', secret).update(body).digest('hex');
-    if (hmac !== sig) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
-    }
+  // Verify signature — reject if no secret is configured
+  if (!secret) {
+    return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 });
+  }
+  const hmac = crypto.createHmac('sha256', secret).update(body).digest('hex');
+  const hmacBuf = Buffer.from(hmac, 'hex');
+  const sigBuf = Buffer.from(sig, 'hex');
+  if (hmacBuf.length !== sigBuf.length || !crypto.timingSafeEqual(hmacBuf, sigBuf)) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
   }
 
   let event;

@@ -23,7 +23,7 @@ export default function TermsPage() {
       <div className="bg-white rounded-2xl p-8 shadow-sm border border-[var(--color-border)] space-y-8">
         <p className="text-[var(--color-text-secondary)] leading-relaxed text-lg">
           Welcome to MetaLens AI. These Terms of Service (&quot;Terms&quot;) govern your access to
-          and use of MetaLens AI (accessible at https://metalens-ai.vercel.app), operated by
+          and use of MetaLens AI (accessible at https://metalens-ai.com), operated by
           SPINAI (&quot;we,&quot; &quot;us,&quot; or &quot;our&quot;). By accessing or using
           MetaLens AI, you agree to be bound by these Terms. If you do not agree to these Terms,
           you must not use the service.

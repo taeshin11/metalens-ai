@@ -23,8 +23,11 @@ export async function POST(request: NextRequest) {
     if (!isAdmin) {
       const rl = await checkRateLimit(identifier, tier);
       if (!rl.allowed) {
+        const errorMsg = tier === 'free'
+          ? 'Free usage limit reached. Upgrade to Pro for more analyses.'
+          : 'Daily limit reached. Resets at midnight UTC.';
         return NextResponse.json(
-          { error: 'Daily limit reached', limit: rl.limit, tier },
+          { error: errorMsg, limit: rl.limit, tier },
           { status: 429 },
         );
       }

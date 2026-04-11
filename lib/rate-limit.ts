@@ -1,8 +1,20 @@
 /**
  * Upstash Redis 기반 Rate Limiter
- * - 서버 재시작해도 카운트 유지
- * - UTC 자정 기준 일별 리셋
+ * - Beta period (until 2026-04-15): logged-in users get unlimited
+ * - free tier: 영구 총량 제한 (평생 3회)
+ * - pro/ultra: 일별 제한 (UTC 자정 리셋)
  */
+
+const BETA_END = new Date('2026-04-16T00:00:00Z'); // unlimited for logged-in until Apr 15
+
+function isBetaPeriod(): boolean {
+  return new Date() < BETA_END;
+}
+
+// Logged-in identifier = contains '@' (email); guests = IP string
+function isLoggedIn(identifier: string): boolean {
+  return identifier.includes('@');
+}
 import { Redis } from '@upstash/redis';
 import type { Tier } from './constants';
 import { TIER_CONFIG } from './constants';
@@ -18,7 +30,11 @@ function getUtcMidnightTtl(): number {
   return Math.floor((midnight.getTime() - now.getTime()) / 1000);
 }
 
-function rateLimitKey(identifier: string): string {
+function rateLimitKey(identifier: string, tier: Tier): string {
+  if (tier === 'free') {
+    // 날짜 없음 — 영구 총량 카운터
+    return `rl:total:${identifier}`;
+  }
   const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   return `rl:${date}:${identifier}`;
 }
@@ -27,16 +43,24 @@ export async function checkRateLimit(
   identifier: string,
   tier: Tier,
 ): Promise<{ allowed: boolean; remaining: number; limit: number }> {
+  // Beta: logged-in users get unlimited
+  if (isBetaPeriod() && isLoggedIn(identifier)) {
+    return { allowed: true, remaining: 999, limit: 999 };
+  }
+
   const limit = TIER_CONFIG[tier].dailyLimit;
-  const key = rateLimitKey(identifier);
-  const ttl = getUtcMidnightTtl();
+  const key = rateLimitKey(identifier, tier);
 
   let count: number;
   try {
     count = await redis.incr(key);
-    if (count === 1) await redis.expire(key, ttl);
+    // pro/ultra: 자정 리셋 (첫 요청 시 TTL 설정)
+    if (tier !== 'free' && count === 1) {
+      await redis.expire(key, getUtcMidnightTtl());
+    }
+    // free: TTL 없음 (영구 보존)
   } catch {
-    // Redis unavailable — allow request with conservative remaining
+    // Redis unavailable — allow request
     return { allowed: true, remaining: 1, limit };
   }
 
@@ -52,7 +76,7 @@ export async function getRateLimitStatus(
   tier: Tier,
 ): Promise<{ count: number; remaining: number; limit: number }> {
   const limit = TIER_CONFIG[tier].dailyLimit;
-  const key = rateLimitKey(identifier);
+  const key = rateLimitKey(identifier, tier);
   const count = (await redis.get<number>(key)) || 0;
   return { count, remaining: Math.max(0, limit - count), limit };
 }

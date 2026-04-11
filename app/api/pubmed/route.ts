@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { searchAndFetch } from '@/lib/pubmed';
 
 export async function GET(request: NextRequest) {
-  const keywords = request.nextUrl.searchParams.get('q');
+  const rawKeywords = request.nextUrl.searchParams.get('q');
+  const keywords = rawKeywords?.trim();
   if (!keywords) {
     return NextResponse.json({ error: 'Missing keywords' }, { status: 400 });
   }
