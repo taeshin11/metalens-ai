@@ -47,7 +47,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'How should I cite MetaLens AI results in academic work?',
     answer:
-      'If you use MetaLens AI results in academic papers, presentations, or reports, we recommend citing the individual PubMed sources referenced in the analysis rather than citing MetaLens AI itself as a primary source. Each finding in your MetaLens AI report includes PMID links that you can use to locate the original papers for proper citation. If you wish to acknowledge MetaLens AI as a tool in your methodology section, you can describe it as: "Literature search and preliminary synthesis were assisted by MetaLens AI (https://metalens-ai.vercel.app), an AI-powered meta-analysis tool that queries the PubMed database." Always verify key claims against the original source papers before including them in formal academic work.',
+      'If you use MetaLens AI results in academic papers, presentations, or reports, we recommend citing the individual PubMed sources referenced in the analysis rather than citing MetaLens AI itself as a primary source. Each finding in your MetaLens AI report includes PMID links that you can use to locate the original papers for proper citation. If you wish to acknowledge MetaLens AI as a tool in your methodology section, you can describe it as: "Literature search and preliminary synthesis were assisted by MetaLens AI (https://metalens-ai.com), an AI-powered meta-analysis tool that queries the PubMed database." Always verify key claims against the original source papers before including them in formal academic work.',
   },
   {
     question: 'Is MetaLens AI a substitute for professional medical advice?',

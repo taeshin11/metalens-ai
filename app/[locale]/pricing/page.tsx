@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/components/AuthProvider';
@@ -29,17 +29,17 @@ interface PlanFeature {
   count?: number;
 }
 
-const PLANS: { key: 'free' | 'pro' | 'ultra'; popular: boolean; features: PlanFeature[] }[] = [
+const PLANS: { key: 'free' | 'pro'; popular: boolean; features: PlanFeature[] }[] = [
   {
     key: 'free', popular: false,
     features: [
-      { key: 'f_analyses', included: true, count: 5 },
+      { key: 'f_analyses', included: true, count: 3 },
       { key: 'f_meta', included: true },
       { key: 'f_gap', included: true },
       { key: 'f_pubmed', included: true },
       { key: 'f_lang', included: true },
-      { key: 'f_plots', included: true },
-      { key: 'f_datatable', included: true },
+      { key: 'f_plots', included: false },
+      { key: 'f_datatable', included: false },
       { key: 'f_abstract', included: false, soon: true },
       { key: 'f_journal', included: false, soon: true },
       { key: 'f_pdf', included: false, soon: true },
@@ -49,23 +49,6 @@ const PLANS: { key: 'free' | 'pro' | 'ultra'; popular: boolean; features: PlanFe
   },
   {
     key: 'pro', popular: true,
-    features: [
-      { key: 'f_analyses', included: true, count: 50 },
-      { key: 'f_meta', included: true },
-      { key: 'f_gap', included: true },
-      { key: 'f_pubmed', included: true },
-      { key: 'f_lang', included: true },
-      { key: 'f_plots', included: true },
-      { key: 'f_datatable', included: true },
-      { key: 'f_abstract', included: true, soon: true },
-      { key: 'f_journal', included: true, soon: true },
-      { key: 'f_pdf', included: true, soon: true },
-      { key: 'f_draft', included: false },
-      { key: 'f_diff', included: false },
-    ],
-  },
-  {
-    key: 'ultra', popular: false,
     features: [
       { key: 'f_analyses', included: true, count: 200 },
       { key: 'f_meta', included: true },
@@ -85,6 +68,7 @@ const PLANS: { key: 'free' | 'pro' | 'ultra'; popular: boolean; features: PlanFe
 
 export default function PricingPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const locale = params.locale as string;
   const t = useTranslations('pricing');
   const [billing, setBilling] = useState<Billing>('monthly');
@@ -92,7 +76,17 @@ export default function PricingPage() {
   const [submitted, setSubmitted] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
   const { user, openSignIn } = useAuth();
+
+  useEffect(() => {
+    if (searchParams.get('success') === 'true') {
+      setPaymentSuccess(true);
+      // Force page reload after 2s so Clerk session picks up new tier
+      const timer = setTimeout(() => window.location.replace(`/${locale}/pricing`), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, locale]);
 
   const handleCheckout = async (planKey: string) => {
     if (!user) {
@@ -105,7 +99,7 @@ export default function PricingPage() {
       const res = await fetch('/api/lemonsqueezy/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: planKey }),
+        body: JSON.stringify({ plan: planKey, locale }),
       });
       const data = await res.json();
       if (data.url) {
@@ -147,6 +141,18 @@ export default function PricingPage() {
 
   return (
     <section className="max-w-[1200px] mx-auto px-4 sm:px-6 py-16 sm:py-24">
+      {/* Payment Success Banner */}
+      {paymentSuccess && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8 p-5 bg-[var(--color-success)]/10 border border-[var(--color-success)]/30 rounded-2xl text-center"
+        >
+          <div className="text-2xl mb-2">🎉</div>
+          <h2 className="text-lg font-bold text-[var(--color-success)] mb-1">{t('successTitle')}</h2>
+          <p className="text-sm text-[var(--color-text-secondary)]">{t('successDesc')}</p>
+        </motion.div>
+      )}
       {/* Header */}
       <div className="text-center space-y-4 mb-12">
         <h1 className="text-4xl sm:text-5xl font-bold text-[var(--color-text-primary)]" style={{ fontFamily: 'Outfit, sans-serif' }}>

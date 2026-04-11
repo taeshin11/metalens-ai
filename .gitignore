@@ -37,3 +37,10 @@ next-env.d.ts
 
 .vercel
 .env.local
+
+# local utility scripts (contain secrets)
+.gsc_auth.py
+.gsc_auth2.py
+.gsc_verify.py
+.pkce_verifier
+FEATURES.txt

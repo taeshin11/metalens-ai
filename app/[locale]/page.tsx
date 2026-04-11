@@ -155,10 +155,32 @@ export default function HomePage() {
     return () => window.removeEventListener('metalens:home', handler);
   });
 
+  const BETA_END = new Date('2026-04-16T00:00:00Z');
+  const betaActive = new Date() < BETA_END;
+
   return (
     <>
       <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
       <FeedbackButton />
+
+      {/* Beta Banner */}
+      {betaActive && (
+        <div className="w-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white py-3 px-4 text-center">
+          <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+            <span className="text-sm font-semibold">
+              🎉 {t('betaBannerTitle')} &nbsp;|&nbsp; {user ? t('betaBannerLoggedIn') : t('betaBannerMsg')}
+            </span>
+            {!user && (
+              <button
+                onClick={() => setShowLogin(true)}
+                className="shrink-0 px-4 py-1.5 bg-white text-[var(--color-primary)] text-xs font-bold rounded-full hover:bg-white/90 transition-colors"
+              >
+                {t('betaBannerCta')}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Hero Section */}
       {stage !== 'done' && (
@@ -373,7 +395,7 @@ export default function HomePage() {
                 ].map((s) => (
                   <div key={s.step} className="text-center p-6 rounded-2xl bg-[var(--color-bg-primary)] border border-[var(--color-border)]">
                     <div className="text-3xl mb-3">{s.icon}</div>
-                    <div className="text-xs font-semibold text-[var(--color-primary)] uppercase tracking-wider mb-2">Step {s.step}</div>
+                    <div className="text-xs font-semibold text-[var(--color-primary)] uppercase tracking-wider mb-2">{t('step')} {s.step}</div>
                     <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
                       {s.title}
                     </h3>

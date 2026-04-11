@@ -15,7 +15,7 @@ export default function HomeJsonLd() {
         name: 'Free',
         price: '0',
         priceCurrency: 'USD',
-        description: '5 analyses per day, 5-point summaries',
+        description: '3 analyses per day, 3-point summaries',
       },
       {
         '@type': 'Offer',

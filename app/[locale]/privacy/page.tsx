@@ -23,7 +23,7 @@ export default function PrivacyPage() {
         <p className="text-[var(--color-text-secondary)] leading-relaxed text-lg">
           This Privacy Policy describes how SPINAI (&quot;we,&quot; &quot;us,&quot; or
           &quot;our&quot;) collects, uses, and protects your personal information when you use
-          MetaLens AI (accessible at https://metalens-ai.vercel.app). We are committed to
+          MetaLens AI (accessible at https://metalens-ai.com). We are committed to
           protecting your privacy and ensuring transparency about our data practices. By using
           MetaLens AI, you consent to the data practices described in this policy.
         </p>
