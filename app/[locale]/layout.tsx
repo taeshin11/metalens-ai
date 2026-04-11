@@ -80,9 +80,7 @@ export async function generateMetadata({
       google: ['WddgcbVJsL2BGHNAje5m6DK56IcR0Mw5UOqozI2Xtrc', 'aNnJOiFANf2bXdlGMVZmhPQ-qTyTn6KDE7Pig6AVYRA'],
       yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || undefined,
       other: {
-        ...(process.env.NEXT_PUBLIC_NAVER_VERIFICATION && {
-          'naver-site-verification': process.env.NEXT_PUBLIC_NAVER_VERIFICATION,
-        }),
+        'naver-site-verification': 'd181f015498ff7d7b280da0749bce165a3b44e01',
         ...(process.env.NEXT_PUBLIC_BAIDU_VERIFICATION && {
           'baidu-site-verification': process.env.NEXT_PUBLIC_BAIDU_VERIFICATION,
         }),
