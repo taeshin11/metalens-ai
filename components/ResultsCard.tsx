@@ -99,6 +99,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   const [extractStep, setExtractStep] = useState(0);
   const [abstractDraft, setAbstractDraft] = useState('');
   const [journalRecs, setJournalRecs] = useState('');
+  const [proposalDraft, setProposalDraft] = useState('');
   const [toolsLoading, setToolsLoading] = useState(false);
 
   // Auto-extract data when switching to data/meta tab
@@ -154,7 +155,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
     { key: 'tools' as const, label: t('tabTools'), icon: '✍️', minTier: 0 },
   ];
 
-  const handleGenerateTools = async (tool: 'abstract' | 'journal') => {
+  const handleGenerateTools = async (tool: 'abstract' | 'journal' | 'proposal') => {
     setToolsLoading(true);
     try {
       const summaryText = result.english;
@@ -181,7 +182,7 @@ Key source papers:
 ${articleList}
 
 Output ONLY the abstract text with section headers in bold. Target length: 250-350 words. Use formal academic language.`;
-      } else {
+      } else if (tool === 'journal') {
         prompt = `Based on the following meta-analysis topic and ${paperCount} PubMed papers, recommend the most suitable SCI/SCIE journals for submission.
 
 For each journal, provide:
@@ -196,6 +197,32 @@ Keywords: ${keywords}
 Source papers were published in: ${[...new Set(articles.map(a => a.journal))].slice(0, 10).join(', ')}
 
 Recommend exactly 5 journals, ordered by fit (best match first). Include a mix of high-impact and realistic options. Output in structured format with bold headers.`;
+      } else {
+        prompt = `Based on the following meta-analysis findings and ${paperCount} PubMed papers, generate a structured research proposal draft.
+
+The proposal should include the following sections:
+1. **Title** — A concise, descriptive research title
+2. **Introduction & Background** — Context, significance, and current state of evidence (3-4 sentences)
+3. **Research Objectives** — 2-3 specific, measurable objectives
+4. **Hypotheses** — Primary and secondary hypotheses
+5. **Methods**
+   - Study Design: recommended study type (RCT, cohort, systematic review, etc.)
+   - Participants/Inclusion Criteria
+   - Intervention/Exposure
+   - Primary Outcome Measures
+   - Statistical Analysis Plan
+6. **Expected Outcomes & Significance** — Anticipated findings and clinical/scientific impact
+7. **Limitations** — Key limitations to acknowledge
+
+Keywords analyzed: ${keywords}
+
+Meta-analysis findings (use these as evidence for the background and hypotheses):
+${summaryText}
+
+Key source papers:
+${articleList}
+
+Output the proposal with each section header in bold. Write in formal academic language suitable for a grant or ethics committee submission. Target length: 400-600 words.`;
       }
 
       const response = await fetch('/api/synthesize', {
@@ -207,10 +234,63 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
       if (response.ok) {
         const data = await response.json();
         if (tool === 'abstract') setAbstractDraft(data.result || '');
-        else setJournalRecs(data.result || '');
+        else if (tool === 'journal') setJournalRecs(data.result || '');
+        else setProposalDraft(data.result || '');
       }
     } catch { /* silent */ }
     setToolsLoading(false);
+  };
+
+  const handleExportPDF = () => {
+    const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const sourcesList = articles.map(a =>
+      `<li style="margin-bottom:6px"><a href="https://pubmed.ncbi.nlm.nih.gov/${a.pmid}/" style="color:#2D7A73">${a.title}</a><br><span style="font-size:11px;color:#6B7C8A">${a.authors.slice(0, 3).join(', ')}${a.authors.length > 3 ? ' et al.' : ''} · ${a.journal} (${a.year}) · PMID: ${a.pmid}</span></li>`
+    ).join('');
+
+    const summaryHtml = (result.translated || result.english)
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MetaLens AI Report — ${keywords}</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #2C3E50; }
+  h1 { font-size: 22px; color: #2D7A73; border-bottom: 2px solid #4DA8A0; padding-bottom: 8px; }
+  h2 { font-size: 16px; color: #2D7A73; margin-top: 28px; }
+  .meta { font-size: 13px; color: #6B7C8A; margin-bottom: 24px; }
+  .summary { background: #F9FAFB; border-left: 4px solid #4DA8A0; padding: 16px 20px; border-radius: 4px; line-height: 1.7; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 8px; line-height: 1.5; }
+  .footer { margin-top: 40px; font-size: 11px; color: #9BA8B2; border-top: 1px solid #E2DDD8; padding-top: 12px; }
+  @media print { body { margin: 20px; } }
+</style>
+</head>
+<body>
+<h1>MetaLens AI — Research Summary Report</h1>
+<div class="meta">
+  <strong>Keywords:</strong> ${keywords}<br>
+  <strong>Papers analyzed:</strong> ${articles.length}<br>
+  <strong>Generated:</strong> ${date}
+</div>
+<h2>AI Summary</h2>
+<div class="summary">${summaryHtml}</div>
+<h2>Sources (${articles.length} papers)</h2>
+<ul>${sourcesList}</ul>
+<div class="footer">
+  Generated by MetaLens AI (metalens-ai.vercel.app) · For research purposes only · Not medical advice
+</div>
+<script>window.onload = function(){ window.print(); }</script>
+</body>
+</html>`;
+
+    const printWin = window.open('', '_blank');
+    if (printWin) {
+      printWin.document.write(html);
+      printWin.document.close();
+    }
   };
 
   return (
@@ -236,8 +316,15 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
         <p className="text-sm text-[var(--color-text-muted)]">
           {t('keywords')}: <span className="font-medium text-[var(--color-text-secondary)]">{keywords}</span>
         </p>
-        <div className="mt-3 pt-3 border-t border-[var(--color-border)]">
+        <div className="mt-3 pt-3 border-t border-[var(--color-border)] flex items-center justify-between flex-wrap gap-2">
           <ShareButtons keywords={keywords} paperCount={articles.length} />
+          <button
+            onClick={handleExportPDF}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-secondary)] rounded-lg hover:bg-[var(--color-border)] transition-colors"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            Export PDF
+          </button>
         </div>
       </div>
 
@@ -524,6 +611,37 @@ Recommend exactly 5 journals, ordered by fit (best match first). Include a mix o
               </div>
             ) : !toolsLoading ? (
               <div className="text-center py-6 text-sm text-[var(--color-text-muted)]">{tt('abstractHint')}</div>
+            ) : null}
+          </div>
+
+          {/* Research Proposal Draft */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                🔬 {tt('proposalTitle')}
+              </h3>
+              {!proposalDraft && (
+                <button onClick={() => handleGenerateTools('proposal')} disabled={toolsLoading}
+                  className="px-4 py-2 text-xs font-semibold text-white bg-[var(--color-success)] rounded-lg hover:bg-[var(--color-success)]/90 transition-colors disabled:opacity-50">
+                  {toolsLoading ? <span className="flex items-center gap-1.5"><span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />{tt('generating')}</span> : tt('proposalBtn')}
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-[var(--color-text-muted)] mb-4">{tt('proposalDesc')}</p>
+            {proposalDraft ? (
+              <div>
+                <div className="prose prose-sm max-w-none text-[var(--color-text-primary)] leading-relaxed whitespace-pre-wrap bg-[var(--color-bg-primary)] rounded-xl p-5 border border-[var(--color-border)]">{proposalDraft}</div>
+                <div className="flex items-center gap-3 mt-3">
+                  <button onClick={() => navigator.clipboard.writeText(proposalDraft)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 rounded-lg hover:bg-[var(--color-primary)]/20 transition-colors">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                    {tt('copy')}
+                  </button>
+                  <button onClick={() => { setProposalDraft(''); handleGenerateTools('proposal'); }} className="text-xs text-[var(--color-text-muted)] hover:text-[var(--color-text-secondary)]">{tt('regenerate')}</button>
+                </div>
+                <p className="text-[10px] text-[var(--color-text-muted)] mt-2">{tt('proposalDisclaimer')}</p>
+              </div>
+            ) : !toolsLoading ? (
+              <div className="text-center py-6 text-sm text-[var(--color-text-muted)]">{tt('proposalHint')}</div>
             ) : null}
           </div>
 

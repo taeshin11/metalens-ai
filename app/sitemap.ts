@@ -3,7 +3,18 @@ import { SUPPORTED_LOCALES, SITE_URL } from '@/lib/constants';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages = ['', '/about', '/how-it-works', '/faq', '/privacy', '/terms', '/blog', '/use-cases', '/pricing'];
-  const blogSlugs = ['what-is-meta-analysis', 'ai-in-medical-research', 'how-to-compare-drug-efficacy'];
+  const blogSlugs = [
+    'what-is-meta-analysis',
+    'ai-in-medical-research',
+    'how-to-compare-drug-efficacy',
+    'understanding-forest-plots',
+    'systematic-review-protocol',
+    'publication-bias-detection',
+    'p-values-statistical-significance',
+    'evidence-based-medicine-guide',
+    'research-grant-proposal',
+    'systematic-review-vs-meta-analysis',
+  ];
   // Massively expanded drug comparisons for programmatic SEO
   const compareSlugs = [
     // Original 6
