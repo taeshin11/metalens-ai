@@ -103,6 +103,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   const [toolsLoading, setToolsLoading] = useState(false);
   const [citationFormat, setCitationFormat] = useState<'apa' | 'mla' | 'vancouver'>('apa');
   const [citationCopied, setCitationCopied] = useState(false);
+  const [shareState, setShareState] = useState<'idle' | 'loading' | 'copied'>('idle');
 
   // Auto-extract data when switching to data/meta tab
   useEffect(() => {
@@ -358,6 +359,27 @@ Output the proposal with each section header in bold. Write in formal academic l
 
   const consensus = computeConsensus(result.english);
 
+  // ── Share Handler ────────────────────────────────────────────
+  const handleShare = async () => {
+    setShareState('loading');
+    try {
+      const res = await fetch('/api/share', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keywords, result, articles, mode }),
+      });
+      if (!res.ok) throw new Error();
+      const { id } = await res.json();
+      const locale = window.location.pathname.split('/')[1] || 'en';
+      const url = `${window.location.origin}/${locale}/share/${id}`;
+      await navigator.clipboard.writeText(url);
+      setShareState('copied');
+      setTimeout(() => setShareState('idle'), 3000);
+    } catch {
+      setShareState('idle');
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -383,13 +405,32 @@ Output the proposal with each section header in bold. Write in formal academic l
         </p>
         <div className="mt-3 pt-3 border-t border-[var(--color-border)] flex items-center justify-between flex-wrap gap-2">
           <ShareButtons keywords={keywords} paperCount={articles.length} />
-          <button
-            onClick={handleExportPDF}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-secondary)] rounded-lg hover:bg-[var(--color-border)] transition-colors"
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-            Export PDF
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleShare}
+              disabled={shareState === 'loading'}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                shareState === 'copied'
+                  ? 'text-[var(--color-success)] bg-[var(--color-success)]/10'
+                  : 'text-[var(--color-text-secondary)] bg-[var(--color-bg-secondary)] hover:bg-[var(--color-border)]'
+              }`}
+            >
+              {shareState === 'loading' ? (
+                <><span className="w-3 h-3 border-2 border-current/30 border-t-current rounded-full animate-spin" />{t('shareSharing')}</>
+              ) : shareState === 'copied' ? (
+                <>✓ {t('shareCopied')}</>
+              ) : (
+                <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>{t('shareBtn')}</>
+              )}
+            </button>
+            <button
+              onClick={handleExportPDF}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-secondary)] rounded-lg hover:bg-[var(--color-border)] transition-colors"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              Export PDF
+            </button>
+          </div>
         </div>
       </div>
 

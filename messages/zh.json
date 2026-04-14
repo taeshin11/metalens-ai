@@ -123,7 +123,19 @@
     "tabData": "数据表",
     "tabMeta": "荟萃分析",
     "tabTools": "写作工具",
-    "keywords": "关键词"
+    "keywords": "关键词",
+    "shareBtn": "分享结果",
+    "shareCopied": "链接已复制！",
+    "shareSharing": "正在创建链接...",
+    "shareExpiry": "链接有效期7天"
+  },
+  "share": {
+    "title": "共享的分析结果",
+    "sharedBy": "通过MetaLens AI分享",
+    "expired": "此链接已过期或不存在。",
+    "expiredDesc": "共享链接有效期为7天。请重新运行分析。",
+    "tryAgain": "运行新分析",
+    "viewOriginal": "在MetaLens AI上查看"
   },
   "nav": {
     "home": "首页",

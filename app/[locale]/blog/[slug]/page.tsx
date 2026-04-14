@@ -2,6 +2,13 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { koreanBlogPosts } from '@/lib/blog-content-ko';
+import { japaneseBlogPosts } from '@/lib/blog-content-ja';
+import { chineseBlogPosts } from '@/lib/blog-content-zh';
+import { germanBlogPosts } from '@/lib/blog-content-de';
+import { frenchBlogPosts } from '@/lib/blog-content-fr';
+import { spanishBlogPosts } from '@/lib/blog-content-es';
+import { portugueseBlogPosts } from '@/lib/blog-content-pt';
 
 type BlogContent = {
   title: string;
@@ -349,13 +356,26 @@ const blogPosts: Record<string, BlogContent> = {
   },
 };
 
+function getLocalizedPost(locale: string, slug: string): BlogContent | undefined {
+  const map: Record<string, Record<string, BlogContent>> = {
+    ko: koreanBlogPosts,
+    ja: japaneseBlogPosts,
+    zh: chineseBlogPosts,
+    de: germanBlogPosts,
+    fr: frenchBlogPosts,
+    es: spanishBlogPosts,
+    pt: portugueseBlogPosts,
+  };
+  return (map[locale]?.[slug]) ?? blogPosts[slug];
+}
+
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const post = blogPosts[slug];
+  const { locale, slug } = await params;
+  const post = getLocalizedPost(locale, slug);
   if (!post) return { title: 'Not Found' };
   return {
     title: post.title,
@@ -369,7 +389,7 @@ export default async function BlogPostPage({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const post = blogPosts[slug];
+  const post = getLocalizedPost(locale, slug);
 
   if (!post) notFound();
 

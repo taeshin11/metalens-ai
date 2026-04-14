@@ -123,7 +123,19 @@
     "tabData": "Tableau de Données",
     "tabMeta": "Méta-analyse",
     "tabTools": "Outils d'Écriture",
-    "keywords": "Mots-clés"
+    "keywords": "Mots-clés",
+    "shareBtn": "Partager les résultats",
+    "shareCopied": "Lien copié !",
+    "shareSharing": "Création du lien...",
+    "shareExpiry": "Lien valable 7 jours"
+  },
+  "share": {
+    "title": "Résultats d'analyse partagés",
+    "sharedBy": "Partagé via MetaLens AI",
+    "expired": "Ce lien a expiré ou n'existe pas.",
+    "expiredDesc": "Les liens partagés sont valables 7 jours. Relancez l'analyse.",
+    "tryAgain": "Lancer une nouvelle analyse",
+    "viewOriginal": "Voir sur MetaLens AI"
   },
   "nav": {
     "home": "Accueil",
