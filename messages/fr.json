@@ -421,8 +421,28 @@
     "proposalDisclaimer": "Il s'agit d'un brouillon généré par IA à titre de référence uniquement. Adaptez-le aux exigences de votre institution et consultez votre directeur de recherche avant soumission.",
     "generating": "Génération...",
     "analyzing": "Analyse...",
+    "citationTitle": "Générateur de citations",
+    "citationDesc": "Génère des citations formatées pour toutes les sources en style APA, MLA ou Vancouver. Copiez tout en une fois pour votre liste de références.",
+    "citationAPA": "APA",
+    "citationMLA": "MLA",
+    "citationVancouver": "Vancouver",
+    "citationCopyAll": "Copier toutes les citations",
+    "citationCopied": "Copié !",
+    "citationCount": "{count} citations",
     "copy": "Copier",
     "regenerate": "Régénérer"
+  },
+  "consensus": {
+    "title": "Consensus des preuves",
+    "strong": "Consensus fort",
+    "moderate": "Consensus modéré",
+    "mixed": "Preuves mixtes",
+    "limited": "Preuves limitées",
+    "strongDesc": "Les études s'accordent largement sur les résultats",
+    "moderateDesc": "La plupart des études pointent dans la même direction",
+    "mixedDesc": "Les études montrent des résultats contradictoires",
+    "limitedDesc": "Preuves insuffisantes pour tirer des conclusions",
+    "studiesAgreement": "{count} études analysées"
   },
   "upgradeGate": {
     "badge": "Fonctionnalité Pro",

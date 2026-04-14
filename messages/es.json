@@ -421,8 +421,28 @@
     "proposalDisclaimer": "Este es un borrador generado por IA solo como referencia. Adáptelo a los requisitos de su institución y consulte a su supervisor antes de presentarlo.",
     "generating": "Generando...",
     "analyzing": "Analizando...",
+    "citationTitle": "Generador de citas",
+    "citationDesc": "Genera citas formateadas para todas las fuentes en estilo APA, MLA o Vancouver. Cópielas todas de una vez para su lista de referencias.",
+    "citationAPA": "APA",
+    "citationMLA": "MLA",
+    "citationVancouver": "Vancouver",
+    "citationCopyAll": "Copiar todas las citas",
+    "citationCopied": "¡Copiado!",
+    "citationCount": "{count} citas",
     "copy": "Copiar",
     "regenerate": "Regenerar"
+  },
+  "consensus": {
+    "title": "Consenso de evidencia",
+    "strong": "Consenso fuerte",
+    "moderate": "Consenso moderado",
+    "mixed": "Evidencia mixta",
+    "limited": "Evidencia limitada",
+    "strongDesc": "Los estudios coinciden ampliamente en los hallazgos",
+    "moderateDesc": "La mayoría de los estudios apuntan en la misma dirección",
+    "mixedDesc": "Los estudios muestran resultados contradictorios",
+    "limitedDesc": "Evidencia insuficiente para sacar conclusiones",
+    "studiesAgreement": "{count} estudios analizados"
   },
   "upgradeGate": {
     "badge": "Función Pro",

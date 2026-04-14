@@ -421,8 +421,28 @@
     "proposalDisclaimer": "Dies ist ein KI-generierter Entwurf nur als Referenz. Passen Sie ihn an die Anforderungen Ihrer Institution an und konsultieren Sie Ihren Betreuer vor der Einreichung.",
     "generating": "Wird generiert...",
     "analyzing": "Wird analysiert...",
+    "citationTitle": "Zitatgenerator",
+    "citationDesc": "Erstellt formatierte Zitate für alle Quellpublikationen im APA-, MLA- oder Vancouver-Stil. Alle auf einmal für Ihre Referenzliste kopieren.",
+    "citationAPA": "APA",
+    "citationMLA": "MLA",
+    "citationVancouver": "Vancouver",
+    "citationCopyAll": "Alle Zitate kopieren",
+    "citationCopied": "Kopiert!",
+    "citationCount": "{count} Zitate",
     "copy": "Kopieren",
     "regenerate": "Neu generieren"
+  },
+  "consensus": {
+    "title": "Evidenz-Konsens",
+    "strong": "Starker Konsens",
+    "moderate": "Moderater Konsens",
+    "mixed": "Gemischte Evidenz",
+    "limited": "Begrenzte Evidenz",
+    "strongDesc": "Studien stimmen weitgehend in den Ergebnissen überein",
+    "moderateDesc": "Die meisten Studien zeigen in dieselbe Richtung",
+    "mixedDesc": "Studien zeigen widersprüchliche Ergebnisse",
+    "limitedDesc": "Unzureichende Evidenz für Schlussfolgerungen",
+    "studiesAgreement": "{count} Studien analysiert"
   },
   "upgradeGate": {
     "badge": "Pro-Funktion",

@@ -35,6 +35,11 @@
     { "id": 33, "name": "PubMed API Retry Logic", "priority": "P1", "status": "complete" },
     { "id": 34, "name": "Research Proposal Draft Generator", "priority": "P1", "status": "complete" },
     { "id": 35, "name": "PDF Report Export", "priority": "P1", "status": "complete" },
-    { "id": 36, "name": "Blog Expansion (3 → 10 posts)", "priority": "P1", "status": "complete" }
+    { "id": 36, "name": "Blog Expansion (3 → 10 posts)", "priority": "P1", "status": "complete" },
+    { "id": 37, "name": "Remove Google AdSense (no ads)", "priority": "P0", "status": "complete" },
+    { "id": 38, "name": "Pro/Ultra users → Claude Sonnet API (Gemini fallback)", "priority": "P1", "status": "complete" },
+    { "id": 39, "name": "Citation Generator (APA / MLA / Vancouver)", "priority": "P1", "status": "complete" },
+    { "id": 40, "name": "Consensus Meter (evidence agreement gauge)", "priority": "P1", "status": "complete" },
+    { "id": 41, "name": "Country portal SEO (Naver/Baidu/Yandex/Bing meta tags)", "priority": "P1", "status": "complete" }
   ]
 }

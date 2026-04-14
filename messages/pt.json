@@ -421,8 +421,28 @@
     "proposalDisclaimer": "Este é um rascunho gerado por IA apenas como referência. Adapte-o aos requisitos da sua instituição e consulte seu orientador antes de submeter.",
     "generating": "Gerando...",
     "analyzing": "Analisando...",
+    "citationTitle": "Gerador de citações",
+    "citationDesc": "Gera citações formatadas para todas as fontes em estilo APA, MLA ou Vancouver. Copie tudo de uma vez para sua lista de referências.",
+    "citationAPA": "APA",
+    "citationMLA": "MLA",
+    "citationVancouver": "Vancouver",
+    "citationCopyAll": "Copiar todas as citações",
+    "citationCopied": "Copiado!",
+    "citationCount": "{count} citações",
     "copy": "Copiar",
     "regenerate": "Regenerar"
+  },
+  "consensus": {
+    "title": "Consenso de evidências",
+    "strong": "Consenso forte",
+    "moderate": "Consenso moderado",
+    "mixed": "Evidências mistas",
+    "limited": "Evidências limitadas",
+    "strongDesc": "Os estudos concordam amplamente nos resultados",
+    "moderateDesc": "A maioria dos estudos aponta na mesma direção",
+    "mixedDesc": "Os estudos mostram resultados contraditórios",
+    "limitedDesc": "Evidências insuficientes para tirar conclusões",
+    "studiesAgreement": "{count} estudos analisados"
   },
   "upgradeGate": {
     "badge": "Recurso Pro",

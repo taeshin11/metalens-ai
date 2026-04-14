@@ -124,7 +124,7 @@ export default function TermsPage() {
         <TermsSection title="7. Third-Party Services and Content">
           <p>
             MetaLens AI relies on third-party services including PubMed (National Library of
-            Medicine), Google Gemini AI, Clerk (authentication), Google Analytics, Google AdSense,
+            Medicine), Google Gemini AI, Clerk (authentication), Google Analytics,
             and Vercel (hosting). We are not responsible for the availability, accuracy, or
             policies of these third-party services. Your use of MetaLens AI may be subject to the
             terms and policies of these third-party providers. We do not endorse, warrant, or
