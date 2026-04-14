@@ -7,11 +7,13 @@
 ```
 research_history/
   README.md              — 이 파일 (인덱스)
+  registrations.md       — 외부 서비스 등록/제출 현황 (항상 최신 유지)
   milestone_00_mvp.md    — MVP 출시 (2026-03-31)
   milestone_01_seo.md    — SEO & 콘텐츠 인프라 (2026-03-31)
   milestone_02_auth.md   — 인증/결제/요금제 (2026-04-06)
   milestone_03_ux.md     — UX 개선 & AI 안정화 (2026-04-07~09)
-  milestone_04_tools.md  — Writing Tools 확장 (2026-04-11~15) ← 현재
+  milestone_04_tools.md  — Writing Tools 확장 (2026-04-11~15)
+  milestone_05_polish.md — 광고 제거, Claude API, Citation, Consensus (2026-04-15) ← 현재
 ```
 
 ## 마일스톤 요약
@@ -23,3 +25,4 @@ research_history/
 | 02 | 인증/결제 | 2026-04-06 | Clerk + Redis + LemonSqueezy |
 | 03 | UX & AI 안정화 | 2026-04-07~09 | 로딩 개선, AI 폴백, SEO 강화 |
 | 04 | Writing Tools 확장 | 2026-04-11~15 | Proposal 생성기, PDF 내보내기, 블로그 10개 |
+| 05 | 광고 제거 & AI 업그레이드 | 2026-04-15 | AdSense 제거, Claude API, Citation, Consensus Meter |
