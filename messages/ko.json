@@ -75,8 +75,28 @@
     "proposalDisclaimer": "AI가 생성한 초안으로 참고용입니다. 기관 요건에 맞게 수정하고 제출 전 지도교수와 검토하세요.",
     "generating": "생성 중...",
     "analyzing": "분석 중...",
+    "citationTitle": "인용 생성기",
+    "citationDesc": "모든 출처 논문에 대해 APA, MLA, 또는 Vancouver 형식으로 인용문을 생성합니다. 참고문헌 목록용으로 한 번에 복사하세요.",
+    "citationAPA": "APA",
+    "citationMLA": "MLA",
+    "citationVancouver": "Vancouver",
+    "citationCopyAll": "모든 인용 복사",
+    "citationCopied": "복사됨!",
+    "citationCount": "인용 {count}개",
     "copy": "복사",
     "regenerate": "다시 생성"
+  },
+  "consensus": {
+    "title": "연구 합의 수준",
+    "strong": "강한 합의",
+    "moderate": "보통 합의",
+    "mixed": "혼재된 근거",
+    "limited": "제한된 근거",
+    "strongDesc": "연구들이 결과에 대체로 동의함",
+    "moderateDesc": "대부분의 연구가 같은 방향을 가리킴",
+    "mixedDesc": "연구들이 상충되는 결과를 보임",
+    "limitedDesc": "결론 도출에 충분한 근거 없음",
+    "studiesAgreement": "{count}개 연구 분석됨"
   },
   "dataTable": {
     "title": "추출된 연구 데이터",

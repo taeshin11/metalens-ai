@@ -126,14 +126,6 @@ export default async function LocaleLayout({
           </>
         )}
 
-        {/* — Google AdSense — */}
-        <meta name="google-adsense-account" content="ca-pub-7098271335538021" />
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7098271335538021"
-          crossOrigin="anonymous"
-        ></script>
-
         {/* — hreflang alternate links for all supported locales — */}
         {SUPPORTED_LOCALES.map((l) => (
           <link
@@ -148,7 +140,7 @@ export default async function LocaleLayout({
         {/* — RSS feed — */}
         <link rel="alternate" type="application/rss+xml" title="MetaLens AI Blog" href="/feed.xml" />
 
-        {/* — Portal-friendly meta tags (Naver/Bing/Baidu) — */}
+        {/* — Portal-friendly meta tags (Naver/Bing/Baidu/Yandex) — */}
         <meta httpEquiv="content-language" content={HREFLANG_MAP[locale] || locale} />
         <meta name="author" content="SPINAI" />
         <meta name="copyright" content="SPINAI" />
@@ -156,12 +148,19 @@ export default async function LocaleLayout({
         <meta name="rating" content="general" />
         <meta name="revisit-after" content="3 days" />
         <meta name="referrer" content="no-referrer-when-downgrade" />
-        {/* Naver-specific link preview optimization */}
-        <meta property="me2:post_tag" content="meta-analysis,medical-research,pubmed,ai" />
-        {/* Baidu — disable translation prompt on Chinese version */}
-        {locale === 'zh' && <meta name="google" content="notranslate" />}
-        {/* Baidu — prevent transcoding of mobile pages */}
+        {/* Naver SmartBlock / Blog indexing hints */}
+        <meta property="me2:post_tag" content="메타분석,의학연구,pubmed,AI,논문검색" />
+        <meta name="NaverBot" content="All" />
+        <meta name="Yeti" content="All" />
+        {/* Baidu — prevent transcoding of mobile pages, disable translation prompt */}
         <meta httpEquiv="Cache-Control" content="no-transform" />
+        {locale === 'zh' && <meta name="google" content="notranslate" />}
+        {/* Bing/Yahoo — explicit indexing */}
+        <meta name="msnbot" content="index,follow" />
+        {/* Yandex — mark content as authoritative for CIS users */}
+        <meta name="yandex" content="all" />
+        {/* Yahoo Japan — og:locale:alternate for ja */}
+        {locale === 'ja' && <meta property="og:locale:alternate" content="en_US" />}
 
         {/* — Preconnect hints for external domains — */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

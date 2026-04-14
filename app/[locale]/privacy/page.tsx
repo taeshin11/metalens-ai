@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Privacy Policy | MetaLens AI',
   description:
-    'MetaLens AI privacy policy — data collection, cookies, Google AdSense, GDPR/CCPA compliance, and your rights.',
+    'MetaLens AI privacy policy — data collection, cookies, GDPR/CCPA compliance, and your rights.',
   keywords:
-    'MetaLens AI privacy, privacy policy, data collection, GDPR, CCPA, Google AdSense cookies',
+    'MetaLens AI privacy, privacy policy, data collection, GDPR, CCPA',
 };
 
 export default function PrivacyPage() {
@@ -79,22 +79,6 @@ export default function PrivacyPage() {
             </a>
             .
           </p>
-          <p className="mt-2">
-            <strong>Advertising Cookies (Google AdSense):</strong> MetaLens AI displays
-            advertisements through Google AdSense to support the free tier of our service. Google
-            AdSense may use cookies (including the DoubleClick DART cookie) to serve ads based on
-            your prior visits to MetaLens AI and other websites on the internet. You can opt out
-            of personalized advertising by visiting{' '}
-            <a
-              href="https://www.google.com/settings/ads"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[var(--color-primary)] hover:underline"
-            >
-              Google Ads Settings
-            </a>
-            .
-          </p>
         </PolicySection>
 
         <PolicySection title="3. Third-Party Services">
@@ -134,12 +118,6 @@ export default function PrivacyPage() {
               </a>.
             </li>
             <li>
-              <strong>Google AdSense:</strong> Used to serve advertisements on the free tier. See{' '}
-              <a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer" className="text-[var(--color-primary)] hover:underline">
-                Google&apos;s Advertising Privacy Policy
-              </a>.
-            </li>
-            <li>
               <strong>Vercel (Hosting):</strong> MetaLens AI is hosted on Vercel. Vercel may
               process request metadata (IP addresses, headers) as part of its hosting
               infrastructure. See{' '}
@@ -157,7 +135,6 @@ export default function PrivacyPage() {
             <li>To authenticate your identity and manage your account and subscription</li>
             <li>To process your meta-analysis queries and deliver results</li>
             <li>To analyze usage patterns and optimize site performance</li>
-            <li>To display relevant advertisements through Google AdSense</li>
             <li>To communicate important service updates and respond to support inquiries</li>
             <li>To detect and prevent fraud, abuse, and security threats</li>
             <li>To comply with legal obligations and enforce our Terms of Service</li>

@@ -421,8 +421,28 @@
     "proposalDisclaimer": "これはAIが生成した参考草案です。所属機関の要件に合わせて修正し、提出前に指導教員と相談してください。",
     "generating": "生成中...",
     "analyzing": "分析中...",
+    "citationTitle": "引用ジェネレーター",
+    "citationDesc": "すべての出典論文についてAPA、MLA、またはVancouver形式の引用を生成します。参考文献リスト用に一括コピーできます。",
+    "citationAPA": "APA",
+    "citationMLA": "MLA",
+    "citationVancouver": "Vancouver",
+    "citationCopyAll": "すべての引用をコピー",
+    "citationCopied": "コピーしました！",
+    "citationCount": "{count}件の引用",
     "copy": "コピー",
     "regenerate": "再生成"
+  },
+  "consensus": {
+    "title": "エビデンスの合意度",
+    "strong": "強い合意",
+    "moderate": "中程度の合意",
+    "mixed": "混在するエビデンス",
+    "limited": "限られたエビデンス",
+    "strongDesc": "研究結果はほぼ一致しています",
+    "moderateDesc": "ほとんどの研究が同じ方向を示しています",
+    "mixedDesc": "研究間で矛盾する結果があります",
+    "limitedDesc": "結論を導くのに十分なエビデンスがありません",
+    "studiesAgreement": "{count}件の研究を分析"
   },
   "upgradeGate": {
     "badge": "Pro機能",

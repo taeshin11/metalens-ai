@@ -42,7 +42,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: 'How does MetaLens AI handle my privacy and personal data?',
     answer:
-      'We take your privacy seriously. MetaLens AI collects minimal personal data — primarily what is needed for account authentication through Clerk (such as your email address) and basic usage analytics to improve our service. Your search queries are processed in real time and are not permanently stored or shared with third parties for marketing purposes. We use Google Analytics and Google AdSense, which may set cookies on your browser for analytics and advertising purposes. You can review our full Privacy Policy for detailed information about data collection, storage, third-party services, and your rights under GDPR and CCPA.',
+      'We take your privacy seriously. MetaLens AI collects minimal personal data — primarily what is needed for account authentication through Clerk (such as your email address) and basic usage analytics to improve our service. Your search queries are processed in real time and are not permanently stored or shared with third parties for marketing purposes. We use Google Analytics to understand usage patterns. You can review our full Privacy Policy for detailed information about data collection, storage, third-party services, and your rights under GDPR and CCPA.',
   },
   {
     question: 'How should I cite MetaLens AI results in academic work?',

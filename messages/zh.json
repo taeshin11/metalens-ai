@@ -421,8 +421,28 @@
     "proposalDisclaimer": "这是AI生成的参考草稿。请根据所在机构要求进行修改，提交前与导师确认。",
     "generating": "生成中...",
     "analyzing": "分析中...",
+    "citationTitle": "引用生成器",
+    "citationDesc": "为所有来源文献生成APA、MLA或Vancouver格式的引用。可一键复制整个参考文献列表。",
+    "citationAPA": "APA",
+    "citationMLA": "MLA",
+    "citationVancouver": "Vancouver",
+    "citationCopyAll": "复制所有引用",
+    "citationCopied": "已复制！",
+    "citationCount": "{count}条引用",
     "copy": "复制",
     "regenerate": "重新生成"
+  },
+  "consensus": {
+    "title": "证据共识水平",
+    "strong": "强共识",
+    "moderate": "中等共识",
+    "mixed": "证据混杂",
+    "limited": "证据有限",
+    "strongDesc": "研究结果基本一致",
+    "moderateDesc": "大多数研究指向相同方向",
+    "mixedDesc": "研究结果存在冲突",
+    "limitedDesc": "现有证据不足以得出结论",
+    "studiesAgreement": "分析了{count}项研究"
   },
   "upgradeGate": {
     "badge": "Pro功能",

@@ -15,7 +15,6 @@ import FunnelPlot from './FunnelPlot';
 import UpgradeGate from './UpgradeGate';
 import ShareButtons from './ShareButtons';
 import UpsellBanner from './UpsellBanner';
-import AdBanner from './AdBanner';
 
 const EXTRACT_STEPS = ['extractStep0', 'extractStep1', 'extractStep2', 'extractStep3', 'extractStep4'] as const;
 
@@ -86,6 +85,7 @@ interface ResultsCardProps {
 export default function ResultsCard({ result, articles, keywords, onNewSearch, mode = 'meta-analysis' }: ResultsCardProps) {
   const t = useTranslations('results');
   const tt = useTranslations('tools');
+  const tc = useTranslations('consensus');
   const td = useTranslations('dataTable');
   const { user } = useAuth();
   const tier = user?.tier || 'free';
@@ -101,6 +101,8 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   const [journalRecs, setJournalRecs] = useState('');
   const [proposalDraft, setProposalDraft] = useState('');
   const [toolsLoading, setToolsLoading] = useState(false);
+  const [citationFormat, setCitationFormat] = useState<'apa' | 'mla' | 'vancouver'>('apa');
+  const [citationCopied, setCitationCopied] = useState(false);
 
   // Auto-extract data when switching to data/meta tab
   useEffect(() => {
@@ -293,6 +295,69 @@ Output the proposal with each section header in bold. Write in formal academic l
     }
   };
 
+  // ── Citation Generator ──────────────────────────────────────
+  const formatCitation = (a: typeof articles[0], fmt: 'apa' | 'mla' | 'vancouver'): string => {
+    const authorList = a.authors.slice(0, 6);
+    const etAl = a.authors.length > 6;
+    const url = a.doi
+      ? `https://doi.org/${a.doi}`
+      : `https://pubmed.ncbi.nlm.nih.gov/${a.pmid}/`;
+
+    if (fmt === 'apa') {
+      const authStr = authorList.map(au => {
+        const parts = au.trim().split(' ');
+        const last = parts[parts.length - 1];
+        const initials = parts.slice(0, -1).map(p => p[0] + '.').join(' ');
+        return initials ? `${last}, ${initials}` : last;
+      }).join(', ') + (etAl ? ', et al.' : '');
+      return `${authStr} (${a.year}). ${a.title}. *${a.journal}*. ${url}`;
+    }
+    if (fmt === 'mla') {
+      const first = authorList[0]?.trim() || '';
+      const firstParts = first.split(' ');
+      const firstFormatted = firstParts.length > 1
+        ? `${firstParts[firstParts.length - 1]}, ${firstParts.slice(0, -1).join(' ')}`
+        : first;
+      const rest = authorList.slice(1).map(au => au.trim()).join(', ');
+      const authStr = rest
+        ? (etAl ? `${firstFormatted}, et al.` : `${firstFormatted}, and ${rest}`)
+        : firstFormatted;
+      return `${authStr}. "${a.title}." *${a.journal}*, ${a.year}. PMID: ${a.pmid}.`;
+    }
+    // Vancouver
+    const authStr = authorList.map(au => {
+      const parts = au.trim().split(' ');
+      const last = parts[parts.length - 1];
+      const initials = parts.slice(0, -1).map(p => p[0]).join('');
+      return initials ? `${last} ${initials}` : last;
+    }).join(', ') + (etAl ? ', et al.' : '');
+    return `${authStr}. ${a.title}. ${a.journal}. ${a.year}. PMID: ${a.pmid}.`;
+  };
+
+  const allCitations = articles.map(a => formatCitation(a, citationFormat)).join('\n\n');
+
+  const handleCopyAllCitations = () => {
+    navigator.clipboard.writeText(allCitations);
+    setCitationCopied(true);
+    setTimeout(() => setCitationCopied(false), 2000);
+  };
+
+  // ── Consensus Meter ─────────────────────────────────────────
+  const computeConsensus = (text: string): { score: number; level: 'strong' | 'moderate' | 'mixed' | 'limited' } => {
+    const lower = text.toLowerCase();
+    const agree = (lower.match(/\b(consistently|consistently showed|all studies|majority|strong evidence|significantly|clear evidence|robust|well-established|consensus|confirmed|supports|demonstrates|confirms|guideline recommends)\b/g) || []).length;
+    const disagree = (lower.match(/\b(conflicting|inconsistent|heterogeneous|mixed results|limited evidence|uncertain|inconclusive|insufficient|controversial|debate|varies|no significant|lack of)\b/g) || []).length;
+    const total = agree + disagree;
+    if (total === 0) return { score: 50, level: 'limited' };
+    const score = Math.round((agree / total) * 100);
+    if (score >= 70) return { score, level: 'strong' };
+    if (score >= 50) return { score, level: 'moderate' };
+    if (total >= 2) return { score, level: 'mixed' };
+    return { score, level: 'limited' };
+  };
+
+  const consensus = computeConsensus(result.english);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -387,6 +452,43 @@ Output the proposal with each section header in bold. Write in formal academic l
               {result.english}
             </div>
           </div>
+
+          {/* Consensus Meter */}
+          {mode === 'meta-analysis' && (
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-[var(--color-border)]">
+              <h3 className="text-sm font-semibold text-[var(--color-text-primary)] mb-3 flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                <span>📊</span> {tc('title')}
+              </h3>
+              <div className="flex items-center gap-4">
+                {/* Gauge */}
+                <div className="relative flex-shrink-0 w-20 h-20">
+                  <svg viewBox="0 0 80 80" className="w-full h-full -rotate-90">
+                    <circle cx="40" cy="40" r="32" fill="none" stroke="var(--color-border)" strokeWidth="8" />
+                    <circle
+                      cx="40" cy="40" r="32" fill="none"
+                      stroke={consensus.level === 'strong' ? 'var(--color-success)' : consensus.level === 'moderate' ? 'var(--color-info)' : consensus.level === 'mixed' ? 'var(--color-warning)' : 'var(--color-text-muted)'}
+                      strokeWidth="8"
+                      strokeDasharray={`${(consensus.score / 100) * 201} 201`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center text-base font-bold text-[var(--color-text-primary)]">{consensus.score}%</span>
+                </div>
+                {/* Labels */}
+                <div>
+                  <p className="font-semibold text-sm text-[var(--color-text-primary)]">
+                    {tc(consensus.level)}
+                  </p>
+                  <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
+                    {tc(`${consensus.level}Desc` as 'strongDesc' | 'moderateDesc' | 'mixedDesc' | 'limitedDesc')}
+                  </p>
+                  <p className="text-[10px] text-[var(--color-text-muted)] mt-1.5">
+                    {tc('studiesAgreement', { count: articles.length })}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Explore other tabs hint */}
           <div className="grid sm:grid-cols-3 gap-3">
@@ -645,6 +747,59 @@ Output the proposal with each section header in bold. Write in formal academic l
             ) : null}
           </div>
 
+          {/* Citation Generator */}
+          <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold text-[var(--color-text-primary)] flex items-center gap-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                📑 {tt('citationTitle')}
+              </h3>
+              <span className="text-xs text-[var(--color-text-muted)]">{tt('citationCount', { count: articles.length })}</span>
+            </div>
+            <p className="text-xs text-[var(--color-text-muted)] mb-3">{tt('citationDesc')}</p>
+            {/* Format Selector */}
+            <div className="flex gap-1.5 mb-4">
+              {(['apa', 'mla', 'vancouver'] as const).map(fmt => (
+                <button
+                  key={fmt}
+                  onClick={() => setCitationFormat(fmt)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                    citationFormat === fmt
+                      ? 'bg-[var(--color-primary)] text-white'
+                      : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:bg-[var(--color-border)]'
+                  }`}
+                >
+                  {fmt === 'apa' ? tt('citationAPA') : fmt === 'mla' ? tt('citationMLA') : tt('citationVancouver')}
+                </button>
+              ))}
+            </div>
+            {/* Citation List */}
+            <div className="max-h-60 overflow-y-auto space-y-2 bg-[var(--color-bg-primary)] rounded-xl p-4 border border-[var(--color-border)] text-xs text-[var(--color-text-primary)] leading-relaxed">
+              {articles.map((a, i) => (
+                <p key={a.pmid} className="pb-2 border-b border-[var(--color-border)] last:border-0 last:pb-0">
+                  <span className="font-mono text-[var(--color-text-muted)] mr-1">[{i + 1}]</span>
+                  {formatCitation(a, citationFormat)}
+                </p>
+              ))}
+            </div>
+            <button
+              onClick={handleCopyAllCitations}
+              className={`mt-3 flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                citationCopied
+                  ? 'text-[var(--color-success)] bg-[var(--color-success)]/10'
+                  : 'text-[var(--color-primary-dark)] bg-[var(--color-primary)]/10 hover:bg-[var(--color-primary)]/20'
+              }`}
+            >
+              {citationCopied ? (
+                <>✓ {tt('citationCopied')}</>
+              ) : (
+                <>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                  {tt('citationCopyAll')}
+                </>
+              )}
+            </button>
+          </div>
+
           {/* Journal Recommendation */}
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
             <div className="flex items-center justify-between mb-4">
@@ -716,9 +871,6 @@ Output the proposal with each section header in bold. Write in formal academic l
           ))}
         </div>
       </div>
-
-      {/* Ad Banner — shown only for free-tier users */}
-      <AdBanner variant="banner" className="rounded-xl opacity-80 hover:opacity-100 transition-opacity" />
 
       {/* Disclaimer */}
       <div className="bg-[var(--color-warning)]/10 rounded-2xl p-4 border border-[var(--color-warning)]/30">
