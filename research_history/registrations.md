@@ -33,7 +33,7 @@
 | **Upstash Redis** | ✅ 운영 중 | 2026-04-06 | rate limit용. env: `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` |
 | **Google Analytics** | ✅ 코드 준비 | — | env: `NEXT_PUBLIC_GA_MEASUREMENT_ID` (현재 `G-XXXXXXXXXX` 플레이스홀더) |
 | **Google Gemini API** | ✅ 운영 중 | 2026-03-31 | env: `GEMINI_API_KEY` |
-| **Anthropic Claude API** | ✅ 코드 준비 | 2026-04-15 | Pro/Ultra 유저용. env: `ANTHROPIC_API_KEY` (Vercel에 추가 필요) |
+| **Anthropic Claude API** | ❌ 미사용 | — | 전 티어 Gemini 사용으로 결정, 통합 안 함 |
 
 ---
 
@@ -63,13 +63,14 @@ UPSTASH_REDIS_REST_TOKEN     ✅
 NEXT_PUBLIC_SITE_URL         ✅
 
 # 추가 필요
-ANTHROPIC_API_KEY            ❌ Pro/Ultra 유저 Claude API
+ANTHROPIC_API_KEY            — 미사용 (전 티어 Gemini 통일)
 NEXT_PUBLIC_GA_MEASUREMENT_ID  ❌ Google Analytics 실제 ID
 NEXT_PUBLIC_BING_VERIFICATION  ❌ Bing 웹마스터 인증
 NEXT_PUBLIC_YANDEX_VERIFICATION ❌ Yandex 웹마스터 인증
 NEXT_PUBLIC_BAIDU_VERIFICATION  ❌ Baidu 웹마스터 인증
-LEMONSQUEEZY_API_KEY         ❓ 설정 여부 미확인
-LS_VARIANT_PRO_MONTHLY       ❓ 설정 여부 미확인
-LS_VARIANT_PRO_YEARLY        ❓ 설정 여부 미확인
-LS_WEBHOOK_SECRET            ❓ 설정 여부 미확인
+LEMONSQUEEZY_API_KEY             ❓ 설정 여부 미확인
+LEMONSQUEEZY_STORE_ID            ❓ 설정 여부 미확인
+LEMONSQUEEZY_WEBHOOK_SECRET      ❓ 설정 여부 미확인 (webhook/route.ts에서 사용)
+LS_VARIANT_PRO_MONTHLY           ❓ 설정 여부 미확인
+LS_VARIANT_PRO_YEARLY            ❓ 설정 여부 미확인
 ```

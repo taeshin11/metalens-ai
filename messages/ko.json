@@ -178,7 +178,19 @@
     "tabData": "데이터 테이블",
     "tabMeta": "메타분석",
     "tabTools": "작성 도구",
-    "keywords": "키워드"
+    "keywords": "키워드",
+    "shareBtn": "결과 공유",
+    "shareCopied": "링크 복사됨!",
+    "shareSharing": "링크 생성 중...",
+    "shareExpiry": "링크 유효 기간: 7일"
+  },
+  "share": {
+    "title": "공유된 분석 결과",
+    "sharedBy": "MetaLens AI로 공유됨",
+    "expired": "이 링크는 만료되었거나 존재하지 않습니다.",
+    "expiredDesc": "공유 링크는 7일간 유효합니다. 다시 분석을 실행해보세요.",
+    "tryAgain": "새 분석 실행",
+    "viewOriginal": "MetaLens AI에서 보기"
   },
   "nav": {
     "home": "홈",

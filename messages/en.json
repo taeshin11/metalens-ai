@@ -178,7 +178,19 @@
     "tabData": "Data Table",
     "tabMeta": "Meta-Analysis",
     "tabTools": "Writing Tools",
-    "keywords": "Keywords"
+    "keywords": "Keywords",
+    "shareBtn": "Share Results",
+    "shareCopied": "Link copied!",
+    "shareSharing": "Creating link...",
+    "shareExpiry": "Link valid for 7 days"
+  },
+  "share": {
+    "title": "Shared Analysis Results",
+    "sharedBy": "Shared via MetaLens AI",
+    "expired": "This link has expired or does not exist.",
+    "expiredDesc": "Shared links are valid for 7 days. Try running the analysis again.",
+    "tryAgain": "Run New Analysis",
+    "viewOriginal": "View on MetaLens AI"
   },
   "nav": {
     "home": "Home",

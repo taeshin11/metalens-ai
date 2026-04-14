@@ -123,7 +123,19 @@
     "tabData": "データテーブル",
     "tabMeta": "メタアナリシス",
     "tabTools": "執筆ツール",
-    "keywords": "キーワード"
+    "keywords": "キーワード",
+    "shareBtn": "結果をシェア",
+    "shareCopied": "リンクをコピーしました！",
+    "shareSharing": "リンク作成中...",
+    "shareExpiry": "リンクは7日間有効"
+  },
+  "share": {
+    "title": "共有された分析結果",
+    "sharedBy": "MetaLens AIで共有",
+    "expired": "このリンクは期限切れまたは存在しません。",
+    "expiredDesc": "共有リンクの有効期間は7日間です。再度分析を実行してください。",
+    "tryAgain": "新しい分析を実行",
+    "viewOriginal": "MetaLens AIで見る"
   },
   "nav": {
     "home": "ホーム",
