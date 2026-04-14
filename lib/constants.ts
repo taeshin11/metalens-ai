@@ -23,7 +23,7 @@ export const TIER_CONFIG = {
   pro: {
     dailyLimit: 200,
     pointCount: 10,
-    model: 'claude-sonnet-4-6',
+    model: 'gemini-2.5-flash',
     label: 'Pro',
     price: 4.99,
     yearlyPrice: 39.99,
@@ -32,7 +32,7 @@ export const TIER_CONFIG = {
     // Legacy alias — treated same as pro
     dailyLimit: 200,
     pointCount: 10,
-    model: 'claude-sonnet-4-6',
+    model: 'gemini-2.5-flash',
     label: 'Pro',
     price: 4.99,
     yearlyPrice: 39.99,
