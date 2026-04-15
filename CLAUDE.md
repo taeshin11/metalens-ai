@@ -16,12 +16,12 @@ URL: https://metalens-ai.vercel.app | GitHub: https://github.com/taeshin11/metal
 - **Hosting**: Vercel
 
 ## 플랜 구조
-- **Free**: 월 5회, Gemini Flash-Lite
-- **Pro**: 월 50회, Gemini 2.5 Flash
-- **Ultra**: 무제한, Gemini 2.5 Flash
+- **Free**: 평생 3회, Gemini 2.5 Flash
+- **Pro**: 하루 200회, Gemini 2.5 Flash ($4.99/mo, $39.99/yr)
+- Ultra 플랜은 제거됨 (2026-04-15)
 
 ## 핵심 결정사항
-- Pro/Ultra 유저도 Claude API 아닌 Gemini 사용 (변경 금지)
+- Pro 유저도 Claude API 아닌 Gemini 사용 (변경 금지)
 - AdSense 없음 (제거됨)
 - PRD.md 절대 삭제 금지
 

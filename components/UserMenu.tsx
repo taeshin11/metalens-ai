@@ -30,7 +30,6 @@ export default function UserMenu() {
   const tierColors: Record<string, string> = {
     free: 'bg-gray-100 text-gray-600',
     pro: 'bg-[var(--color-primary)]/10 text-[var(--color-primary-dark)]',
-    ultra: 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]',
   };
 
   return (

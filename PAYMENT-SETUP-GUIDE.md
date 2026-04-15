@@ -11,20 +11,18 @@ Store already created: **kingkingmarket** on https://app.lemonsqueezy.com
 ### Remaining Steps:
 1. **Activate Store** — Identity verification (need bank account)
    - Website: `https://metalens-ai.vercel.app`
-   - Product description: "MetaLens AI is a web application that provides AI-powered medical research meta-analysis summaries. Users enter medical keywords and receive structured analysis from 40M+ PubMed papers. We offer free and paid subscription plans (Pro $2.99/mo, Ultra $6.99/mo) through our website."
+   - Product description: "MetaLens AI is a web application that provides AI-powered medical research meta-analysis summaries. Users enter medical keywords and receive structured analysis from 40M+ PubMed papers. We offer a free tier and a Pro subscription ($4.99/mo) through our website."
 2. **Bank Account** (KakaoBank):
    - Name: Your passport English name (e.g., KIM TAESHIN)
    - SWIFT / BIC: `CITIKRSXKAK`
    - Account number: Your KakaoBank account number
 3. **2FA** — Set up two-factor authentication
-4. **Create 4 subscription products**:
+4. **Create 2 subscription products**:
 
 | Product Name | Type | Price |
 |---|---|---|
-| MetaLens Pro Monthly | Subscription | $2.99/month |
-| MetaLens Pro Yearly | Subscription | $29.99/year |
-| MetaLens Ultra Monthly | Subscription | $6.99/month |
-| MetaLens Ultra Yearly | Subscription | $69.99/year |
+| MetaLens Pro Monthly | Subscription | $4.99/month |
+| MetaLens Pro Yearly | Subscription | $39.99/year |
 
 5. **Copy Variant IDs** from each product → set as env vars
 
@@ -41,8 +39,6 @@ LEMONSQUEEZY_WEBHOOK_SECRET=your_webhook_secret_here
 
 LS_VARIANT_PRO_MONTHLY=variant_id_here
 LS_VARIANT_PRO_YEARLY=variant_id_here
-LS_VARIANT_ULTRA_MONTHLY=variant_id_here
-LS_VARIANT_ULTRA_YEARLY=variant_id_here
 ```
 
 ### Where to find these:

@@ -24,7 +24,7 @@ export const VARIANT_IDS = {
 
 export type PlanKey = keyof typeof VARIANT_IDS;
 
-export function planKeyToTier(key: string): 'pro' | 'ultra' {
+export function planKeyToTier(_key: string): 'pro' {
   return 'pro';
 }
 

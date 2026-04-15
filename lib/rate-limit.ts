@@ -2,7 +2,7 @@
  * Upstash Redis 기반 Rate Limiter
  * - Beta period (until 2026-04-15): logged-in users get unlimited
  * - free tier: 영구 총량 제한 (평생 3회)
- * - pro/ultra: 일별 제한 (UTC 자정 리셋)
+ * - pro: 일별 제한 (UTC 자정 리셋)
  */
 
 const BETA_END = new Date('2026-04-16T00:00:00Z'); // unlimited for logged-in until Apr 15
@@ -54,7 +54,7 @@ export async function checkRateLimit(
   let count: number;
   try {
     count = await redis.incr(key);
-    // pro/ultra: 자정 리셋 (첫 요청 시 TTL 설정)
+    // pro: 자정 리셋 (첫 요청 시 TTL 설정)
     if (tier !== 'free' && count === 1) {
       await redis.expire(key, getUtcMidnightTtl());
     }

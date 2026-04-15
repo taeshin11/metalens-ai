@@ -177,7 +177,7 @@ export default function AboutPage() {
           <p>
             We are firm believers in open access to scientific knowledge. MetaLens AI&apos;s Free
             tier provides meaningful analytical capability at no cost — not a crippled trial, but
-            a genuinely useful tool. Our paid tiers (Pro and Ultra) offer expanded capacity for
+            a genuinely useful tool. Our Pro tier offers expanded capacity for
             power users who need to analyze more papers per query and run more analyses per month,
             but the core experience remains available to everyone.
           </p>

@@ -43,7 +43,6 @@ export default function AccountPage() {
   const tierStyles: Record<Tier, { bg: string; text: string; border: string }> = {
     free: { bg: 'bg-gray-100', text: 'text-gray-700', border: 'border-gray-200' },
     pro: { bg: 'bg-[var(--color-primary)]/10', text: 'text-[var(--color-primary-dark)]', border: 'border-[var(--color-primary)]/30' },
-    ultra: { bg: 'bg-[var(--color-accent)]/10', text: 'text-[var(--color-accent)]', border: 'border-[var(--color-accent)]/30' },
   };
 
   const style = tierStyles[tier];
