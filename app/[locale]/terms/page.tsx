@@ -93,9 +93,9 @@ export default function TermsPage() {
 
         <TermsSection title="5. Subscription Plans and Payments">
           <p>
-            MetaLens AI offers Free, Pro, and Ultra subscription tiers. The Free tier provides
-            limited functionality at no cost. Paid tiers (Pro and Ultra) require a recurring
-            subscription payment and offer expanded features, including increased numbers of
+            MetaLens AI offers Free and Pro subscription tiers. The Free tier provides
+            limited functionality at no cost. The Pro tier requires a recurring
+            subscription payment and offers expanded features, including increased numbers of
             abstracts analyzed per query and higher monthly usage limits. Subscription fees are
             billed in advance on a monthly or annual basis, depending on your chosen plan. All
             fees are non-refundable except as required by applicable law or as stated in our

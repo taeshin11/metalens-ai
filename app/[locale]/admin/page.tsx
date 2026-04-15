@@ -24,7 +24,6 @@ interface AdminStats {
   };
   revenue: {
     proUsers: number;
-    ultraUsers: number;
     grossMonthly: number;
     paymentFees: number;
     netRevenue: number;
@@ -158,7 +157,6 @@ export default function AdminDashboard() {
               </div>
               <div className="text-right space-y-1 text-xs text-[var(--color-text-muted)]">
                 <p>Pro: <strong>{stats.revenue.proUsers}</strong> x ${TIER_CONFIG.pro.price} = <strong>${(stats.revenue.proUsers * TIER_CONFIG.pro.price).toFixed(2)}</strong></p>
-                <p>Ultra: <strong>{stats.revenue.ultraUsers}</strong> x ${TIER_CONFIG.ultra.price} = <strong>${(stats.revenue.ultraUsers * TIER_CONFIG.ultra.price).toFixed(2)}</strong></p>
                 <p className="border-t border-[var(--color-border)] pt-1 mt-1">Gross: <strong>${stats.revenue.grossMonthly}</strong></p>
                 <p className="text-orange-500">- Lemon Squeezy (5%+$0.50): <strong>-${stats.revenue.paymentFees}</strong></p>
                 <p className="text-orange-500">- Gemini API: <strong>-{formatMoney(stats.revenue.apiCost)}</strong></p>
@@ -177,11 +175,11 @@ export default function AdminDashboard() {
                 Usage by Tier
               </h2>
               <div className="space-y-4">
-                {(['free', 'pro', 'ultra'] as const).map(tier => {
+                {(['free', 'pro'] as const).map(tier => {
                   const count = stats.tierBreakdown[tier] || 0;
                   const total = stats.overview.totalCalls || 1;
                   const pct = Math.round((count / total) * 100);
-                  const colors = { free: '#9BA8B2', pro: '#4DA8A0', ultra: '#E8856C' };
+                  const colors = { free: '#9BA8B2', pro: '#4DA8A0' };
                   return (
                     <div key={tier}>
                       <div className="flex justify-between text-sm mb-1">
@@ -286,7 +284,6 @@ export default function AdminDashboard() {
                     <th className="text-right py-2 font-medium text-[var(--color-text-secondary)]">Calls</th>
                     <th className="text-right py-2 font-medium text-[var(--color-text-secondary)]">Free</th>
                     <th className="text-right py-2 font-medium text-[var(--color-text-secondary)]">Pro</th>
-                    <th className="text-right py-2 font-medium text-[var(--color-text-secondary)]">Ultra</th>
                     <th className="text-right py-2 font-medium text-[var(--color-text-secondary)]">Cost</th>
                   </tr>
                 </thead>
@@ -297,7 +294,6 @@ export default function AdminDashboard() {
                       <td className="py-2 text-right font-mono">{d.totalCalls}</td>
                       <td className="py-2 text-right font-mono text-[var(--color-text-muted)]">{d.callsByTier.free || 0}</td>
                       <td className="py-2 text-right font-mono text-[var(--color-primary)]">{d.callsByTier.pro || 0}</td>
-                      <td className="py-2 text-right font-mono text-[var(--color-accent)]">{d.callsByTier.ultra || 0}</td>
                       <td className="py-2 text-right font-mono">{formatMoney(d.estimatedCost)}</td>
                     </tr>
                   ))}

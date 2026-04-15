@@ -9,7 +9,7 @@ export type Locale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: Locale = 'en';
 
 // === Tier System ===
-export type Tier = 'free' | 'pro' | 'ultra'; // 'ultra' = legacy value from old subscriptions, treated as 'pro'
+export type Tier = 'free' | 'pro';
 
 export const TIER_CONFIG = {
   free: {
@@ -21,15 +21,6 @@ export const TIER_CONFIG = {
     yearlyPrice: 0,
   },
   pro: {
-    dailyLimit: 200,
-    pointCount: 10,
-    model: 'gemini-2.5-flash',
-    label: 'Pro',
-    price: 4.99,
-    yearlyPrice: 39.99,
-  },
-  ultra: {
-    // Legacy alias — treated same as pro
     dailyLimit: 200,
     pointCount: 10,
     model: 'gemini-2.5-flash',

@@ -52,13 +52,13 @@ export default function UpsellBanner({ tier, paperCount }: UpsellBannerProps) {
                 icon="🔬"
                 title="Meta-Analysis"
                 desc="Pool data into new statistics"
-                tier="Ultra"
+                tier="Pro"
               />
               <MiniFeature
                 icon="🌲"
                 title="Forest Plot"
                 desc="Visualize combined results"
-                tier="Ultra"
+                tier="Pro"
               />
             </div>
           </div>
@@ -71,7 +71,7 @@ export default function UpsellBanner({ tier, paperCount }: UpsellBannerProps) {
             >
               See Plans
             </a>
-            <p className="text-[10px] text-[var(--color-text-muted)] mt-1">From $2.99/mo</p>
+            <p className="text-[10px] text-[var(--color-text-muted)] mt-1">From $4.99/mo</p>
           </div>
         </div>
       </motion.div>
@@ -86,9 +86,7 @@ function MiniFeature({ icon, title, desc, tier }: { icon: string; title: string;
       <div>
         <div className="flex items-center gap-1">
           <span className="text-xs font-semibold text-[var(--color-text-primary)]">{title}</span>
-          <span className={`text-[8px] px-1 py-0.5 rounded font-bold ${
-            tier === 'Pro' ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary-dark)]' : 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
-          }`}>{tier}</span>
+          <span className="text-[8px] px-1 py-0.5 rounded font-bold bg-[var(--color-primary)]/10 text-[var(--color-primary-dark)]">{tier}</span>
         </div>
         <p className="text-[10px] text-[var(--color-text-muted)] leading-tight">{desc}</p>
       </div>

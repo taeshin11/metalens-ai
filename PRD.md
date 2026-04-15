@@ -722,18 +722,13 @@ The architecture should support easy addition of these premium features:
 - AI-generated structured abstract drafts
 - SCI journal recommendation (keyword-based matching)
 
-### Ultra Tier ($9.99/mo)
-- Everything in Pro
-- Introduction/Discussion draft generation
-- Differentiation analysis vs existing literature
-- Statistical analysis report (Forest Plot, Funnel Plot, pooled effects)
-- Full research report PDF export
-- Priority API queue (faster results)
+### Ultra Tier — REMOVED (2026-04-15)
+- Merged into Pro. Pro now includes statistical meta-analysis, forest plot, data extraction, PDF export, and draft generation features.
 
 ### Team Tier (Future — only if demand exists)
 - Consider adding only after individual user base is established
 - Would require: database, permission system, invite flows
-- Not worth building until Pro/Ultra tiers are validated
+- Not worth building until Pro tier is validated
 
 ### Technical Preparation for Paid Features
 - Design the API routes to accept a `tier` parameter

@@ -30,9 +30,9 @@ const faqs: { question: string; answer: string }[] = [
       'PubMed is a free search engine maintained by the National Center for Biotechnology Information (NCBI) at the U.S. National Library of Medicine. It provides access to over 40 million citations and abstracts from biomedical literature, including journals indexed in MEDLINE, life science journals, and online books. PubMed is the gold standard database used by researchers, clinicians, and medical students worldwide. MetaLens AI uses PubMed because it is the most comprehensive, authoritative, and regularly updated source of biomedical research data available, ensuring that our analyses are grounded in peer-reviewed scientific evidence.',
   },
   {
-    question: 'What are the differences between the Free, Pro, and Ultra plans?',
+    question: 'What are the differences between the Free and Pro plans?',
     answer:
-      'The Free tier gives you access to MetaLens AI\'s core functionality at no cost, analyzing up to 10 PubMed abstracts per query with a limited number of monthly analyses. The Pro plan increases this to approximately 40 abstracts per query with significantly more monthly queries, providing broader literature coverage and more thorough synthesis. The Ultra plan offers our most comprehensive analysis at up to 80 abstracts per query with the highest monthly limit, making it ideal for researchers and professionals who need deep, exhaustive literature reviews. All tiers include the same structured report format with full PubMed citations, AI-powered synthesis, and multi-language support.',
+      'The Free tier gives you access to MetaLens AI\'s core functionality at no cost, analyzing up to 10 PubMed abstracts per query with a limited number of lifetime analyses. The Pro plan offers our most comprehensive analysis at up to 80 abstracts per query with a high daily limit, making it ideal for researchers and professionals who need deep, thorough literature reviews. Both tiers include the same structured report format with full PubMed citations, AI-powered synthesis, and multi-language support.',
   },
   {
     question: 'What languages does MetaLens AI support?',

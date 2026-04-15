@@ -88,19 +88,16 @@ export function getAdminStats() {
   const todayUsers = new Set(todayEntries.map(e => e.email)).size;
 
   // Calls by tier
-  const tierBreakdown: Record<Tier, number> = { free: 0, pro: 0, ultra: 0 };
+  const tierBreakdown: Record<Tier, number> = { free: 0, pro: 0 };
   for (const e of usageLog) tierBreakdown[e.tier]++;
 
   // Revenue (from paid tiers)
   const proUsers = new Set(usageLog.filter(e => e.tier === 'pro').map(e => e.email)).size;
-  const ultraUsers = new Set(usageLog.filter(e => e.tier === 'ultra').map(e => e.email)).size;
-  const grossRevenue = proUsers * TIER_CONFIG.pro.price + ultraUsers * TIER_CONFIG.ultra.price;
+  const grossRevenue = proUsers * TIER_CONFIG.pro.price;
 
   // Lemon Squeezy fees: 5% + $0.50 per transaction per user per month
   const lsFeePerUser = (amount: number) => amount * 0.05 + 0.50;
-  const proFees = proUsers * lsFeePerUser(TIER_CONFIG.pro.price);
-  const ultraFees = ultraUsers * lsFeePerUser(TIER_CONFIG.ultra.price);
-  const totalPaymentFees = proFees + ultraFees;
+  const totalPaymentFees = proUsers * lsFeePerUser(TIER_CONFIG.pro.price);
   const netRevenue = grossRevenue - totalPaymentFees;
   const estimatedRevenue = grossRevenue;
 
@@ -110,7 +107,7 @@ export function getAdminStats() {
     const d = new Date(now - i * 24 * 60 * 60 * 1000);
     const dateStr = toDateStr(d.getTime());
     const dayEntries = usageLog.filter(e => toDateStr(e.timestamp) === dateStr);
-    const byTier: Record<Tier, number> = { free: 0, pro: 0, ultra: 0 };
+    const byTier: Record<Tier, number> = { free: 0, pro: 0 };
     for (const e of dayEntries) byTier[e.tier]++;
     dailyData.push({
       date: dateStr,
@@ -149,7 +146,6 @@ export function getAdminStats() {
     },
     revenue: {
       proUsers,
-      ultraUsers,
       grossMonthly: Math.round(grossRevenue * 100) / 100,
       paymentFees: Math.round(totalPaymentFees * 100) / 100,
       netRevenue: Math.round(netRevenue * 100) / 100,

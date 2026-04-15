@@ -148,7 +148,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
     }
   };
 
-  const tierOrder: Record<string, number> = { free: 0, pro: 1, ultra: 2 };
+  const tierOrder: Record<string, number> = { free: 0, pro: 1 };
   const userTierNum = tierOrder[tier] || 0;
 
   const tabs = [
@@ -591,9 +591,9 @@ Output the proposal with each section header in bold. Write in formal academic l
         </UpgradeGate>
       )}
 
-      {/* Tab Content: Meta-Analysis (Ultra) */}
+      {/* Tab Content: Meta-Analysis (Pro) */}
       {activeTab === 'meta' && (
-        <UpgradeGate requiredTier="ultra" currentTier={tier} feature="Statistical Meta-Analysis & Forest Plot" featureKey="meta_analysis">
+        <UpgradeGate requiredTier="pro" currentTier={tier} feature="Statistical Meta-Analysis & Forest Plot" featureKey="meta_analysis">
           <div className="space-y-6">
             {/* Pooled Result */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)]">
@@ -602,7 +602,7 @@ Output the proposal with each section header in bold. Write in formal academic l
                 style={{ fontFamily: 'Outfit, sans-serif' }}
               >
                 <span>🔬</span> {t('statMetaTitle')}
-                {/* ULTRA badge hidden during beta */}
+                {/* Pro feature */}
               </h3>
 
               {extracting ? (

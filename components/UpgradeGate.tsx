@@ -8,7 +8,7 @@ import { ADMIN_EMAILS } from '@/lib/admin';
 import type { Tier } from '@/lib/constants';
 
 interface UpgradeGateProps {
-  requiredTier: 'pro' | 'ultra'; // 'ultra' kept for legacy call sites — treated as 'pro'
+  requiredTier: 'pro';
   currentTier: Tier;
   feature: string;
   featureKey: string;
@@ -45,8 +45,8 @@ export default function UpgradeGate({ currentTier, feature, featureKey, children
   const isAdminUser = user?.email && ADMIN_EMAILS.includes(user.email.toLowerCase());
   if (isAdminUser) return <>{children}</>;
 
-  // Free tier → gate; pro/ultra → pass through
-  const hasAccess = currentTier === 'pro' || currentTier === 'ultra';
+  // Free tier → gate; pro → pass through
+  const hasAccess = currentTier === 'pro';
   if (hasAccess || trialActive) return <>{children}</>;
 
   const tierColor = 'var(--color-primary)';

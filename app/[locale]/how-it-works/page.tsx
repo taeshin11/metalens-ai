@@ -91,7 +91,7 @@ export default function HowItWorksPage() {
             </p>
             <p className="text-[var(--color-text-secondary)] leading-relaxed mt-2">
               Depending on your subscription tier, MetaLens AI retrieves between 10 abstracts
-              (Free tier) and 80 abstracts (Ultra tier) per query. Each abstract is fetched in
+              (Free tier) and 80 abstracts (Pro tier) per query. Each abstract is fetched in
               real time, ensuring you always receive the most up-to-date research available in the
               PubMed database.
             </p>
@@ -217,7 +217,7 @@ export default function HowItWorksPage() {
             <span className="text-[var(--color-primary)] font-bold flex-shrink-0">5.</span>
             <p>
               <strong>Upgrade for deeper analysis.</strong> If you need more comprehensive
-              coverage, the Pro and Ultra tiers analyze significantly more abstracts per query
+              coverage, the Pro tier analyzes significantly more abstracts per query
               (up to 80), providing a more thorough synthesis of the available evidence.
             </p>
           </div>

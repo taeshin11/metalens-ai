@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
     const isAdmin = session?.email && ADMIN_EMAILS.includes(session.email.toLowerCase());
-    const tier: Tier = isAdmin ? 'ultra' : (session?.tier || 'free');
+    const tier: Tier = isAdmin ? 'pro' : (session?.tier || 'free');
     const identifier = session?.email || request.headers.get('x-forwarded-for') || 'anon';
 
     // Admin users skip rate limit
