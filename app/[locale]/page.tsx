@@ -15,7 +15,7 @@ import { synthesizeWithAI, SynthesisResult } from '@/lib/synthesis';
 import { collectData } from '@/lib/analytics';
 import { translateForPubMed } from '@/lib/translate';
 import { buildPubMedQuery } from '@/lib/pubmed-filters';
-import { TIER_CONFIG } from '@/lib/constants';
+import { TIER_CONFIG, BETA_END } from '@/lib/constants';
 
 type Stage = 'idle' | 'searching' | 'synthesizing' | 'done' | 'error';
 
@@ -155,7 +155,6 @@ export default function HomePage() {
     return () => window.removeEventListener('metalens:home', handler);
   });
 
-  const BETA_END = new Date('2026-04-16T00:00:00Z');
   const betaActive = new Date() < BETA_END;
 
   return (
