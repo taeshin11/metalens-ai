@@ -21,8 +21,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { keywords, result, articles, mode } = body;
 
-    if (!keywords || !result || !articles) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    if (typeof keywords !== 'string' || keywords.length === 0 || keywords.length > 500) {
+      return NextResponse.json({ error: 'Invalid keywords' }, { status: 400 });
+    }
+    if (!result || typeof result !== 'object' || typeof result.english !== 'string') {
+      return NextResponse.json({ error: 'Invalid result' }, { status: 400 });
+    }
+    if (!Array.isArray(articles) || articles.length === 0 || articles.length > 200) {
+      return NextResponse.json({ error: 'Invalid articles' }, { status: 400 });
     }
 
     // Store only what's needed for rendering
