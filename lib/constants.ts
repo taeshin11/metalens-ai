@@ -41,6 +41,8 @@ export const FREE_DAILY_LIMIT = TIER_CONFIG.free.dailyLimit;
 export const FREE_POINTS = TIER_CONFIG.free.pointCount;
 export const PRO_POINTS = TIER_CONFIG.pro.pointCount;
 
+export const BETA_END = new Date('2026-04-16T00:00:00Z');
+
 export const PUBMED_BASE = 'https://pubmed.ncbi.nlm.nih.gov';
 
 export const META_ANALYSIS_PROMPT = `Synthesize these PubMed abstracts into exactly {pointCount} key findings.

@@ -5,7 +5,7 @@
  * - pro: 일별 제한 (UTC 자정 리셋)
  */
 
-const BETA_END = new Date('2026-04-16T00:00:00Z'); // unlimited for logged-in until Apr 15
+import { BETA_END } from './constants';
 
 function isBetaPeriod(): boolean {
   return new Date() < BETA_END;
