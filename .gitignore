@@ -44,3 +44,6 @@ next-env.d.ts
 .gsc_verify.py
 .pkce_verifier
 FEATURES.txt
+
+# new-machine transfer bundle (contains .env.local)
+/_transfer/
