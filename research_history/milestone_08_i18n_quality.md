@@ -30,6 +30,14 @@
 - 8개 언어 키 카운트 동일 (468)
 - `git push origin master` 성공
 
+### 코드 정리 & 강화
+- `components/AdBanner.tsx`: 삭제 (AdSense 제거 후 사용 안 함)
+- `lib/usage-tracker.ts`: 30일 이상 오래된 로그 자동 제거, 중복 signup 이메일 방지
+- `app/api/share/route.ts`: 입력 타입/길이 검증 강화 (keywords ≤500자, articles ≤200개)
+- `app/[locale]/layout.tsx`: production에서 GA 환경변수 누락 시 경고 로그
+
 ## 커밋
 - `f16ff92` chore: gitignore _transfer/
 - `16e568e` feat: complete i18n for 6 languages, add error boundary, consolidate beta date
+- `da0b2bb` chore: add milestone_08 i18n quality improvement record
+- `3b6745b` chore: cleanup and hardening
