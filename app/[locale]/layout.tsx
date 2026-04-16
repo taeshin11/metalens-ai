@@ -8,6 +8,10 @@ import { SITE_NAME, SITE_URL, SUPPORTED_LOCALES } from '@/lib/constants';
 // Google Analytics Measurement ID — replace with your actual GA4 ID
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX';
 
+if (process.env.NODE_ENV === 'production' && GA_MEASUREMENT_ID === 'G-XXXXXXXXXX') {
+  console.warn('[MetaLens] NEXT_PUBLIC_GA_MEASUREMENT_ID is not set — Google Analytics disabled.');
+}
+
 // Map locales to BCP-47 hreflang codes.
 // Naver prefers ko-KR, Baidu prefers zh-CN, Yandex prefers ru (we don't have ru yet).
 const HREFLANG_MAP: Record<string, string> = {

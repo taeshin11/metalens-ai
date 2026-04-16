@@ -29,6 +29,18 @@ const MODEL_COSTS: Record<string, { input: number; output: number }> = {
 
 const usageLog: UsageEntry[] = [];
 const signupLog: { timestamp: number; email: string; name: string }[] = [];
+const signupEmails = new Set<string>();
+
+const MAX_LOG_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
+function pruneOldEntries() {
+  const cutoff = Date.now() - MAX_LOG_AGE_MS;
+  while (usageLog.length > 0 && usageLog[0].timestamp < cutoff) usageLog.shift();
+  while (signupLog.length > 0 && signupLog[0].timestamp < cutoff) {
+    const removed = signupLog.shift();
+    if (removed) signupEmails.delete(removed.email);
+  }
+}
 
 export function trackUsage(
   email: string,
@@ -37,6 +49,7 @@ export function trackUsage(
   inputTokensEst: number = 5000,
   outputTokensEst: number = 800,
 ) {
+  pruneOldEntries();
   usageLog.push({
     timestamp: Date.now(),
     email,
@@ -48,6 +61,9 @@ export function trackUsage(
 }
 
 export function trackSignup(email: string, name: string) {
+  pruneOldEntries();
+  if (signupEmails.has(email)) return;
+  signupEmails.add(email);
   signupLog.push({ timestamp: Date.now(), email, name });
 }
 
