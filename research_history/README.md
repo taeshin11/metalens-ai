@@ -15,7 +15,8 @@ research_history/
   milestone_04_tools.md  — Writing Tools 확장 (2026-04-11~15)
   milestone_05_polish.md — 광고 제거, Claude API, Citation, Consensus (2026-04-15)
   milestone_06_share_blog.md — Share, 7-lang 블로그, Claude 롤백 (2026-04-15)
-  milestone_07_remove_ultra.md — Ultra 플랜 제거 (2026-04-15) ← 현재
+  milestone_07_remove_ultra.md — Ultra 플랜 제거 (2026-04-15)
+  milestone_08_i18n_quality.md — i18n 완성 & 품질 개선 (2026-04-16) ← 현재
 ```
 
 ## 마일스톤 요약
@@ -30,3 +31,4 @@ research_history/
 | 05 | 광고 제거 & AI 업그레이드 | 2026-04-15 | AdSense 제거, Claude API, Citation, Consensus Meter |
 | 06 | Share & 다국어 블로그 | 2026-04-15 | Share Results, 블로그 7개 언어 추가, Claude API 롤백 |
 | 07 | Ultra 플랜 제거 | 2026-04-15 | 티어 시스템을 free/pro 2단계로 축소, i18n/문서 정리 |
+| 08 | i18n 완성 & 품질 개선 | 2026-04-16 | 6개 언어 48키 번역, 에러 바운더리, BETA_END 통합 |
