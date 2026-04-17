@@ -14,7 +14,8 @@ export async function GET(request: NextRequest) {
   try {
     const articles = await searchAndFetch(keywords, 50);
     return NextResponse.json({ articles });
-  } catch {
+  } catch (err) {
+    console.error('[api/pubmed] failed:', err);
     return NextResponse.json({ error: 'PubMed search failed' }, { status: 500 });
   }
 }

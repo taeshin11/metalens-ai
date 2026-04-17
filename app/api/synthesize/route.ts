@@ -48,7 +48,8 @@ export async function POST(request: NextRequest) {
     trackUsage(identifier, tier, TIER_CONFIG[tier].model);
 
     return NextResponse.json({ result, remaining });
-  } catch {
+  } catch (err) {
+    console.error('[api/synthesize] failed:', err);
     return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
   }
 }
@@ -63,16 +64,16 @@ async function synthesize(prompt: string, tier: Tier): Promise<string | null> {
   try {
     const result = await callGemini(prompt, geminiKey, tierModel);
     if (result && result.trim()) return result;
-  } catch {
-    // Primary model failed — try fallback
+  } catch (err) {
+    console.warn(`[synthesize] primary model ${tierModel} failed, trying fallback:`, err);
   }
 
   // Strategy 2: Gemini fallback (Flash-Lite is cheapest)
   try {
     const result = await callGemini(prompt, geminiKey, 'gemini-2.0-flash-lite');
     if (result && result.trim()) return result;
-  } catch {
-    // Fallback also failed
+  } catch (err) {
+    console.error('[synthesize] fallback model also failed:', err);
   }
 
   return null;

@@ -55,7 +55,8 @@ export async function POST(request: NextRequest) {
     await redis.set(`share:${id}`, JSON.stringify(payload), { ex: TTL });
 
     return NextResponse.json({ id });
-  } catch {
+  } catch (err) {
+    console.error('[api/share POST] failed:', err);
     return NextResponse.json({ error: 'Failed to save share' }, { status: 500 });
   }
 }
@@ -71,7 +72,8 @@ export async function GET(request: NextRequest) {
 
     const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
     return NextResponse.json(data);
-  } catch {
+  } catch (err) {
+    console.error('[api/share GET] failed:', err);
     return NextResponse.json({ error: 'Failed to fetch share' }, { status: 500 });
   }
 }

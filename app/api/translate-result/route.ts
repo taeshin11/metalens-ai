@@ -37,7 +37,8 @@ Write ONLY the numbered lines. Nothing else.`;
     }
 
     return NextResponse.json({ translated });
-  } catch {
+  } catch (err) {
+    console.error('[api/translate-result] failed:', err);
     return NextResponse.json({ error: 'Translation failed' }, { status: 502 });
   }
 }
@@ -57,7 +58,9 @@ async function translate(text: string, systemPrompt: string): Promise<string | n
     });
     const result = response.text?.trim();
     if (result) return result;
-  } catch { /* primary failed */ }
+  } catch (err) {
+    console.warn('[translate-result] primary model failed, trying fallback:', err);
+  }
 
   // Try fallback model
   try {
@@ -70,7 +73,9 @@ async function translate(text: string, systemPrompt: string): Promise<string | n
     });
     const result = response.text?.trim();
     if (result) return result;
-  } catch { /* fallback failed */ }
+  } catch (err) {
+    console.error('[translate-result] fallback model also failed:', err);
+  }
 
   return null;
 }
