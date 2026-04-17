@@ -539,6 +539,8 @@
     "funnelSymmetric": "The plot appears roughly symmetric, suggesting low publication bias.",
     "funnelAsymmetric": "Asymmetry detected — smaller studies cluster on one side. This may indicate publication bias (negative studies not published) or genuine small-study effects.",
     "funnelCaution": "A symmetric funnel does not guarantee absence of bias; an asymmetric funnel does not prove bias.",
+    "funnelInterpretAsymShort": "Funnel plot asymmetry detected — potential publication bias or small-study effects. Interpret pooled estimates with caution.",
+    "funnelInterpretSymShort": "Funnel plot appears approximately symmetric — no strong visual evidence of publication bias.",
     "savePng": "Save PNG (High-Res)",
     "saveSvg": "Save SVG (Vector)",
     "saveHint": "PNG for presentations and documents — SVG for high-quality publication figures",

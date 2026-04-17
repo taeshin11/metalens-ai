@@ -93,6 +93,18 @@ Header 우측 "Upgrade" 링크(Free 티어 사용자만 노출) → `t('upgrade'
 
 **스킵 결정**: Forest/Funnel chart SVG 라벨, DataTable CSV 헤더는 영어 유지. 과학 문헌 컨벤션상 차트 라벨은 국제 저널에서도 영어가 표준이며, 사용자가 export한 차트를 영어권 동료와 공유할 때 호환성 유지에 유리.
 
+### 추가 변경 (6차 커밋) — FunnelPlot 해석 배너
+
+#### components/FunnelPlot.tsx
+차트 하단에 렌더링되는 `interpretationText` — Funnel plot 비대칭 여부에 따라 "Funnel plot asymmetry detected..." 또는 "Funnel plot appears approximately symmetric..." 표시. 사용자가 결과를 이해하는 핵심 문장인데 영어 하드코딩 → `t('funnelInterpretAsymShort')` / `t('funnelInterpretSymShort')`.
+
+차트의 순수 축 라벨(`Study`, `Standard Error` 등)은 학술 컨벤션으로 영어 유지하되, 해석 문장은 사용자 언어로 제공해야 한다는 구분.
+
+#### messages/{8 locales}.json
+`plots` 네임스페이스에 `funnelInterpretAsymShort`, `funnelInterpretSymShort` 2개 키 × 8 언어 추가. 8개 JSON 파일 파싱 검증 통과.
+
+**참고**: 이 커밋은 사용자 요청으로 VRAM 사용을 피하기 위해 `npm run build` 없이 커밋됨. 변경은 단순 문자열 교체라 빌드 리스크 낮음. 푸시 후 Vercel이 자동으로 빌드 검증.
+
 ## 커밋
 - `fda712e` feat: pricing metadata layout + API error observability
 - `32c6c6a` feat: share OG metadata + account/admin noindex

@@ -484,6 +484,8 @@
     "funnelSymmetric": "O gráfico parece aproximadamente simétrico, sugerindo baixo viés de publicação.",
     "funnelAsymmetric": "Assimetria detectada — estudos menores se agrupam em um lado. Isso pode indicar viés de publicação (estudos negativos não publicados) ou efeitos reais de estudos pequenos.",
     "funnelCaution": "Um funil simétrico não garante ausência de viés; um funil assimétrico não prova viés.",
+    "funnelInterpretAsymShort": "Assimetria no funnel plot detectada — possível viés de publicação ou efeitos de estudos pequenos. Interprete as estimativas agrupadas com cautela.",
+    "funnelInterpretSymShort": "O funnel plot aparece aproximadamente simétrico — sem evidência visual forte de viés de publicação.",
     "savePng": "Salvar PNG (Alta Resolução)",
     "saveSvg": "Salvar SVG (Vetorial)",
     "saveHint": "PNG para apresentações e documentos — SVG para figuras de publicação de alta qualidade",

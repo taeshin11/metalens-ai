@@ -484,6 +484,8 @@
     "funnelSymmetric": "Das Diagramm erscheint annähernd symmetrisch, was auf einen geringen Publikationsbias hindeutet.",
     "funnelAsymmetric": "Asymmetrie erkannt — kleinere Studien häufen sich auf einer Seite. Dies kann auf Publikationsbias (negative Studien nicht veröffentlicht) oder echte Kleinststudieneffekte hinweisen.",
     "funnelCaution": "Ein symmetrischer Funnel garantiert keine Verzerrungsfreiheit; ein asymmetrischer Funnel beweist keine Verzerrung.",
+    "funnelInterpretAsymShort": "Funnel-Plot-Asymmetrie erkannt — mögliche Publikationsverzerrung oder Kleinstudieneffekte. Gepoolte Schätzungen mit Vorsicht interpretieren.",
+    "funnelInterpretSymShort": "Funnel-Plot erscheint annähernd symmetrisch — kein starker visueller Hinweis auf Publikationsverzerrung.",
     "savePng": "PNG speichern (Hochauflösend)",
     "saveSvg": "SVG speichern (Vektor)",
     "saveHint": "PNG für Präsentationen und Dokumente — SVG für hochwertige Publikationsabbildungen",

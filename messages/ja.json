@@ -484,6 +484,8 @@
     "funnelSymmetric": "プロットはほぼ左右対称に見え、出版バイアスが低いことを示唆します。",
     "funnelAsymmetric": "非対称性が検出されました — 小規模研究が一方に集中しています。出版バイアス（陰性研究の未掲載）または真の小規模研究効果を示す可能性があります。",
     "funnelCaution": "対称なファネルはバイアスの不在を保証せず、非対称なファネルはバイアスを証明しません。",
+    "funnelInterpretAsymShort": "Funnel plot の非対称性を検出 — 出版バイアスまたは小規模研究効果の可能性。統合推定値の解釈に注意。",
+    "funnelInterpretSymShort": "Funnel plot はほぼ対称的 — 出版バイアスの視覚的証拠なし。",
     "savePng": "PNG保存（高解像度）",
     "saveSvg": "SVG保存（ベクター）",
     "saveHint": "プレゼンや文書にはPNG — 高品質な出版図にはSVG",

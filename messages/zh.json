@@ -484,6 +484,8 @@
     "funnelSymmetric": "图形呈大致对称，提示发表偏倚较低。",
     "funnelAsymmetric": "检测到不对称——小型研究聚集在一侧。这可能提示发表偏倚（阴性研究未发表）或真实的小样本研究效应。",
     "funnelCaution": "对称漏斗不能保证没有偏倚；不对称漏斗也不能证明存在偏倚。",
+    "funnelInterpretAsymShort": "检测到漏斗图不对称 — 可能存在发表偏倚或小样本研究效应。请谨慎解释合并估计值。",
+    "funnelInterpretSymShort": "漏斗图大致对称 — 无明显发表偏倚的视觉证据。",
     "savePng": "保存PNG（高分辨率）",
     "saveSvg": "保存SVG（矢量图）",
     "saveHint": "PNG适用于演示和文档——SVG适用于高质量出版图",
