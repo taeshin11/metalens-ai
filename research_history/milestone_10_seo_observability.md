@@ -110,7 +110,8 @@ Header 우측 "Upgrade" 링크(Free 티어 사용자만 노출) → `t('upgrade'
 - `32c6c6a` feat: share OG metadata + account/admin noindex
 - `8518933` fix: i18n error page + locale-aware home link
 - `d40b551` fix: i18n FeedbackButton + aria-labels
-- (next commit) fix: i18n UpsellBanner + ShareButtons + UserMenu + Export PDF
+- `bb8c4aa` fix: i18n UpsellBanner + ShareButtons + UserMenu + Export PDF
+- `4346201` fix: i18n FunnelPlot asymmetry interpretation
 
 ## ⚠️ 인계
 Milestone 09의 푸시 대기 상태와 함께 이 커밋도 local-only로 쌓임. 사용자가 VS Code Source Control 또는 taeshin11 크리덴셜 터미널에서 `git push origin master`로 일괄 푸시하면 Vercel 자동 배포.
