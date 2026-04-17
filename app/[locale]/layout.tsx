@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -103,6 +103,15 @@ export async function generateMetadata({
   };
 }
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+  ],
+};
+
 export default async function LocaleLayout({
   children,
   params,
@@ -172,7 +181,6 @@ export default async function LocaleLayout({
         <link rel="preconnect" href="https://pubmed.ncbi.nlm.nih.gov" />
         <link rel="dns-prefetch" href="https://eutils.ncbi.nlm.nih.gov" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
 
         {/* — Google Fonts — */}
         <link

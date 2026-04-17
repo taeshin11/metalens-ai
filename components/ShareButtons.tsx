@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLocale } from 'next-intl';
 import { SITE_URL } from '@/lib/constants';
 
 interface ShareButtonsProps {
@@ -10,8 +11,9 @@ interface ShareButtonsProps {
 
 export default function ShareButtons({ keywords, paperCount }: ShareButtonsProps) {
   const [copied, setCopied] = useState(false);
+  const locale = useLocale();
 
-  const shareUrl = `${SITE_URL}/en?q=${encodeURIComponent(keywords)}`;
+  const shareUrl = `${SITE_URL}/${locale}?q=${encodeURIComponent(keywords)}`;
   const shareText = `I just analyzed ${paperCount} PubMed papers on "${keywords}" using MetaLens AI — free AI-powered meta-analysis tool!`;
 
   const handleCopy = async () => {
