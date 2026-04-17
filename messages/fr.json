@@ -69,6 +69,7 @@
     "viewOnPubMed": "Voir sur PubMed",
     "disclaimer": "Ceci est un résumé généré par l'IA à des fins d'information uniquement. Il ne constitue PAS un avis médical. Consultez toujours un professionnel de santé.",
     "newSearch": "Nouvelle Recherche",
+    "exportPdf": "Exporter en PDF",
     "analyzing": "Analyse des articles de recherche...",
     "searchingPubMed": "Recherche dans la base de données PubMed...",
     "synthesizing": "Synthèse des résultats avec l'IA...",
@@ -271,6 +272,7 @@
   "auth": {
     "signIn": "Se connecter",
     "signOut": "Se déconnecter",
+    "upgrade": "Passer à Pro",
     "loginTitle": "Inscription gratuite",
     "loginDesc": "Créez un compte gratuit pour obtenir 5 analyses par jour avec des résumés de méta-analyse propulsés par l'IA.",
     "nameLabel": "Nom",
@@ -406,6 +408,26 @@
   "a11y": {
     "enterKeywords": "Entrez des mots-clés médicaux",
     "toggleMenu": "Basculer le menu"
+  },
+  "upsell": {
+    "intro": "Vous avez analysé {count} articles. Pro vous offre en plus :",
+    "dataTableTitle": "Table de données",
+    "dataTableDesc": "Extraire les chiffres de chaque article",
+    "metaTitle": "Méta-analyse",
+    "metaDesc": "Agréger les données en statistiques",
+    "forestTitle": "Forest Plot",
+    "forestDesc": "Visualiser les résultats combinés",
+    "cta": "Voir les formules",
+    "pricing": "À partir de 4,99 $/mois"
+  },
+  "shareButtons": {
+    "label": "Partager :",
+    "twitter": "Partager sur X",
+    "linkedin": "Partager sur LinkedIn",
+    "reddit": "Partager sur Reddit",
+    "copyTitle": "Copier le lien",
+    "copy": "Copier",
+    "copied": "Copié !"
   },
   "blog": {
     "title": "Blog",

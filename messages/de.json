@@ -69,6 +69,7 @@
     "viewOnPubMed": "Auf PubMed ansehen",
     "disclaimer": "Dies ist eine von KI generierte Zusammenfassung, die ausschließlich zu Informationszwecken dient. Es handelt sich NICHT um einen medizinischen Rat. Konsultieren Sie immer einen Facharzt.",
     "newSearch": "Neue Suche",
+    "exportPdf": "PDF exportieren",
     "analyzing": "Forschungsartikel werden analysiert...",
     "searchingPubMed": "PubMed-Datenbank wird durchsucht...",
     "synthesizing": "Erkenntnisse werden mit KI zusammengeführt...",
@@ -292,9 +293,30 @@
     "enterKeywords": "Medizinische Suchbegriffe eingeben",
     "toggleMenu": "Menü umschalten"
   },
+  "upsell": {
+    "intro": "Sie haben {count} Studien analysiert. Mit Pro erhalten Sie zusätzlich:",
+    "dataTableTitle": "Datentabelle",
+    "dataTableDesc": "Zahlen aus jedem Paper extrahieren",
+    "metaTitle": "Meta-Analyse",
+    "metaDesc": "Daten zu neuen Statistiken aggregieren",
+    "forestTitle": "Forest Plot",
+    "forestDesc": "Kombinierte Ergebnisse visualisieren",
+    "cta": "Pläne ansehen",
+    "pricing": "Ab $4,99/Monat"
+  },
+  "shareButtons": {
+    "label": "Teilen:",
+    "twitter": "Auf X teilen",
+    "linkedin": "Auf LinkedIn teilen",
+    "reddit": "Auf Reddit teilen",
+    "copyTitle": "Link kopieren",
+    "copy": "Kopieren",
+    "copied": "Kopiert!"
+  },
   "auth": {
     "signIn": "Anmelden",
     "signOut": "Abmelden",
+    "upgrade": "Upgraden",
     "loginTitle": "Kostenlos registrieren",
     "loginDesc": "Erstellen Sie ein kostenloses Konto für 5 Analysen pro Tag mit KI-gestützten Metaanalyse-Zusammenfassungen.",
     "nameLabel": "Name",

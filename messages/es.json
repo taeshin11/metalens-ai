@@ -69,6 +69,7 @@
     "viewOnPubMed": "Ver en PubMed",
     "disclaimer": "Este es un resumen generado por IA solo con fines informativos. NO es un consejo médico. Consulte siempre a un profesional de la salud.",
     "newSearch": "Nueva Búsqueda",
+    "exportPdf": "Exportar PDF",
     "analyzing": "Analizando artículos de investigación...",
     "searchingPubMed": "Buscando en la base de datos de PubMed...",
     "synthesizing": "Sintetizando hallazgos con IA...",
@@ -292,9 +293,30 @@
     "enterKeywords": "Ingresa términos médicos",
     "toggleMenu": "Alternar menú"
   },
+  "upsell": {
+    "intro": "Analizaste {count} artículos. Pro añade:",
+    "dataTableTitle": "Tabla de datos",
+    "dataTableDesc": "Extrae cifras de cada artículo",
+    "metaTitle": "Metaanálisis",
+    "metaDesc": "Agrupa datos en nuevas estadísticas",
+    "forestTitle": "Forest Plot",
+    "forestDesc": "Visualiza resultados combinados",
+    "cta": "Ver planes",
+    "pricing": "Desde $4.99/mes"
+  },
+  "shareButtons": {
+    "label": "Compartir:",
+    "twitter": "Compartir en X",
+    "linkedin": "Compartir en LinkedIn",
+    "reddit": "Compartir en Reddit",
+    "copyTitle": "Copiar enlace",
+    "copy": "Copiar",
+    "copied": "¡Copiado!"
+  },
   "auth": {
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión",
+    "upgrade": "Mejorar plan",
     "loginTitle": "Regístrate gratis",
     "loginDesc": "Crea una cuenta gratuita para obtener 5 análisis al día con resúmenes de metaanálisis impulsados por IA.",
     "nameLabel": "Nombre",

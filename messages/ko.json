@@ -130,6 +130,7 @@
     "tabToolsTitle": "논문 작성 도구",
     "tabToolsDesc": "초록 초안 생성 및 SCI 저널 추천",
     "newSearch": "새 검색",
+    "exportPdf": "PDF 내보내기",
     "analyzing": "연구 논문 분석 중...",
     "searchingPubMed": "PubMed 데이터베이스 검색 중...",
     "synthesizing": "AI로 연구 결과 종합 중...",
@@ -347,9 +348,30 @@
     "enterKeywords": "의학 키워드를 입력하세요",
     "toggleMenu": "메뉴 열기/닫기"
   },
+  "upsell": {
+    "intro": "{count}개 논문을 분석했습니다. Pro로 업그레이드하면 추가되는 기능:",
+    "dataTableTitle": "데이터 테이블",
+    "dataTableDesc": "각 논문에서 수치 추출",
+    "metaTitle": "메타분석",
+    "metaDesc": "데이터를 통합 통계로",
+    "forestTitle": "Forest Plot",
+    "forestDesc": "통합 결과 시각화",
+    "cta": "요금제 보기",
+    "pricing": "월 $4.99부터"
+  },
+  "shareButtons": {
+    "label": "공유:",
+    "twitter": "X에 공유",
+    "linkedin": "LinkedIn에 공유",
+    "reddit": "Reddit에 공유",
+    "copyTitle": "링크 복사",
+    "copy": "복사",
+    "copied": "복사됨!"
+  },
   "auth": {
     "signIn": "로그인",
     "signOut": "로그아웃",
+    "upgrade": "업그레이드",
     "loginTitle": "무료 가입하기",
     "loginDesc": "무료 계정을 만들면 총 3회 AI 기반 메타분석 요약을 이용할 수 있습니다.",
     "nameLabel": "이름",
