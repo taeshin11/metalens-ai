@@ -69,6 +69,7 @@
     "viewOnPubMed": "PubMedで見る",
     "disclaimer": "これは情報提供のみを目的としたAI生成の要約です。医学的アドバイスではありません。必ず医療専門家にご相談ください。",
     "newSearch": "新しい検索",
+    "exportPdf": "PDFエクスポート",
     "analyzing": "研究論文を分析中...",
     "searchingPubMed": "PubMedデータベースを検索中...",
     "synthesizing": "AIで知見を統合中...",
@@ -292,9 +293,30 @@
     "enterKeywords": "医学キーワードを入力",
     "toggleMenu": "メニューの開閉"
   },
+  "upsell": {
+    "intro": "{count}本の論文を分析しました。Proで追加される機能:",
+    "dataTableTitle": "データテーブル",
+    "dataTableDesc": "各論文から数値を抽出",
+    "metaTitle": "メタ分析",
+    "metaDesc": "データを新しい統計に集約",
+    "forestTitle": "Forest Plot",
+    "forestDesc": "統合結果を可視化",
+    "cta": "プランを見る",
+    "pricing": "月額$4.99から"
+  },
+  "shareButtons": {
+    "label": "共有:",
+    "twitter": "Xで共有",
+    "linkedin": "LinkedInで共有",
+    "reddit": "Redditで共有",
+    "copyTitle": "リンクをコピー",
+    "copy": "コピー",
+    "copied": "コピーしました!"
+  },
   "auth": {
     "signIn": "ログイン",
     "signOut": "ログアウト",
+    "upgrade": "アップグレード",
     "loginTitle": "無料で登録",
     "loginDesc": "無料アカウントを作成すると、AI搭載のメタアナリシス要約で1日5回の分析が可能です。",
     "nameLabel": "お名前",

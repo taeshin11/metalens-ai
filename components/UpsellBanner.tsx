@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Tier } from '@/lib/constants';
 
@@ -13,6 +14,7 @@ interface UpsellBannerProps {
 export default function UpsellBanner({ tier, paperCount }: UpsellBannerProps) {
   const params = useParams();
   const locale = params.locale as string;
+  const t = useTranslations('upsell');
   const [dismissed, setDismissed] = useState(false);
 
   if (tier !== 'free' || dismissed) return null;
@@ -39,25 +41,25 @@ export default function UpsellBanner({ tier, paperCount }: UpsellBannerProps) {
           {/* Left: What you're missing */}
           <div className="flex-1">
             <p className="text-sm font-semibold text-[var(--color-text-primary)] mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              You analyzed {paperCount} papers. Here&apos;s what Pro would add:
+              {t('intro', { count: paperCount })}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <MiniFeature
                 icon="📊"
-                title="Data Table"
-                desc="Extract numbers from each paper"
+                title={t('dataTableTitle')}
+                desc={t('dataTableDesc')}
                 tier="Pro"
               />
               <MiniFeature
                 icon="🔬"
-                title="Meta-Analysis"
-                desc="Pool data into new statistics"
+                title={t('metaTitle')}
+                desc={t('metaDesc')}
                 tier="Pro"
               />
               <MiniFeature
                 icon="🌲"
-                title="Forest Plot"
-                desc="Visualize combined results"
+                title={t('forestTitle')}
+                desc={t('forestDesc')}
                 tier="Pro"
               />
             </div>
@@ -69,9 +71,9 @@ export default function UpsellBanner({ tier, paperCount }: UpsellBannerProps) {
               href={`/${locale}/pricing`}
               className="inline-block px-5 py-2.5 bg-[var(--color-primary)] text-white text-sm font-semibold rounded-xl hover:bg-[var(--color-primary-dark)] transition-colors"
             >
-              See Plans
+              {t('cta')}
             </a>
-            <p className="text-[10px] text-[var(--color-text-muted)] mt-1">From $4.99/mo</p>
+            <p className="text-[10px] text-[var(--color-text-muted)] mt-1">{t('pricing')}</p>
           </div>
         </div>
       </motion.div>

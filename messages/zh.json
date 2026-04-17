@@ -69,6 +69,7 @@
     "viewOnPubMed": "在PubMed上查看",
     "disclaimer": "这是仅供参考的AI生成摘要，不构成医疗建议。请务必咨询医疗专业人员。",
     "newSearch": "新搜索",
+    "exportPdf": "导出PDF",
     "analyzing": "正在分析研究论文...",
     "searchingPubMed": "正在搜索PubMed数据库...",
     "synthesizing": "正在用AI综合研究结果...",
@@ -292,9 +293,30 @@
     "enterKeywords": "输入医学关键词",
     "toggleMenu": "切换菜单"
   },
+  "upsell": {
+    "intro": "您已分析 {count} 篇论文。Pro 版本可解锁:",
+    "dataTableTitle": "数据表",
+    "dataTableDesc": "从每篇论文提取数据",
+    "metaTitle": "荟萃分析",
+    "metaDesc": "汇总数据为新统计",
+    "forestTitle": "Forest Plot",
+    "forestDesc": "可视化合并结果",
+    "cta": "查看套餐",
+    "pricing": "每月$4.99起"
+  },
+  "shareButtons": {
+    "label": "分享:",
+    "twitter": "分享到 X",
+    "linkedin": "分享到 LinkedIn",
+    "reddit": "分享到 Reddit",
+    "copyTitle": "复制链接",
+    "copy": "复制",
+    "copied": "已复制!"
+  },
   "auth": {
     "signIn": "登录",
     "signOut": "退出",
+    "upgrade": "升级",
     "loginTitle": "免费注册",
     "loginDesc": "创建免费账户，每天可进行5次AI驱动的荟萃分析摘要。",
     "nameLabel": "姓名",

@@ -130,6 +130,7 @@
     "tabToolsTitle": "Writing Tools",
     "tabToolsDesc": "Generate abstract drafts and get SCI journal recommendations",
     "newSearch": "New Search",
+    "exportPdf": "Export PDF",
     "analyzing": "Analyzing research papers...",
     "searchingPubMed": "Searching PubMed database...",
     "synthesizing": "Synthesizing findings with AI...",
@@ -396,9 +397,30 @@
     "enterKeywords": "Enter medical keywords",
     "toggleMenu": "Toggle menu"
   },
+  "upsell": {
+    "intro": "You analyzed {count} papers. Here's what Pro would add:",
+    "dataTableTitle": "Data Table",
+    "dataTableDesc": "Extract numbers from each paper",
+    "metaTitle": "Meta-Analysis",
+    "metaDesc": "Pool data into new statistics",
+    "forestTitle": "Forest Plot",
+    "forestDesc": "Visualize combined results",
+    "cta": "See Plans",
+    "pricing": "From $4.99/mo"
+  },
+  "shareButtons": {
+    "label": "Share:",
+    "twitter": "Share on X",
+    "linkedin": "Share on LinkedIn",
+    "reddit": "Share on Reddit",
+    "copyTitle": "Copy link",
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
   "auth": {
     "signIn": "Sign In",
     "signOut": "Sign Out",
+    "upgrade": "Upgrade",
     "loginTitle": "Sign up for free",
     "loginDesc": "Create a free account to get 3 analyses total with AI-powered meta-analysis summaries.",
     "nameLabel": "Name",

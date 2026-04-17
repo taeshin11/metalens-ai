@@ -44,7 +44,7 @@ export default function UserMenu() {
           href={`/${locale}/pricing`}
           className="hidden sm:inline-block text-xs font-semibold text-[var(--color-primary)] hover:underline"
         >
-          Upgrade
+          {t('upgrade')}
         </Link>
       )}
 
