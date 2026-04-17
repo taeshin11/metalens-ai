@@ -29,5 +29,14 @@ Milestone 08 완료 후 정기 품질 감사에서 발견된 low-risk 최적화 
 - 모든 route가 기존과 동일하게 빌드됨 (/api/*, /[locale]/*, /sitemap.xml 등)
 
 ## 주목할 점
-- **Beta 기간 만료**: `BETA_END = 2026-04-16T00:00:00Z`. 오늘(2026-04-17)부터는 logged-in 유저도 일반 rate limit 적용 — 의도된 동작.
+- **Beta 기간 만료**: `BETA_END = 2026-04-16T00:00:00Z`. 2026-04-17부터는 logged-in 유저도 일반 rate limit 적용 — 의도된 동작.
 - metadataBase 경고는 기존부터 있던 것. 자식 페이지들이 OG 이미지를 자체 설정하지 않으므로 실무적으로 문제 없음.
+
+## 커밋
+- `8a3cb3f` perf: next.config tuning, viewport export, share link i18n fix
+
+## ⚠️ 인계 (2026-04-18 세션 종료 시점)
+**로컬 커밋 완료, 푸시는 안 된 상태**로 세션 종료.
+- 이유: Claude 세션 내 `gh`가 SpinAIceo로만 인증되어 있어 `taeshin11/metalens-ai`에 push 권한 없음. Windows Credential Manager에 taeshin11 PAT 캐시가 없거나 만료.
+- 해결: 사용자가 VS Code Source Control 또는 taeshin11 크리덴셜이 잡히는 본인 터미널에서 `git push origin master` 실행 → Vercel 자동 배포.
+- 다음 Claude 세션: 먼저 `git log origin/master..HEAD`로 푸시 여부 확인할 것. 이미 푸시됐으면 skip.
