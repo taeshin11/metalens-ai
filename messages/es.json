@@ -273,6 +273,12 @@
     "description": "La página que buscas no existe. Intenta buscar investigación médica desde la página de inicio.",
     "backHome": "Volver al inicio"
   },
+  "error": {
+    "title": "Algo salió mal",
+    "description": "Ocurrió un error inesperado. Inténtalo de nuevo o vuelve a la página de inicio.",
+    "tryAgain": "Reintentar",
+    "goHome": "Ir a inicio"
+  },
   "auth": {
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión",

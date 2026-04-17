@@ -273,6 +273,12 @@
     "description": "A página que você procura não existe. Tente pesquisar pesquisas médicas na página inicial.",
     "backHome": "Voltar ao início"
   },
+  "error": {
+    "title": "Algo deu errado",
+    "description": "Ocorreu um erro inesperado. Tente novamente ou volte à página inicial.",
+    "tryAgain": "Tentar novamente",
+    "goHome": "Início"
+  },
   "auth": {
     "signIn": "Entrar",
     "signOut": "Sair",

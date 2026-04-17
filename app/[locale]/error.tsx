@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 
 export default function Error({
   error,
@@ -9,6 +12,10 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+  const t = useTranslations('error');
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -23,24 +30,24 @@ export default function Error({
           className="text-2xl font-semibold text-[var(--color-text-primary)]"
           style={{ fontFamily: 'Outfit, sans-serif' }}
         >
-          Something went wrong
+          {t('title')}
         </h1>
         <p className="text-[var(--color-text-secondary)] max-w-md mx-auto">
-          An unexpected error occurred. Please try again or return to the homepage.
+          {t('description')}
         </p>
         <div className="flex items-center justify-center gap-4">
           <button
             onClick={reset}
             className="px-6 py-3 bg-[var(--color-primary)] text-white rounded-2xl font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
           >
-            Try Again
+            {t('tryAgain')}
           </button>
-          <a
-            href="/"
+          <Link
+            href={`/${locale}`}
             className="px-6 py-3 border border-[var(--color-border)] text-[var(--color-text-primary)] rounded-2xl font-medium hover:bg-[var(--color-bg-secondary)] transition-colors"
           >
-            Go Home
-          </a>
+            {t('goHome')}
+          </Link>
         </div>
       </div>
     </div>
