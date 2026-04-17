@@ -47,3 +47,6 @@ FEATURES.txt
 
 # new-machine transfer bundle (contains .env.local)
 /_transfer/
+
+# claude code runtime artifacts
+/.claude/scheduled_tasks.lock
