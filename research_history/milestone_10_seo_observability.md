@@ -34,8 +34,22 @@ Milestone 09 커밋 후 품질 감사에서 추가 발견한 두 항목 해결:
 - **로깅 전략**: primary Gemini 실패는 정상 플로우의 일부라 `warn`, fallback까지 실패하거나 최상위 catch는 `error`. Vercel 대시보드에서 error 수로 서비스 건강도 관측 가능.
 - **개별 연구 정보 보존 원칙** (AGENTS.md): catch 블록에서 에러 객체를 로그하되 응답은 기존과 동일하게 유지 — 클라이언트 동작 변화 없음.
 
+### 추가 변경 (2차 커밋)
+
+#### app/[locale]/share/[id]/layout.tsx (새 파일)
+Share 페이지 동적 OG 메타데이터 — 공유된 분석 결과가 Slack/Twitter/LinkedIn에서 미리보기될 때 실제 키워드와 요약을 노출:
+- Server layout의 `generateMetadata`에서 Upstash Redis에 직접 쿼리 → share payload 로드
+- title: `"Shared Analysis Results: {keywords}"` (80자 절단)
+- description: 번역된 결과 또는 영문 결과의 첫 문장 (160자 절단)
+- `robots: { index: false }` — 공유 링크는 7일 만료라 SERP 오염 방지
+- Redis 실패 시 silent fallback → 페이지 렌더 막지 않음
+
+#### app/[locale]/account/layout.tsx, app/[locale]/admin/layout.tsx (새 파일)
+Auth-gated 페이지 `robots: { index: false, follow: false }` 적용. 개인 정보/관리 페이지는 SERP에 노출될 이유 없음 (privacy & hygiene).
+
 ## 커밋
-- (next commit) perf: pricing metadata layout + API error observability
+- `fda712e` feat: pricing metadata layout + API error observability
+- (next commit) feat: share OG + account/admin noindex
 
 ## ⚠️ 인계
 Milestone 09의 푸시 대기 상태와 함께 이 커밋도 local-only로 쌓임. 사용자가 VS Code Source Control 또는 taeshin11 크리덴셜 터미널에서 `git push origin master`로 일괄 푸시하면 Vercel 자동 배포.
