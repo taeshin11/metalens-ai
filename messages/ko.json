@@ -334,6 +334,19 @@
     "tryAgain": "다시 시도",
     "goHome": "홈으로"
   },
+  "feedbackWidget": {
+    "button": "피드백",
+    "title": "의견을 보내주세요",
+    "placeholder": "어떤 점을 개선할까요?",
+    "hint": "이메일 앱이 열립니다",
+    "send": "보내기",
+    "ariaTrigger": "피드백 보내기",
+    "ariaForm": "피드백 양식"
+  },
+  "a11y": {
+    "enterKeywords": "의학 키워드를 입력하세요",
+    "toggleMenu": "메뉴 열기/닫기"
+  },
   "auth": {
     "signIn": "로그인",
     "signOut": "로그아웃",

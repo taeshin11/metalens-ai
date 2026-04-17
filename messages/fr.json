@@ -394,6 +394,19 @@
     "tryAgain": "Réessayer",
     "goHome": "Accueil"
   },
+  "feedbackWidget": {
+    "button": "Commentaire",
+    "title": "Envoyez-nous un commentaire",
+    "placeholder": "Que pouvons-nous améliorer ?",
+    "hint": "Ouvre votre client mail",
+    "send": "Envoyer",
+    "ariaTrigger": "Envoyer un commentaire",
+    "ariaForm": "Formulaire de commentaire"
+  },
+  "a11y": {
+    "enterKeywords": "Entrez des mots-clés médicaux",
+    "toggleMenu": "Basculer le menu"
+  },
   "blog": {
     "title": "Blog",
     "subtitle": "Perspectives sur la recherche médicale, l'IA et la médecine factuelle.",

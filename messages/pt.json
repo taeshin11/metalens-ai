@@ -279,6 +279,19 @@
     "tryAgain": "Tentar novamente",
     "goHome": "Início"
   },
+  "feedbackWidget": {
+    "button": "Feedback",
+    "title": "Envie seu feedback",
+    "placeholder": "O que podemos melhorar?",
+    "hint": "Abre seu cliente de email",
+    "send": "Enviar",
+    "ariaTrigger": "Enviar feedback",
+    "ariaForm": "Formulário de feedback"
+  },
+  "a11y": {
+    "enterKeywords": "Digite termos médicos",
+    "toggleMenu": "Alternar menu"
+  },
   "auth": {
     "signIn": "Entrar",
     "signOut": "Sair",

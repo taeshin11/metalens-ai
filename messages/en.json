@@ -383,6 +383,19 @@
     "tryAgain": "Try Again",
     "goHome": "Go Home"
   },
+  "feedbackWidget": {
+    "button": "Feedback",
+    "title": "Send us feedback",
+    "placeholder": "What can we improve?",
+    "hint": "Opens your email client",
+    "send": "Send",
+    "ariaTrigger": "Send feedback",
+    "ariaForm": "Feedback form"
+  },
+  "a11y": {
+    "enterKeywords": "Enter medical keywords",
+    "toggleMenu": "Toggle menu"
+  },
   "auth": {
     "signIn": "Sign In",
     "signOut": "Sign Out",
