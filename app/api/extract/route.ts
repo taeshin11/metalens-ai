@@ -94,7 +94,8 @@ export async function POST(request: NextRequest) {
         if (!match) return [];
         const parsed = JSON.parse(match[0]);
         return Array.isArray(parsed) ? parsed : [];
-      } catch {
+      } catch (err) {
+        console.warn('[extract] batch failed:', err);
         return [];
       }
     });
@@ -104,7 +105,8 @@ export async function POST(request: NextRequest) {
     const combined = batchResults.flat();
 
     return NextResponse.json({ data: combined });
-  } catch {
+  } catch (err) {
+    console.error('[api/extract] failed:', err);
     return NextResponse.json({ error: 'Extraction failed' }, { status: 502 });
   }
 }

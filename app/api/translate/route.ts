@@ -41,7 +41,9 @@ Input: ${keywords}`;
       });
       const translated = response.text?.trim().replace(/^["']|["']$/g, '');
       if (translated) return NextResponse.json({ translated });
-    } catch { /* primary failed */ }
+    } catch (err) {
+      console.warn('[translate] primary model failed, trying fallback:', err);
+    }
 
     // Try fallback model
     try {
@@ -54,10 +56,13 @@ Input: ${keywords}`;
       });
       const translated = response.text?.trim().replace(/^["']|["']$/g, '');
       if (translated) return NextResponse.json({ translated });
-    } catch { /* fallback failed */ }
+    } catch (err) {
+      console.warn('[translate] fallback model also failed:', err);
+    }
 
     return NextResponse.json({ translated: keywords });
-  } catch {
+  } catch (err) {
+    console.error('[api/translate] failed:', err);
     return NextResponse.json({ translated: keywords });
   }
 }
