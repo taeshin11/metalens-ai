@@ -377,6 +377,12 @@
     "description": "The page you're looking for doesn't exist. Try searching for medical research from the homepage.",
     "backHome": "Back to Home"
   },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again or return to the homepage.",
+    "tryAgain": "Try Again",
+    "goHome": "Go Home"
+  },
   "auth": {
     "signIn": "Sign In",
     "signOut": "Sign Out",

@@ -47,9 +47,21 @@ Share 페이지 동적 OG 메타데이터 — 공유된 분석 결과가 Slack/T
 #### app/[locale]/account/layout.tsx, app/[locale]/admin/layout.tsx (새 파일)
 Auth-gated 페이지 `robots: { index: false, follow: false }` 적용. 개인 정보/관리 페이지는 SERP에 노출될 이유 없음 (privacy & hygiene).
 
+### 추가 변경 (3차 커밋) — Error 페이지 i18n
+
+#### app/[locale]/error.tsx
+- 하드코딩된 영문 문구 5개 ("Something went wrong", "Try Again" 등) → `useTranslations('error')`
+- `<a href="/">` → `<Link href={\`/${locale}\`}>` — ko/ja/zh 등 비영어권 사용자가 에러 후 영문 홈페이지로 튕기던 버그 수정
+- `useParams()`로 locale 추출, NextIntlClientProvider 컨텍스트가 없을 때를 대비해 `|| 'en'` 폴백
+- "Oops" 로고 텍스트는 그대로 유지 (브랜드 느낌)
+
+#### messages/{8 locales}.json — error 네임스페이스 추가
+`notFound` 직후에 `error.{title, description, tryAgain, goHome}` 추가. 8개 언어 모두 JSON 파싱 검증 통과.
+
 ## 커밋
 - `fda712e` feat: pricing metadata layout + API error observability
-- (next commit) feat: share OG + account/admin noindex
+- `32c6c6a` feat: share OG metadata + account/admin noindex
+- (next commit) fix: i18n error page + locale-aware home link
 
 ## ⚠️ 인계
 Milestone 09의 푸시 대기 상태와 함께 이 커밋도 local-only로 쌓임. 사용자가 VS Code Source Control 또는 taeshin11 크리덴셜 터미널에서 `git push origin master`로 일괄 푸시하면 Vercel 자동 배포.

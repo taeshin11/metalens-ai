@@ -273,6 +273,12 @@
     "description": "Die gesuchte Seite existiert nicht. Versuchen Sie, auf der Startseite nach medizinischer Forschung zu suchen.",
     "backHome": "Zurück zur Startseite"
   },
+  "error": {
+    "title": "Etwas ist schiefgelaufen",
+    "description": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut oder kehren Sie zur Startseite zurück.",
+    "tryAgain": "Erneut versuchen",
+    "goHome": "Zur Startseite"
+  },
   "auth": {
     "signIn": "Anmelden",
     "signOut": "Abmelden",
