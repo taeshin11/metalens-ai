@@ -26,6 +26,7 @@ const DEFAULT_FILTERS: SearchFilters = {
 
 export default function KeywordInput({ onSubmit, isLoading, initialValue }: KeywordInputProps) {
   const t = useTranslations('hero');
+  const ta = useTranslations('a11y');
   const [keywords, setKeywords] = useState(initialValue || '');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<SearchFilters>(DEFAULT_FILTERS);
@@ -93,7 +94,7 @@ export default function KeywordInput({ onSubmit, isLoading, initialValue }: Keyw
             disabled={isLoading}
             maxLength={500}
             className="w-full px-5 py-4 text-base bg-white border-2 border-[var(--color-border)] rounded-2xl focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all placeholder:text-[var(--color-text-muted)] text-[var(--color-text-primary)] disabled:opacity-60"
-            aria-label="Enter medical keywords"
+            aria-label={ta('enterKeywords')}
           />
         </div>
         <button

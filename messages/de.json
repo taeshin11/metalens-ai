@@ -279,6 +279,19 @@
     "tryAgain": "Erneut versuchen",
     "goHome": "Zur Startseite"
   },
+  "feedbackWidget": {
+    "button": "Feedback",
+    "title": "Feedback senden",
+    "placeholder": "Was können wir verbessern?",
+    "hint": "Öffnet Ihren E-Mail-Client",
+    "send": "Senden",
+    "ariaTrigger": "Feedback senden",
+    "ariaForm": "Feedback-Formular"
+  },
+  "a11y": {
+    "enterKeywords": "Medizinische Suchbegriffe eingeben",
+    "toggleMenu": "Menü umschalten"
+  },
   "auth": {
     "signIn": "Anmelden",
     "signOut": "Abmelden",

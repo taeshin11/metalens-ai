@@ -9,6 +9,7 @@ import UserMenu from './UserMenu';
 
 export default function Header() {
   const t = useTranslations('nav');
+  const ta = useTranslations('a11y');
   const params = useParams();
   const locale = params.locale as string;
   const router = useRouter();
@@ -66,7 +67,7 @@ export default function Header() {
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden p-2 text-[var(--color-text-secondary)]"
-            aria-label="Toggle menu"
+            aria-label={ta('toggleMenu')}
           >
           <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2">
             {menuOpen ? (

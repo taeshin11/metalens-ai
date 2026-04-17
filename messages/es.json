@@ -279,6 +279,19 @@
     "tryAgain": "Reintentar",
     "goHome": "Ir a inicio"
   },
+  "feedbackWidget": {
+    "button": "Comentarios",
+    "title": "Envíanos tus comentarios",
+    "placeholder": "¿Qué podemos mejorar?",
+    "hint": "Abre tu cliente de correo",
+    "send": "Enviar",
+    "ariaTrigger": "Enviar comentarios",
+    "ariaForm": "Formulario de comentarios"
+  },
+  "a11y": {
+    "enterKeywords": "Ingresa términos médicos",
+    "toggleMenu": "Alternar menú"
+  },
   "auth": {
     "signIn": "Iniciar sesión",
     "signOut": "Cerrar sesión",

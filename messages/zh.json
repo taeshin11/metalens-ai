@@ -279,6 +279,19 @@
     "tryAgain": "重试",
     "goHome": "返回首页"
   },
+  "feedbackWidget": {
+    "button": "反馈",
+    "title": "向我们发送反馈",
+    "placeholder": "我们可以改进什么？",
+    "hint": "将打开您的邮件客户端",
+    "send": "发送",
+    "ariaTrigger": "发送反馈",
+    "ariaForm": "反馈表单"
+  },
+  "a11y": {
+    "enterKeywords": "输入医学关键词",
+    "toggleMenu": "切换菜单"
+  },
   "auth": {
     "signIn": "登录",
     "signOut": "退出",

@@ -279,6 +279,19 @@
     "tryAgain": "再試行",
     "goHome": "ホームへ"
   },
+  "feedbackWidget": {
+    "button": "フィードバック",
+    "title": "ご意見をお寄せください",
+    "placeholder": "改善できる点は？",
+    "hint": "メールアプリが開きます",
+    "send": "送信",
+    "ariaTrigger": "フィードバックを送信",
+    "ariaForm": "フィードバックフォーム"
+  },
+  "a11y": {
+    "enterKeywords": "医学キーワードを入力",
+    "toggleMenu": "メニューの開閉"
+  },
   "auth": {
     "signIn": "ログイン",
     "signOut": "ログアウト",
