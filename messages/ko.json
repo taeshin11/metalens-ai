@@ -539,6 +539,8 @@
     "funnelSymmetric": "플롯이 대략 대칭적으로 보여 출판 편향이 낮음을 시사합니다.",
     "funnelAsymmetric": "비대칭이 감지됨 — 소규모 연구들이 한쪽에 몰려 있습니다. 이는 출판 편향(음성 연구 미발표) 또는 실제 소규모 연구 효과를 나타낼 수 있습니다.",
     "funnelCaution": "대칭적인 퍼널이 편향의 부재를 보장하지 않으며, 비대칭 퍼널이 편향을 증명하지도 않습니다.",
+    "funnelInterpretAsymShort": "Funnel plot 비대칭 감지 — 출판 편향 또는 소규모 연구 효과 가능성. 통합 추정치 해석에 주의.",
+    "funnelInterpretSymShort": "Funnel plot이 대체로 대칭적 — 출판 편향의 시각적 증거 없음.",
     "savePng": "PNG 저장 (고해상도)",
     "saveSvg": "SVG 저장 (벡터)",
     "saveHint": "발표 및 문서용 PNG — 고품질 출판 그림용 SVG",

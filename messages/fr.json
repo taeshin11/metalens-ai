@@ -484,6 +484,8 @@
     "funnelSymmetric": "Le graphique semble approximativement symétrique, ce qui suggère un faible biais de publication.",
     "funnelAsymmetric": "Asymétrie détectée — les petites études se regroupent d'un côté. Cela peut indiquer un biais de publication (études négatives non publiées) ou de véritables effets de petites études.",
     "funnelCaution": "Un entonnoir symétrique ne garantit pas l'absence de biais ; un entonnoir asymétrique ne prouve pas un biais.",
+    "funnelInterpretAsymShort": "Asymétrie du funnel plot détectée — biais de publication possible ou effets de petites études. Interprétez les estimations groupées avec prudence.",
+    "funnelInterpretSymShort": "Le funnel plot paraît à peu près symétrique — pas de preuve visuelle forte de biais de publication.",
     "savePng": "Enregistrer PNG (Haute résolution)",
     "saveSvg": "Enregistrer SVG (Vectoriel)",
     "saveHint": "PNG pour les présentations et documents — SVG pour les figures de publication de haute qualité",

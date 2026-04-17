@@ -484,6 +484,8 @@
     "funnelSymmetric": "El gráfico parece aproximadamente simétrico, lo que sugiere un sesgo de publicación bajo.",
     "funnelAsymmetric": "Se detectó asimetría — los estudios pequeños se agrupan en un lado. Esto puede indicar sesgo de publicación (estudios negativos no publicados) o efectos reales de estudios pequeños.",
     "funnelCaution": "Un embudo simétrico no garantiza la ausencia de sesgo; un embudo asimétrico no prueba el sesgo.",
+    "funnelInterpretAsymShort": "Se detectó asimetría en el funnel plot — posible sesgo de publicación o efectos de estudios pequeños. Interpreta los estimados agrupados con cautela.",
+    "funnelInterpretSymShort": "El funnel plot parece aproximadamente simétrico — sin evidencia visual fuerte de sesgo de publicación.",
     "savePng": "Guardar PNG (Alta resolución)",
     "saveSvg": "Guardar SVG (Vectorial)",
     "saveHint": "PNG para presentaciones y documentos — SVG para figuras de publicación de alta calidad",

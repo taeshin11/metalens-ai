@@ -150,8 +150,8 @@ export default function FunnelPlot({ studies, pooled }: FunnelPlotProps) {
   );
 
   const interpretationText = overallAsymmetric
-    ? 'Funnel plot asymmetry detected — potential publication bias or small-study effects. Interpret pooled estimates with caution.'
-    : 'Funnel plot appears approximately symmetric — no strong visual evidence of publication bias.';
+    ? t('funnelInterpretAsymShort')
+    : t('funnelInterpretSymShort');
 
   // X-axis ticks
   const xTickCount = 7;
