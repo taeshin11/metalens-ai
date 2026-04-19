@@ -18,7 +18,8 @@ research_history/
   milestone_07_remove_ultra.md — Ultra 플랜 제거 (2026-04-15)
   milestone_08_i18n_quality.md — i18n 완성 & 품질 개선 (2026-04-16)
   milestone_09_perf_optimization.md — 프로덕션 최적화 & 정리 (2026-04-17)
-  milestone_10_seo_observability.md — Pricing 메타데이터 & API 관측성 (2026-04-18) ← 현재
+  milestone_10_seo_observability.md — Pricing 메타데이터 & API 관측성 (2026-04-18~19)
+  incident_2026-04-20_deployment_not_found.md — 프로덕션 배포 실종 (2026-04-20) ← 현재
 ```
 
 ## 마일스톤 요약
