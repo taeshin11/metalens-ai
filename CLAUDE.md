@@ -44,6 +44,22 @@ URL: https://metalens-ai.vercel.app | GitHub: https://github.com/taeshin11/metal
 ## research_history/ 규칙
 기능 묶음 완성될 때마다 `research_history/milestone_NN_*.md` 파일 자동 생성 + README.md 업데이트. 물어보지 않아도 알아서 할 것.
 
+## FEATURES.md 규칙 (의무)
+`FEATURES.md` = 앱 기능의 single source of truth. 탭/섹션/서브기능별로 `file:line` 참조와 함께 정리되어 있음.
+
+**다음 변경 시 반드시 같은 커밋에서 FEATURES.md도 업데이트** (물어보지 말고 자동):
+- 탭/페이지/라우트 추가·삭제·개명
+- 컴포넌트 기능 추가·제거·gating 변경 (Pro/Free)
+- 새 API 라우트 추가 → §10 라우트 테이블에 행 추가
+- 새 로케일 추가 → §12
+- 새 client 쓰기/저장/업로드 포인트 추가 → §14
+- 티어 정책 변경 → §11
+- 상단 "Last synced" 날짜 갱신
+
+순수 리팩터(동작 변경 없음)는 예외지만, 커밋 메시지에 "no user-facing change — FEATURES.md unchanged" 한 줄 적어 명시적으로 표시.
+
+예: pricing 페이지에 새 FAQ 항목 추가 → 같은 PR에서 §3.7 bullet 추가 + "Last synced" 오늘 날짜로 bump.
+
 ## 피드백 기억
 - AI 요약은 가이드라인/메타분석 우선, 개별 연구 후순위
 - 임휘빈 피드백: 유료 기능으로 초록 작성, SCI 저널 추천, 논문 초안 기능 추가 예정
