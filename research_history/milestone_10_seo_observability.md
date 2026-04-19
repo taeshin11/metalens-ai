@@ -105,6 +105,48 @@ Header 우측 "Upgrade" 링크(Free 티어 사용자만 노출) → `t('upgrade'
 
 **참고**: 이 커밋은 사용자 요청으로 VRAM 사용을 피하기 위해 `npm run build` 없이 커밋됨. 변경은 단순 문자열 교체라 빌드 리스크 낮음. 푸시 후 Vercel이 자동으로 빌드 검증.
 
+### 추가 변경 (7차 커밋) — 구조화 JSON-line 로거 + 전 API 라우트 계측
+
+이전 에러 로깅은 `console.error` prefix로는 Vercel 로그 필터링/추적이 어려웠음. 장애 원인과 단계별 소요 시간을 즉시 볼 수 있도록 구조화 로거 도입.
+
+#### lib/logger.ts (새 파일)
+- `RouteLogger` 클래스: `start` → `stage(name, ctx)` × N → `done(status, ctx)` 또는 `error(msg, err, ctx)`
+- 매 요청에 8자 `reqId` 자동 생성 → 동시 요청 로그 분리 추적 가능
+- 각 stage에 `ms` (직전 stage 이후 경과) + `totalMs` (요청 시작 후 누적) 자동 계산
+- Error 객체는 `serializeError`로 정규화: `errName`, `errMessage`, `errStack` (top 6 frames), `errCause`, `errCode`, `errStatus`
+- `maskId()` 헬퍼: 이메일/Clerk ID 등 식별자 일부만 노출 (예: `abc…xyz`)
+- 출력: JSON-line (`JSON.stringify` 한 줄) → Vercel Dashboard에서 키별 필터링 가능, `jq`로 export 후 분석 가능
+
+#### 계측된 라우트 9개
+- `api/pubmed` — search_start → search_done(articleCount) 또는 pubmed_search_failed
+- `api/synthesize` — auth → rate_limit → body_parsed → gemini_primary_start/done 또는 failed → gemini_fallback_start/done 또는 failed → tracking_usage → done(200/429/502)
+- `api/extract` — auth → body_parsed → batches_prepared(n) → 각 batch별 성공/실패 카운트 → batches_complete(successful, failed) → done
+- `api/translate` — body_parsed → gemini_primary_start/done 또는 failed → gemini_fallback → done/passthrough
+- `api/translate-result` — body_parsed(language) → gemini_primary → gemini_fallback → done
+- `api/share` POST — body_parsed(size) → validated → payload_prepared(bytes) → redis_write_done 또는 redis_write_failed → done
+- `api/share` GET — redis_read_start/done(hit) 또는 redis_read_failed → done/404
+- `api/lemonsqueezy/checkout` — auth → body_parsed → variant_resolved → checkout_url_create_start/created 또는 create_returned_null
+- `api/lemonsqueezy/webhook` — body_read → signature_verified 또는 invalid_signature → event_parsed(eventName) → clerk 조회/tier 설정 각 단계 로그 → done. **내부 에러 발생 시 200 반환** (LemonSqueezy 재시도 폭주 방지, 수동 복구는 로그에서)
+- `api/lemonsqueezy/portal` — auth → done
+
+#### 로그 예시
+```json
+{"ts":"2026-04-19T03:41:12.345Z","level":"info","route":"api/synthesize","reqId":"a3f9k2x1","msg":"start"}
+{"ts":"2026-04-19T03:41:12.412Z","level":"info","route":"api/synthesize","reqId":"a3f9k2x1","msg":"stage:auth_done","ms":67,"totalMs":67,"user":"use…com","tier":"pro","isAdmin":false,"anon":false}
+{"ts":"2026-04-19T03:41:12.430Z","level":"info","route":"api/synthesize","reqId":"a3f9k2x1","msg":"stage:rate_limit_done","ms":18,"totalMs":85,"allowed":true,"remaining":197,"limit":200}
+{"ts":"2026-04-19T03:41:19.827Z","level":"warn","route":"api/synthesize","reqId":"a3f9k2x1","msg":"gemini_primary_failed","model":"gemini-2.5-flash","errName":"AbortError","errMessage":"timeout"}
+{"ts":"2026-04-19T03:41:24.101Z","level":"info","route":"api/synthesize","reqId":"a3f9k2x1","msg":"stage:gemini_fallback_done","ms":4274,"totalMs":11756,"model":"gemini-2.0-flash-lite","bytes":3214}
+{"ts":"2026-04-19T03:41:24.105Z","level":"info","route":"api/synthesize","reqId":"a3f9k2x1","msg":"done","status":200,"totalMs":11760,"tier":"pro","resultBytes":3214,"remaining":197}
+```
+
+#### Vercel Dashboard 활용
+- 특정 요청 전체 추적: `reqId:"a3f9k2x1"`로 필터
+- 실패만 보기: `level:"error"` 또는 `msg:"stage:gemini_primary_failed"` 등으로 필터
+- p95 응답 시간: `msg:"done"` 의 `totalMs` 필드 집계
+- Gemini 모델별 소요 시간: `msg:"stage:gemini_primary_done"`의 `ms` 필드 분포 확인
+
+**참고**: 이 커밋도 VRAM 제약으로 로컬 빌드 없이 커밋. 로거는 순수 TypeScript + console API만 사용(외부 런타임 의존 없음), 라우트 변경은 기존 catch 동작과 응답 유지하며 로깅만 추가 — 런타임 회귀 리스크 매우 낮음. Vercel이 배포 시 빌드 검증.
+
 ## 커밋
 - `fda712e` feat: pricing metadata layout + API error observability
 - `32c6c6a` feat: share OG metadata + account/admin noindex
@@ -112,6 +154,8 @@ Header 우측 "Upgrade" 링크(Free 티어 사용자만 노출) → `t('upgrade'
 - `d40b551` fix: i18n FeedbackButton + aria-labels
 - `bb8c4aa` fix: i18n UpsellBanner + ShareButtons + UserMenu + Export PDF
 - `4346201` fix: i18n FunnelPlot asymmetry interpretation
+- `569fbbd` docs: update milestone 10 commit list
+- (next commit) feat: structured JSON-line logger + instrument 9 API routes
 
 ## ⚠️ 인계
 Milestone 09의 푸시 대기 상태와 함께 이 커밋도 local-only로 쌓임. 사용자가 VS Code Source Control 또는 taeshin11 크리덴셜 터미널에서 `git push origin master`로 일괄 푸시하면 Vercel 자동 배포.

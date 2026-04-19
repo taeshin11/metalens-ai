@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createLogger } from '@/lib/logger';
 
 export const maxDuration = 60;
 
 export async function POST(request: NextRequest) {
+  const log = createLogger('api/translate');
+  log.start();
+
   let keywords = '';
   try {
     ({ keywords } = await request.json());
 
     if (!keywords) {
+      log.done(400, { reason: 'missing_keywords' });
       return NextResponse.json({ error: 'Missing keywords' }, { status: 400 });
     }
+    log.stage('body_parsed', { keywordsLen: keywords.length });
 
     const prompt = `Convert this medical query into PubMed search keywords in English.
 
@@ -28,41 +34,64 @@ Examples:
 Input: ${keywords}`;
 
     const geminiKey = process.env.GEMINI_API_KEY;
-    if (!geminiKey) return NextResponse.json({ translated: keywords });
+    if (!geminiKey) {
+      log.warn('gemini_key_missing_fallback_passthrough');
+      log.done(200, { reason: 'no_api_key', passthrough: true });
+      return NextResponse.json({ translated: keywords });
+    }
 
     // Try primary model
+    const primaryModel = 'gemini-2.5-flash';
+    log.stage('gemini_primary_start', { model: primaryModel });
     try {
       const { GoogleGenAI } = await import('@google/genai');
       const ai = new GoogleGenAI({ apiKey: geminiKey });
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: primaryModel,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { temperature: 0, maxOutputTokens: 200 },
       });
       const translated = response.text?.trim().replace(/^["']|["']$/g, '');
-      if (translated) return NextResponse.json({ translated });
+      if (translated) {
+        log.stage('gemini_primary_done', { model: primaryModel, bytes: translated.length });
+        log.done(200, { model: primaryModel });
+        return NextResponse.json({ translated });
+      }
+      log.warn('gemini_primary_empty', { model: primaryModel });
     } catch (err) {
-      console.warn('[translate] primary model failed, trying fallback:', err);
+      log.warn('gemini_primary_failed', {
+        model: primaryModel,
+        errMessage: err instanceof Error ? err.message : String(err).slice(0, 200),
+      });
     }
 
     // Try fallback model
+    const fallbackModel = 'gemini-2.0-flash-lite';
+    log.stage('gemini_fallback_start', { model: fallbackModel });
     try {
       const { GoogleGenAI } = await import('@google/genai');
       const ai = new GoogleGenAI({ apiKey: geminiKey });
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash-lite',
+        model: fallbackModel,
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
         config: { temperature: 0, maxOutputTokens: 200 },
       });
       const translated = response.text?.trim().replace(/^["']|["']$/g, '');
-      if (translated) return NextResponse.json({ translated });
+      if (translated) {
+        log.stage('gemini_fallback_done', { model: fallbackModel, bytes: translated.length });
+        log.done(200, { model: fallbackModel });
+        return NextResponse.json({ translated });
+      }
+      log.warn('gemini_fallback_empty', { model: fallbackModel });
     } catch (err) {
-      console.warn('[translate] fallback model also failed:', err);
+      log.error('gemini_fallback_failed', err, { model: fallbackModel });
     }
 
+    log.done(200, { passthrough: true, reason: 'all_models_failed' });
     return NextResponse.json({ translated: keywords });
   } catch (err) {
-    console.error('[api/translate] failed:', err);
+    log.error('translate_handler_crashed', err);
+    log.done(200, { passthrough: true, reason: 'unexpected_error' });
     return NextResponse.json({ translated: keywords });
   }
 }
