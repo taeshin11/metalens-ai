@@ -147,6 +147,55 @@ Header 우측 "Upgrade" 링크(Free 티어 사용자만 노출) → `t('upgrade'
 
 **참고**: 이 커밋도 VRAM 제약으로 로컬 빌드 없이 커밋. 로거는 순수 TypeScript + console API만 사용(외부 런타임 의존 없음), 라우트 변경은 기존 catch 동작과 응답 유지하며 로깅만 추가 — 런타임 회귀 리스크 매우 낮음. Vercel이 배포 시 빌드 검증.
 
+### 추가 변경 (8차 커밋) — lib 함수 로거 스레딩 + silent catch 정리
+
+API 라우트 로거만으로는 장애 원인이 라이브러리 내부 어디서 발생했는지 보이지 않는 문제 — `lib/pubmed.ts`에서 esearch가 실패한 건지 efetch가 실패한 건지, 4개 fallback 전략 중 어디서 끝난 건지 불명. lib 함수들을 optional `RouteLogger` 파라미터로 받게 수정.
+
+#### lib/pubmed.ts
+- `searchPubMed`, `fetchAbstracts`, `searchAndFetch`에 optional `log` 파라미터 추가
+- 4단계 esearch fallback 전략(original → cleaned → progressive relaxation → OR query) 각각 시도/히트를 stage로 기록
+- `fetchWithRetry`에 `step` 이름 인자 + 재시도 단계별 경고 로그 (pubmed_http_retry, pubmed_fetch_attempt_failed)
+- AbortError(타임아웃) 식별 플래그 로그 포함
+- XML 파싱 결과: requestedPmids vs parsedArticles vs droppedNoAbstract 카운트 노출
+
+이제 api/pubmed 호출 한 건에서:
+```
+stage:pubmed_esearch_strategy1_original
+stage:pubmed_esearch_strategy2_cleaned
+stage:pubmed_esearch_strategy3_relaxation
+pubmed_esearch_strategy3_hit {drop:2, remaining:3, count:18}
+stage:pubmed_efetch_start {pmidCount:18}
+stage:pubmed_efetch_done {xmlBytes:142833}
+stage:pubmed_xml_parsed {requestedPmids:18, parsedArticles:15, droppedNoAbstract:3}
+```
+→ 어느 전략에서 결과가 나왔고 abstract 없어 탈락한 논문 개수까지 즉시 파악 가능.
+
+#### lib/rate-limit.ts
+`catch {}`로 Redis 실패 시 조용히 fail-open(요청 허용) 하던 것을 `log?.error('rate_limit_redis_unavailable_fail_open', err, ...)` 로 큰 소리로 로그. Upstash 장애가 로그 없이 무제한 사용으로 이어지던 사일런트 위험 제거. `expire()` 실패도 warn 로그.
+
+#### lib/auth.ts
+- `getSession` catch → JSON-line 형식으로 `getSession_failed` 로그 (Clerk 장애 시 전 사용자가 익명화되는 인시던트 무게감 있게 기록)
+- `setUserTier` 에러 메시지에 HTTP status + response body 포함 → webhook 로그에서 Clerk 거절 이유 즉시 파악
+- `findClerkUserByEmail` HTTP 실패 시 body 포함하여 `findClerkUserByEmail_http_failed` 로그
+
+#### components/ResultsCard.tsx
+Writing Tools(abstract/journal/proposal) 요청의 `catch { /* silent */ }` → `console.error` 로 변경. 사용자가 "Generate Abstract" 눌렀는데 아무 반응 없으면 어디서 막혔는지 콘솔에서 확인 가능.
+
+#### app/api/synthesize/route.ts
+`checkRateLimit(identifier, tier)` → `checkRateLimit(identifier, tier, log)`. Redis 장애 발생 시 해당 요청의 reqId 로그에 함께 나옴.
+
+#### app/api/pubmed/route.ts
+`searchAndFetch(keywords, 50)` → `searchAndFetch(keywords, 50, log)`. 위 pubmed.ts stage들이 reqId와 함께 연결되어 단일 요청의 전체 플로우 추적 가능.
+
+**로그로 답할 수 있게 된 질문들**:
+- "어느 PubMed 전략까지 fallback 했나?" → `pubmed_esearch_strategy{1,2,3,4}_*`
+- "Redis가 죽었을 때 우리가 알 수 있나?" → `rate_limit_redis_unavailable_fail_open` error 로그
+- "Clerk이 tier 업데이트 거절한 이유?" → webhook 로그의 `errMessage` 에 body 포함
+- "사용자가 결제 후에도 Pro 안 된 경우?" → webhook의 `clerk_user_not_found` 또는 `webhook_processing_failed` + errMessage
+- "esearch는 성공했는데 efetch만 실패?" → stage 순서 + errStack에서 구분됨
+
+**참고**: 이 커밋도 VRAM 제약으로 로컬 빌드 생략. 변경은 optional 파라미터 추가 + catch 로깅 강화 — 기존 호출자는 인자 추가 없이도 동작(파라미터 optional). 런타임 리스크 매우 낮음.
+
 ## 커밋
 - `fda712e` feat: pricing metadata layout + API error observability
 - `32c6c6a` feat: share OG metadata + account/admin noindex
@@ -155,7 +204,8 @@ Header 우측 "Upgrade" 링크(Free 티어 사용자만 노출) → `t('upgrade'
 - `bb8c4aa` fix: i18n UpsellBanner + ShareButtons + UserMenu + Export PDF
 - `4346201` fix: i18n FunnelPlot asymmetry interpretation
 - `569fbbd` docs: update milestone 10 commit list
-- (next commit) feat: structured JSON-line logger + instrument 9 API routes
+- `df2bb11` feat: structured JSON-line logger + instrument 9 API routes
+- (next commit) feat: thread logger into lib functions + kill silent catches
 
 ## ⚠️ 인계
 Milestone 09의 푸시 대기 상태와 함께 이 커밋도 local-only로 쌓임. 사용자가 VS Code Source Control 또는 taeshin11 크리덴셜 터미널에서 `git push origin master`로 일괄 푸시하면 Vercel 자동 배포.

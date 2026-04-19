@@ -239,8 +239,12 @@ Output the proposal with each section header in bold. Write in formal academic l
         if (tool === 'abstract') setAbstractDraft(data.result || '');
         else if (tool === 'journal') setJournalRecs(data.result || '');
         else setProposalDraft(data.result || '');
+      } else {
+        console.error('[ResultsCard] writing tool request failed:', tool, response.status, response.statusText);
       }
-    } catch { /* silent */ }
+    } catch (err) {
+      console.error('[ResultsCard] writing tool crashed:', tool, err);
+    }
     setToolsLoading(false);
   };
 
