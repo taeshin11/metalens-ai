@@ -6,6 +6,7 @@
  */
 
 import { BETA_END } from './constants';
+import type { RouteLogger } from './logger';
 
 function isBetaPeriod(): boolean {
   return new Date() < BETA_END;
@@ -42,6 +43,7 @@ function rateLimitKey(identifier: string, tier: Tier): string {
 export async function checkRateLimit(
   identifier: string,
   tier: Tier,
+  log?: RouteLogger,
 ): Promise<{ allowed: boolean; remaining: number; limit: number }> {
   // Beta: logged-in users get unlimited
   if (isBetaPeriod() && isLoggedIn(identifier)) {
@@ -56,11 +58,19 @@ export async function checkRateLimit(
     count = await redis.incr(key);
     // pro: 자정 리셋 (첫 요청 시 TTL 설정)
     if (tier !== 'free' && count === 1) {
-      await redis.expire(key, getUtcMidnightTtl());
+      try {
+        await redis.expire(key, getUtcMidnightTtl());
+      } catch (expErr) {
+        log?.warn('rate_limit_expire_failed', {
+          errMessage: expErr instanceof Error ? expErr.message : String(expErr).slice(0, 200),
+          key,
+        });
+      }
     }
     // free: TTL 없음 (영구 보존)
-  } catch {
-    // Redis unavailable — allow request
+  } catch (err) {
+    // Redis unavailable — fail-open (allow request) but log loudly
+    log?.error('rate_limit_redis_unavailable_fail_open', err, { tier, key });
     return { allowed: true, remaining: 1, limit };
   }
 

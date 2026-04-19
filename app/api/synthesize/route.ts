@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     let remaining = 999;
     if (!isAdmin) {
       log.stage('rate_limit_start', { identifier: maskId(identifier) });
-      const rl = await checkRateLimit(identifier, tier);
+      const rl = await checkRateLimit(identifier, tier, log);
       log.stage('rate_limit_done', { allowed: rl.allowed, remaining: rl.remaining, limit: rl.limit });
       if (!rl.allowed) {
         const errorMsg = tier === 'free'

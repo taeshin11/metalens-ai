@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
   try {
     log.stage('search_start', { preview: keywords.slice(0, 60) });
-    const articles = await searchAndFetch(keywords, 50);
+    const articles = await searchAndFetch(keywords, 50, log);
     log.stage('search_done', { articleCount: articles.length });
     log.done(200, { articleCount: articles.length });
     return NextResponse.json({ articles });

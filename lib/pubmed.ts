@@ -1,3 +1,5 @@
+import type { RouteLogger } from './logger';
+
 const BASE_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
 
 export interface PubMedArticle {
@@ -11,7 +13,8 @@ export interface PubMedArticle {
   pubTypes: string[]; // e.g. "Review", "Guideline", "Meta-Analysis", "Randomized Controlled Trial"
 }
 
-async function fetchWithRetry(url: string, retries = 2): Promise<Response> {
+async function fetchWithRetry(url: string, step: string, retries = 2, log?: RouteLogger): Promise<Response> {
+  let lastErr: unknown;
   for (let i = 0; i < retries; i++) {
     try {
       const controller = new AbortController();
@@ -21,13 +24,24 @@ async function fetchWithRetry(url: string, retries = 2): Promise<Response> {
       if (res.ok) return res;
       // PubMed rate limit (429) or server error — retry
       if (res.status === 429 || res.status >= 500) {
+        log?.warn('pubmed_http_retry', { step, status: res.status, attempt: i + 1, retries });
         if (i < retries - 1) {
           await new Promise(r => setTimeout(r, 1000 * (i + 1)));
           continue;
         }
       }
-      throw new Error(`PubMed returned ${res.status}`);
+      throw new Error(`PubMed ${step} returned ${res.status}`);
     } catch (err) {
+      lastErr = err;
+      const isAbort = err instanceof Error && err.name === 'AbortError';
+      log?.warn('pubmed_fetch_attempt_failed', {
+        step,
+        attempt: i + 1,
+        retries,
+        errName: err instanceof Error ? err.name : 'unknown',
+        errMessage: err instanceof Error ? err.message : String(err).slice(0, 200),
+        timedOut: isAbort,
+      });
       if (i < retries - 1) {
         await new Promise(r => setTimeout(r, 1000 * (i + 1)));
         continue;
@@ -35,7 +49,9 @@ async function fetchWithRetry(url: string, retries = 2): Promise<Response> {
       throw err;
     }
   }
-  throw new Error('PubMed request failed after retries');
+  throw lastErr instanceof Error
+    ? lastErr
+    : new Error(`PubMed ${step} request failed after retries`);
 }
 
 // Words that hurt PubMed search when used as plain text
@@ -58,59 +74,93 @@ function cleanKeywords(raw: string): string {
   return tokens.join(' ');
 }
 
-async function esearch(term: string, maxResults: number): Promise<string[]> {
+async function esearch(term: string, maxResults: number, log?: RouteLogger): Promise<string[]> {
   const url = `${BASE_URL}/esearch.fcgi?db=pubmed&term=${encodeURIComponent(term)}&retmax=${maxResults}&retmode=json&sort=relevance`;
-  const res = await fetchWithRetry(url);
-  const data = await res.json();
+  const res = await fetchWithRetry(url, 'esearch', 2, log);
+  let data;
+  try {
+    data = await res.json();
+  } catch (err) {
+    log?.error('pubmed_esearch_json_parse_failed', err, { termPreview: term.slice(0, 60) });
+    throw new Error('PubMed esearch returned invalid JSON');
+  }
   return data.esearchresult?.idlist || [];
 }
 
-export async function searchPubMed(keywords: string, maxResults = 20): Promise<string[]> {
+export async function searchPubMed(keywords: string, maxResults = 20, log?: RouteLogger): Promise<string[]> {
   // Strategy 1: Try original query
-  let ids = await esearch(keywords, maxResults);
-  if (ids.length >= 3) return ids;
+  log?.stage('pubmed_esearch_strategy1_original');
+  let ids = await esearch(keywords, maxResults, log);
+  if (ids.length >= 3) {
+    log?.info('pubmed_esearch_strategy1_hit', { count: ids.length });
+    return ids;
+  }
 
   // Strategy 2: Clean noise words and retry
   const cleaned = cleanKeywords(keywords);
   if (cleaned !== keywords.toLowerCase().trim()) {
-    ids = await esearch(cleaned, maxResults);
-    if (ids.length >= 3) return ids;
+    log?.stage('pubmed_esearch_strategy2_cleaned', { original: keywords.slice(0, 60), cleaned: cleaned.slice(0, 60) });
+    ids = await esearch(cleaned, maxResults, log);
+    if (ids.length >= 3) {
+      log?.info('pubmed_esearch_strategy2_hit', { count: ids.length });
+      return ids;
+    }
   }
 
-  // Strategy 3: Progressive relaxation — drop keywords one at a time from the end
-  // "TNF, EGFR, chronic sinusitis, nasal polyp, antibiotics" → try without "antibiotics", etc.
+  // Strategy 3: Progressive relaxation
   const tokens = cleaned.split(/[,\s]+/).filter(t => t.trim().length > 0);
   if (tokens.length > 3) {
+    log?.stage('pubmed_esearch_strategy3_relaxation', { tokenCount: tokens.length });
     for (let drop = 1; drop < tokens.length - 2; drop++) {
       const relaxed = tokens.slice(0, tokens.length - drop).join(' ');
-      ids = await esearch(relaxed, maxResults);
-      if (ids.length >= 3) return ids;
+      ids = await esearch(relaxed, maxResults, log);
+      if (ids.length >= 3) {
+        log?.info('pubmed_esearch_strategy3_hit', { drop, remaining: tokens.length - drop, count: ids.length });
+        return ids;
+      }
     }
   }
 
   // Strategy 4: Try OR instead of AND for multi-keyword queries
   if (tokens.length >= 3) {
-    // Keep the first 2-3 most important terms as AND, rest as OR
+    log?.stage('pubmed_esearch_strategy4_or');
     const core = tokens.slice(0, 2).join(' AND ');
     const rest = tokens.slice(2).join(' OR ');
     const orQuery = `(${core}) AND (${rest})`;
-    ids = await esearch(orQuery, maxResults);
-    if (ids.length >= 3) return ids;
+    ids = await esearch(orQuery, maxResults, log);
+    if (ids.length >= 3) {
+      log?.info('pubmed_esearch_strategy4_hit', { count: ids.length });
+      return ids;
+    }
 
     // Last resort: just the core terms
-    ids = await esearch(core, maxResults);
-    if (ids.length > 0) return ids;
+    log?.stage('pubmed_esearch_strategy4_core_only');
+    ids = await esearch(core, maxResults, log);
+    if (ids.length > 0) {
+      log?.info('pubmed_esearch_strategy4_core_hit', { count: ids.length });
+      return ids;
+    }
   }
 
+  log?.warn('pubmed_esearch_all_strategies_empty', { originalKeywordsLen: keywords.length });
   return ids;
 }
 
-export async function fetchAbstracts(pmids: string[]): Promise<PubMedArticle[]> {
+export async function fetchAbstracts(pmids: string[], log?: RouteLogger): Promise<PubMedArticle[]> {
   if (pmids.length === 0) return [];
   const url = `${BASE_URL}/efetch.fcgi?db=pubmed&id=${pmids.join(',')}&retmode=xml`;
-  const res = await fetchWithRetry(url);
+  log?.stage('pubmed_efetch_start', { pmidCount: pmids.length });
+  const res = await fetchWithRetry(url, 'efetch', 2, log);
   const xml = await res.text();
-  return parseArticlesFromXml(xml);
+  log?.stage('pubmed_efetch_done', { xmlBytes: xml.length });
+
+  const articles = parseArticlesFromXml(xml);
+  log?.stage('pubmed_xml_parsed', {
+    requestedPmids: pmids.length,
+    parsedArticles: articles.length,
+    droppedNoAbstract: pmids.length - articles.length,
+  });
+  return articles;
 }
 
 function parseArticlesFromXml(xml: string): PubMedArticle[] {
@@ -202,9 +252,9 @@ function articlePriority(article: PubMedArticle): number {
   return 5;
 }
 
-export async function searchAndFetch(keywords: string, maxResults = 20): Promise<PubMedArticle[]> {
-  const pmids = await searchPubMed(keywords, maxResults);
-  const articles = await fetchAbstracts(pmids);
+export async function searchAndFetch(keywords: string, maxResults = 20, log?: RouteLogger): Promise<PubMedArticle[]> {
+  const pmids = await searchPubMed(keywords, maxResults, log);
+  const articles = await fetchAbstracts(pmids, log);
 
   // Sort: guidelines → systematic reviews → reviews → RCTs → others
   articles.sort((a, b) => articlePriority(a) - articlePriority(b));

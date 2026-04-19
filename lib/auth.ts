@@ -23,7 +23,17 @@ export async function getSession(): Promise<UserSession | null> {
     const tier = (user.publicMetadata?.tier as Tier) || 'free';
 
     return { email, name, tier, clerkId: user.id };
-  } catch {
+  } catch (err) {
+    // Don't block the caller — unauthenticated is a valid state — but surface
+    // genuine Clerk outages in logs so an auth incident isn't invisible.
+    console.error(JSON.stringify({
+      ts: new Date().toISOString(),
+      level: 'error',
+      route: 'lib/auth',
+      msg: 'getSession_failed',
+      errName: err instanceof Error ? err.name : 'unknown',
+      errMessage: err instanceof Error ? err.message : String(err).slice(0, 200),
+    }));
     return null;
   }
 }
@@ -48,7 +58,10 @@ export async function setUserTier(clerkId: string, tier: Tier): Promise<void> {
     }
   );
   if (!res.ok) {
-    throw new Error(`Clerk metadata update failed: ${res.status}`);
+    // Include response body so webhook logs can see WHY Clerk rejected the update
+    let body = '';
+    try { body = (await res.text()).slice(0, 300); } catch { /* ignore */ }
+    throw new Error(`Clerk metadata update failed: HTTP ${res.status} ${res.statusText} | body: ${body}`);
   }
 }
 
@@ -60,7 +73,32 @@ export async function findClerkUserByEmail(email: string): Promise<string | null
       headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
     }
   );
-  if (!res.ok) return null;
-  const users = await res.json();
-  return users[0]?.id || null;
+  if (!res.ok) {
+    // Log the error so webhook can see it — but return null to let caller decide flow
+    let body = '';
+    try { body = (await res.text()).slice(0, 200); } catch { /* ignore */ }
+    console.error(JSON.stringify({
+      ts: new Date().toISOString(),
+      level: 'error',
+      route: 'lib/auth',
+      msg: 'findClerkUserByEmail_http_failed',
+      status: res.status,
+      statusText: res.statusText,
+      body,
+    }));
+    return null;
+  }
+  try {
+    const users = await res.json();
+    return users[0]?.id || null;
+  } catch (err) {
+    console.error(JSON.stringify({
+      ts: new Date().toISOString(),
+      level: 'error',
+      route: 'lib/auth',
+      msg: 'findClerkUserByEmail_parse_failed',
+      errMessage: err instanceof Error ? err.message : String(err).slice(0, 200),
+    }));
+    return null;
+  }
 }
