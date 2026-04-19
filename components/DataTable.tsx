@@ -3,40 +3,48 @@
 import { useTranslations } from 'next-intl';
 import { ExtractedData } from '@/lib/data-extraction';
 import { PUBMED_BASE } from '@/lib/constants';
+import { clog } from '@/lib/client-logger';
 
 interface DataTableProps {
   data: ExtractedData[];
 }
 
 function exportCsv(data: ExtractedData[]) {
-  const headers = ['Study', 'PMID', 'Year', 'Sample Size', 'Effect Size', 'Effect Type', 'CI Lower', 'CI Upper', 'p-value', 'Outcome'];
-  const rows = data.map(d => [
-    `${d.firstAuthor} ${d.year}`,
-    d.pmid,
-    d.year,
-    d.sampleSize ?? '',
-    d.effectSize !== null ? d.effectSize.toFixed(4) : '',
-    d.effectType !== 'other' ? d.effectType : '',
-    d.ciLower !== null ? d.ciLower.toFixed(4) : '',
-    d.ciUpper !== null ? d.ciUpper.toFixed(4) : '',
-    d.pValue !== null ? d.pValue.toFixed(6) : '',
-    d.outcome || '',
-  ]);
+  clog.info('export_csv_start', 'DataTable', { rows: data.length });
+  try {
+    const headers = ['Study', 'PMID', 'Year', 'Sample Size', 'Effect Size', 'Effect Type', 'CI Lower', 'CI Upper', 'p-value', 'Outcome'];
+    const rows = data.map(d => [
+      `${d.firstAuthor} ${d.year}`,
+      d.pmid,
+      d.year,
+      d.sampleSize ?? '',
+      d.effectSize !== null ? d.effectSize.toFixed(4) : '',
+      d.effectType !== 'other' ? d.effectType : '',
+      d.ciLower !== null ? d.ciLower.toFixed(4) : '',
+      d.ciUpper !== null ? d.ciUpper.toFixed(4) : '',
+      d.pValue !== null ? d.pValue.toFixed(6) : '',
+      d.outcome || '',
+    ]);
 
-  const csv = [headers, ...rows]
-    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
-    .join('\n');
+    const csv = [headers, ...rows]
+      .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
 
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'metalens-extracted-data.csv';
-  a.click();
-  URL.revokeObjectURL(url);
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'metalens-extracted-data.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    clog.info('export_csv_done', 'DataTable', { rows: data.length, bytes: blob.size });
+  } catch (err) {
+    clog.error('export_csv_failed', 'DataTable', err, { rows: data.length });
+  }
 }
 
 function copyTable(data: ExtractedData[]) {
+  clog.info('copy_table_start', 'DataTable', { rows: data.length });
   const headers = 'Study\tPMID\tN\tEffect\tType\t95% CI\tp-value\tOutcome';
   const rows = data.map(d =>
     [
@@ -51,7 +59,11 @@ function copyTable(data: ExtractedData[]) {
     ].join('\t')
   );
 
-  navigator.clipboard.writeText([headers, ...rows].join('\n'));
+  const payload = [headers, ...rows].join('\n');
+  navigator.clipboard.writeText(payload).then(
+    () => clog.info('copy_table_done', 'DataTable', { rows: data.length, bytes: payload.length }),
+    (err) => clog.error('copy_table_failed', 'DataTable', err, { rows: data.length }),
+  );
 }
 
 export default function DataTable({ data }: DataTableProps) {

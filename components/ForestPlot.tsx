@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { ExtractedData } from '@/lib/data-extraction';
 import { PooledResult } from '@/lib/meta-stats';
+import { clog } from '@/lib/client-logger';
 
 interface ForestPlotProps {
   studies: ExtractedData[];
@@ -82,16 +83,34 @@ export default function ForestPlot({ studies, pooled }: ForestPlotProps) {
   const nullX = xScale(nullLine);
 
   const handleSavePng = async () => {
-    if (!svgRef.current) return;
-    const blob = await svgToPng(svgRef.current, 3);
-    downloadBlob(blob, `forest-plot-metalens.png`);
+    if (!svgRef.current) {
+      clog.warn('save_png_no_svg_ref', 'ForestPlot');
+      return;
+    }
+    clog.info('save_png_start', 'ForestPlot', { studyCount: valid.length, scale: 3 });
+    try {
+      const blob = await svgToPng(svgRef.current, 3);
+      downloadBlob(blob, `forest-plot-metalens.png`);
+      clog.info('save_png_done', 'ForestPlot', { studyCount: valid.length, bytes: blob.size });
+    } catch (err) {
+      clog.error('save_png_failed', 'ForestPlot', err, { studyCount: valid.length });
+    }
   };
 
   const handleSaveSvg = () => {
-    if (!svgRef.current) return;
-    const svgData = new XMLSerializer().serializeToString(svgRef.current);
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    downloadBlob(blob, `forest-plot-metalens.svg`);
+    if (!svgRef.current) {
+      clog.warn('save_svg_no_svg_ref', 'ForestPlot');
+      return;
+    }
+    clog.info('save_svg_start', 'ForestPlot', { studyCount: valid.length });
+    try {
+      const svgData = new XMLSerializer().serializeToString(svgRef.current);
+      const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      downloadBlob(blob, `forest-plot-metalens.svg`);
+      clog.info('save_svg_done', 'ForestPlot', { studyCount: valid.length, bytes: blob.size });
+    } catch (err) {
+      clog.error('save_svg_failed', 'ForestPlot', err, { studyCount: valid.length });
+    }
   };
 
   return (

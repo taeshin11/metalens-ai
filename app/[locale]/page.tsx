@@ -16,6 +16,7 @@ import { collectData } from '@/lib/analytics';
 import { translateForPubMed } from '@/lib/translate';
 import { buildPubMedQuery } from '@/lib/pubmed-filters';
 import { TIER_CONFIG, BETA_END } from '@/lib/constants';
+import { clog } from '@/lib/client-logger';
 
 type Stage = 'idle' | 'searching' | 'synthesizing' | 'done' | 'error';
 
@@ -44,8 +45,16 @@ export default function HomePage() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem('metalens_history');
-      if (saved) setHistory(JSON.parse(saved));
-    } catch { /* ignore */ }
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setHistory(parsed);
+        clog.info('history_load_done', 'HomePage', { entries: Array.isArray(parsed) ? parsed.length : 0 });
+      } else {
+        clog.info('history_load_empty', 'HomePage');
+      }
+    } catch (err) {
+      clog.warn('history_load_failed', 'HomePage', { errMessage: err instanceof Error ? err.message : String(err).slice(0, 200) });
+    }
   }, []);
 
   const tier = user?.tier || 'free';
@@ -122,12 +131,23 @@ export default function HomePage() {
       const updated = [entry, ...history.filter(h => h.keywords !== kw)].slice(0, 20);
       setHistory(updated);
       try {
-        localStorage.setItem('metalens_history', JSON.stringify(updated));
-        localStorage.setItem(`metalens_result_${resultId}`, JSON.stringify({ result: synthesisResult, articles: papers }));
+        const historyJson = JSON.stringify(updated);
+        const resultJson = JSON.stringify({ result: synthesisResult, articles: papers });
+        localStorage.setItem('metalens_history', historyJson);
+        localStorage.setItem(`metalens_result_${resultId}`, resultJson);
         // Keep only the 20 most recent cached results
         const oldEntry = history.find(h => h.keywords === kw);
         if (oldEntry?.resultId) localStorage.removeItem(`metalens_result_${oldEntry.resultId}`);
-      } catch { /* ignore */ }
+        clog.info('history_save_done', 'HomePage', {
+          entries: updated.length,
+          historyBytes: historyJson.length,
+          resultBytes: resultJson.length,
+          evictedOld: !!oldEntry?.resultId,
+        });
+      } catch (err) {
+        // localStorage may be full (QuotaExceededError) or disabled
+        clog.error('history_save_failed', 'HomePage', err, { entries: updated.length });
+      }
     } catch (err) {
       setStage('error');
       // Check for rate limit

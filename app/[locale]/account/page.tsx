@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { TIER_CONFIG } from '@/lib/constants';
 import type { Tier } from '@/lib/constants';
+import { clog } from '@/lib/client-logger';
 
 export default function AccountPage() {
   const { user, loading, logout } = useAuth();
@@ -48,7 +49,13 @@ export default function AccountPage() {
   const style = tierStyles[tier];
 
   const handleLogout = async () => {
-    await logout();
+    clog.info('logout_start', 'AccountPage', { tier: user?.tier });
+    try {
+      await logout();
+      clog.info('logout_done', 'AccountPage');
+    } catch (err) {
+      clog.error('logout_failed', 'AccountPage', err);
+    }
     router.push(`/${locale}`);
   };
 
