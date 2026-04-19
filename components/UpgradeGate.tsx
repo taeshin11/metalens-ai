@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useAuth } from '@/components/AuthProvider';
 import { ADMIN_EMAILS } from '@/lib/admin';
 import type { Tier } from '@/lib/constants';
+import { clog } from '@/lib/client-logger';
 
 interface UpgradeGateProps {
   requiredTier: 'pro';
@@ -19,13 +20,23 @@ const MAX_TRIALS = 1;
 
 function getTrialCount(key: string): number {
   if (typeof window === 'undefined') return 0;
-  return parseInt(sessionStorage.getItem(`trial_${key}`) || '0', 10);
+  try {
+    return parseInt(sessionStorage.getItem(`trial_${key}`) || '0', 10);
+  } catch (err) {
+    clog.warn('trial_count_read_failed', 'UpgradeGate', { featureKey: key, errMessage: err instanceof Error ? err.message : String(err).slice(0, 200) });
+    return 0;
+  }
 }
 
 function useTrial(key: string) {
   if (typeof window === 'undefined') return;
-  const count = getTrialCount(key);
-  sessionStorage.setItem(`trial_${key}`, String(count + 1));
+  try {
+    const count = getTrialCount(key);
+    sessionStorage.setItem(`trial_${key}`, String(count + 1));
+    clog.info('trial_consumed', 'UpgradeGate', { featureKey: key, newCount: count + 1 });
+  } catch (err) {
+    clog.error('trial_write_failed', 'UpgradeGate', err, { featureKey: key });
+  }
 }
 
 export default function UpgradeGate({ currentTier, feature, featureKey, children }: UpgradeGateProps) {

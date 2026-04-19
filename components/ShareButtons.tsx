@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { SITE_URL } from '@/lib/constants';
+import { clog } from '@/lib/client-logger';
 
 interface ShareButtonsProps {
   keywords: string;
@@ -18,9 +19,15 @@ export default function ShareButtons({ keywords, paperCount }: ShareButtonsProps
   const shareText = `I just analyzed ${paperCount} PubMed papers on "${keywords}" using MetaLens AI — free AI-powered meta-analysis tool!`;
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(shareUrl);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    clog.info('copy_share_link_start', 'ShareButtons', { keywordsLen: keywords.length, paperCount });
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      clog.info('copy_share_link_done', 'ShareButtons', { urlLen: shareUrl.length });
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      clog.error('copy_share_link_failed', 'ShareButtons', err);
+    }
   };
 
   const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;

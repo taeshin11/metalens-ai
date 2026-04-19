@@ -15,6 +15,7 @@ import FunnelPlot from './FunnelPlot';
 import UpgradeGate from './UpgradeGate';
 import ShareButtons from './ShareButtons';
 import UpsellBanner from './UpsellBanner';
+import { clog } from '@/lib/client-logger';
 
 const EXTRACT_STEPS = ['extractStep0', 'extractStep1', 'extractStep2', 'extractStep3', 'extractStep4'] as const;
 
@@ -159,6 +160,8 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   ];
 
   const handleGenerateTools = async (tool: 'abstract' | 'journal' | 'proposal') => {
+    const t0 = performance.now();
+    clog.info('writing_tool_start', 'ResultsCard', { tool, paperCount: articles.length, tier });
     setToolsLoading(true);
     try {
       const summaryText = result.english;
@@ -239,16 +242,30 @@ Output the proposal with each section header in bold. Write in formal academic l
         if (tool === 'abstract') setAbstractDraft(data.result || '');
         else if (tool === 'journal') setJournalRecs(data.result || '');
         else setProposalDraft(data.result || '');
+        clog.info('writing_tool_done', 'ResultsCard', {
+          tool,
+          ms: Math.round(performance.now() - t0),
+          resultBytes: (data.result || '').length,
+        });
       } else {
-        console.error('[ResultsCard] writing tool request failed:', tool, response.status, response.statusText);
+        clog.error('writing_tool_http_failed', 'ResultsCard', undefined, {
+          tool,
+          status: response.status,
+          statusText: response.statusText,
+          ms: Math.round(performance.now() - t0),
+        });
       }
     } catch (err) {
-      console.error('[ResultsCard] writing tool crashed:', tool, err);
+      clog.error('writing_tool_crashed', 'ResultsCard', err, {
+        tool,
+        ms: Math.round(performance.now() - t0),
+      });
     }
     setToolsLoading(false);
   };
 
   const handleExportPDF = () => {
+    clog.info('export_pdf_start', 'ResultsCard', { paperCount: articles.length, mode, tier });
     const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     const sourcesList = articles.map(a =>
       `<li style="margin-bottom:6px"><a href="https://pubmed.ncbi.nlm.nih.gov/${a.pmid}/" style="color:#2D7A73">${a.title}</a><br><span style="font-size:11px;color:#6B7C8A">${a.authors.slice(0, 3).join(', ')}${a.authors.length > 3 ? ' et al.' : ''} · ${a.journal} (${a.year}) · PMID: ${a.pmid}</span></li>`
@@ -297,6 +314,11 @@ Output the proposal with each section header in bold. Write in formal academic l
     if (printWin) {
       printWin.document.write(html);
       printWin.document.close();
+      clog.info('export_pdf_window_opened', 'ResultsCard', { htmlBytes: html.length });
+    } else {
+      clog.error('export_pdf_window_blocked', 'ResultsCard', undefined, {
+        hint: 'popup_blocked_likely',
+      });
     }
   };
 
@@ -365,6 +387,8 @@ Output the proposal with each section header in bold. Write in formal academic l
 
   // ── Share Handler ────────────────────────────────────────────
   const handleShare = async () => {
+    const t0 = performance.now();
+    clog.info('share_create_start', 'ResultsCard', { paperCount: articles.length, mode, tier });
     setShareState('loading');
     try {
       const res = await fetch('/api/share', {
@@ -372,14 +396,28 @@ Output the proposal with each section header in bold. Write in formal academic l
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ keywords, result, articles, mode }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        clog.error('share_create_http_failed', 'ResultsCard', undefined, {
+          status: res.status,
+          statusText: res.statusText,
+          ms: Math.round(performance.now() - t0),
+        });
+        throw new Error(`share POST ${res.status}`);
+      }
       const { id } = await res.json();
+      clog.info('share_id_received', 'ResultsCard', { id, ms: Math.round(performance.now() - t0) });
       const locale = window.location.pathname.split('/')[1] || 'en';
       const url = `${window.location.origin}/${locale}/share/${id}`;
-      await navigator.clipboard.writeText(url);
+      try {
+        await navigator.clipboard.writeText(url);
+        clog.info('share_link_copied', 'ResultsCard', { id, ms: Math.round(performance.now() - t0) });
+      } catch (copyErr) {
+        clog.error('share_link_copy_failed', 'ResultsCard', copyErr, { id });
+      }
       setShareState('copied');
       setTimeout(() => setShareState('idle'), 3000);
-    } catch {
+    } catch (err) {
+      clog.error('share_create_failed', 'ResultsCard', err, { ms: Math.round(performance.now() - t0) });
       setShareState('idle');
     }
   };

@@ -42,6 +42,24 @@ function pruneOldEntries() {
   }
 }
 
+function maskEmail(email: string): string {
+  if (!email || email.length <= 6) return email || 'anon';
+  return `${email.slice(0, 3)}…${email.slice(-3)}`;
+}
+
+function emitLog(level: 'info' | 'warn', msg: string, ctx: Record<string, unknown>) {
+  const entry = {
+    ts: new Date().toISOString(),
+    level,
+    route: 'lib/usage-tracker',
+    msg,
+    ...ctx,
+  };
+  const line = JSON.stringify(entry);
+  if (level === 'warn') console.warn(line);
+  else console.log(line);
+}
+
 export function trackUsage(
   email: string,
   tier: Tier,
@@ -58,13 +76,29 @@ export function trackUsage(
     inputTokensEst,
     outputTokensEst,
   });
+  emitLog('info', 'usage_tracked', {
+    user: maskEmail(email),
+    tier,
+    model,
+    inputTokensEst,
+    outputTokensEst,
+    totalEntries: usageLog.length,
+  });
 }
 
 export function trackSignup(email: string, name: string) {
   pruneOldEntries();
-  if (signupEmails.has(email)) return;
+  if (signupEmails.has(email)) {
+    emitLog('info', 'signup_duplicate_ignored', { user: maskEmail(email) });
+    return;
+  }
   signupEmails.add(email);
   signupLog.push({ timestamp: Date.now(), email, name });
+  emitLog('info', 'signup_tracked', {
+    user: maskEmail(email),
+    nameLen: name?.length || 0,
+    totalSignups: signupLog.length,
+  });
 }
 
 function estimateCost(entry: UsageEntry): number {

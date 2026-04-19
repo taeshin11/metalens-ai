@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { CONTACT_EMAIL } from '@/lib/constants';
+import { clog } from '@/lib/client-logger';
 
 export default function FeedbackButton() {
   const t = useTranslations('feedbackWidget');
@@ -40,9 +41,15 @@ export default function FeedbackButton() {
 
   function handleSend() {
     if (!feedback.trim()) return;
-    const subject = encodeURIComponent('MetaLens AI Feedback');
-    const body = encodeURIComponent(feedback.trim());
-    window.open(`mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`, '_self');
+    clog.info('feedback_send_start', 'FeedbackButton', { bodyLen: feedback.trim().length });
+    try {
+      const subject = encodeURIComponent('MetaLens AI Feedback');
+      const body = encodeURIComponent(feedback.trim());
+      window.open(`mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`, '_self');
+      clog.info('feedback_mailto_opened', 'FeedbackButton');
+    } catch (err) {
+      clog.error('feedback_mailto_failed', 'FeedbackButton', err);
+    }
     setFeedback('');
     setOpen(false);
   }

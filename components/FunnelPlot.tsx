@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { ExtractedData } from '@/lib/data-extraction';
 import { PooledResult } from '@/lib/meta-stats';
+import { clog } from '@/lib/client-logger';
 
 interface FunnelPlotProps {
   studies: ExtractedData[];
@@ -164,16 +165,34 @@ export default function FunnelPlot({ studies, pooled }: FunnelPlotProps) {
   const yTicks = Array.from({ length: yTickCount }, (_, i) => i * yStep);
 
   const handleSavePng = async () => {
-    if (!svgRef.current) return;
-    const blob = await svgToPng(svgRef.current, 3);
-    downloadBlob(blob, 'funnel-plot-metalens.png');
+    if (!svgRef.current) {
+      clog.warn('save_png_no_svg_ref', 'FunnelPlot');
+      return;
+    }
+    clog.info('save_png_start', 'FunnelPlot', { studyCount: valid.length, asymmetric: overallAsymmetric });
+    try {
+      const blob = await svgToPng(svgRef.current, 3);
+      downloadBlob(blob, 'funnel-plot-metalens.png');
+      clog.info('save_png_done', 'FunnelPlot', { studyCount: valid.length, bytes: blob.size });
+    } catch (err) {
+      clog.error('save_png_failed', 'FunnelPlot', err, { studyCount: valid.length });
+    }
   };
 
   const handleSaveSvg = () => {
-    if (!svgRef.current) return;
-    const svgData = new XMLSerializer().serializeToString(svgRef.current);
-    const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    downloadBlob(blob, 'funnel-plot-metalens.svg');
+    if (!svgRef.current) {
+      clog.warn('save_svg_no_svg_ref', 'FunnelPlot');
+      return;
+    }
+    clog.info('save_svg_start', 'FunnelPlot', { studyCount: valid.length });
+    try {
+      const svgData = new XMLSerializer().serializeToString(svgRef.current);
+      const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      downloadBlob(blob, 'funnel-plot-metalens.svg');
+      clog.info('save_svg_done', 'FunnelPlot', { studyCount: valid.length, bytes: blob.size });
+    } catch (err) {
+      clog.error('save_svg_failed', 'FunnelPlot', err, { studyCount: valid.length });
+    }
   };
 
   return (

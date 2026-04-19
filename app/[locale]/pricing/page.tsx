@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/components/AuthProvider';
 import { TIER_CONFIG } from '@/lib/constants';
+import { clog } from '@/lib/client-logger';
 
 type Billing = 'monthly' | 'yearly';
 
@@ -89,25 +90,41 @@ export default function PricingPage() {
   }, [searchParams, locale]);
 
   const handleCheckout = async (planKey: string) => {
+    clog.info('checkout_click', 'PricingPage', { plan: planKey, hasUser: !!user });
     if (!user) {
+      clog.info('checkout_signin_required', 'PricingPage');
       openSignIn();
       return;
     }
+    const t0 = performance.now();
     setCheckoutLoading(planKey);
     setCheckoutError(null);
     try {
+      clog.info('checkout_request_start', 'PricingPage', { plan: planKey, locale });
       const res = await fetch('/api/lemonsqueezy/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ plan: planKey, locale }),
       });
       const data = await res.json();
+      const ms = Math.round(performance.now() - t0);
       if (data.url) {
+        clog.info('checkout_redirecting', 'PricingPage', { plan: planKey, ms });
         window.location.href = data.url;
       } else {
+        clog.error('checkout_no_url', 'PricingPage', undefined, {
+          plan: planKey,
+          status: res.status,
+          errMessage: data.error,
+          ms,
+        });
         setCheckoutError(data.error || 'Checkout failed. Please try again.');
       }
-    } catch {
+    } catch (err) {
+      clog.error('checkout_request_crashed', 'PricingPage', err, {
+        plan: planKey,
+        ms: Math.round(performance.now() - t0),
+      });
       setCheckoutError('Checkout failed. Please try again.');
     } finally {
       setCheckoutLoading(null);
@@ -117,9 +134,12 @@ export default function PricingPage() {
   const handleNotify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
+    clog.info('waitlist_submit_start', 'PricingPage', { emailLen: email.trim().length });
     try {
       const webhookUrl = process.env.NEXT_PUBLIC_SHEETS_WEBHOOK;
-      if (webhookUrl) {
+      if (!webhookUrl) {
+        clog.warn('waitlist_webhook_not_configured', 'PricingPage');
+      } else {
         fetch(webhookUrl, {
           method: 'POST', mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
@@ -128,9 +148,14 @@ export default function PricingPage() {
             paper_count: 0, language: navigator.language,
             user_agent: navigator.userAgent, referrer: 'pricing_page', session_id: 'waitlist',
           }),
-        });
+        }).then(
+          () => clog.info('waitlist_webhook_posted', 'PricingPage'),
+          (err) => clog.error('waitlist_webhook_failed', 'PricingPage', err),
+        );
       }
-    } catch { /* silent */ }
+    } catch (err) {
+      clog.error('waitlist_submit_crashed', 'PricingPage', err);
+    }
     setSubmitted(true);
   };
 

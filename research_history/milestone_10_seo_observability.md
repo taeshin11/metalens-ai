@@ -196,6 +196,55 @@ Writing Tools(abstract/journal/proposal) 요청의 `catch { /* silent */ }` → 
 
 **참고**: 이 커밋도 VRAM 제약으로 로컬 빌드 생략. 변경은 optional 파라미터 추가 + catch 로깅 강화 — 기존 호출자는 인자 추가 없이도 동작(파라미터 optional). 런타임 리스크 매우 낮음.
 
+### 추가 변경 (9차 커밋) — 클라이언트 로거 + 모든 쓰기/저장/업로드/내비게이션 계측
+
+요청: "핵심 모든 쓰기 작업, 저장 작업, 업로드 작업, 배포, 빌드, 푸쉬 작업에 단계별 로그". 서버 측은 이미 완비됐으므로 클라이언트 사이드를 빠짐없이 계측.
+
+#### lib/client-logger.ts (새 파일)
+- `clog.info/warn/error(msg, component, ctx)` API
+- 페이지 로드당 8자 `sid` (sessionStorage, private 모드 폴백 in-memory)
+- 서버 로거와 동일한 JSON-line 포맷 + `side: 'client'` 태그 → 전체 이벤트를 동일 툴로 필터
+- `serializeError`로 Error 객체 정규화 (errName/errMessage/errStack/errCause/errCode/errStatus)
+
+#### 계측된 클라이언트 쓰기/저장/업로드 포인트 (14개)
+**다운로드/파일 저장**:
+- `DataTable.exportCsv` — rows 수, 결과 blob bytes
+- `DataTable.copyTable` — clipboard write 성공/실패 (promise reject 포함)
+- `ForestPlot.handleSavePng` / `handleSaveSvg` — 연구 수, bytes, SVG ref 누락 감지
+- `FunnelPlot.handleSavePng` / `handleSaveSvg` — 대칭성 플래그, bytes
+- `ResultsCard.handleExportPDF` — 팝업 차단 감지(`export_pdf_window_blocked`)
+
+**서버 업로드/API 호출 (클라이언트 관점)**:
+- `ResultsCard.handleGenerateTools` (abstract/journal/proposal) — tool 종류, 소요 ms, resultBytes / HTTP 실패 / crash 각각
+- `ResultsCard.handleShare` — create 시작 → id 수신 → 링크 copy 각 단계
+- `ShareButtons.handleCopy` — 공유 링크 clipboard 복사
+- `PricingPage.handleCheckout` — 클릭 → 요청 → redirect 각 단계, 소요 ms, url 누락 감지
+- `PricingPage.handleNotify` — waitlist webhook upload 성공/실패
+- `lib/analytics.collectData` — sid 생성, webhook 디스패치 / 실패
+
+**로컬 스토리지 쓰기**:
+- `HomePage` history load / save — entries 수, historyBytes, resultBytes, QuotaExceededError 감지
+- `UpgradeGate.useTrial` — 트라이얼 소비 카운트, sessionStorage write 실패
+
+**인증/세션 상태**:
+- `AccountPage.handleLogout` — 로그아웃 시작/완료/실패
+- `FeedbackButton.handleSend` — mailto: 오픈 성공/실패
+
+#### 서버 측 추가
+- `lib/usage-tracker.ts` — `trackUsage` / `trackSignup`에 JSON-line 로그 추가 (user, tier, model, tokens, 누적 엔트리 수). 이메일은 `maskEmail()`로 마스킹(3앞…3뒤).
+
+#### 운영 관점 답할 수 있게 된 질문들
+- "사용자가 PDF export 눌렀는데 PDF 안 열렸다" → `export_pdf_window_blocked` (팝업 차단) vs 열림 확인
+- "Pro 구독 결제 전환율 낮은데 어디서 이탈?" → `checkout_click` → `checkout_request_start` → `checkout_redirecting` 각 드롭오프 지점
+- "공유 링크가 클립보드에 안 들어간다" → `share_link_copied` 없이 `share_link_copy_failed` 기록
+- "localStorage 꽉 차서 저장 안 됨" → `history_save_failed` with QuotaExceededError
+- "waitlist 제출이 실제로 구글시트 들어갔는지" → `waitlist_webhook_posted` vs `waitlist_webhook_failed`
+
+#### 배포/빌드/푸쉬 로깅
+앱 내부 런타임 범위를 벗어나는 영역 (`vercel build`, `git push`, Vercel deploy webhooks)은 플랫폼 자체가 로그를 남기며, 사용자 행동 결과로 생성되는 artifact (share payload 작성, 결제 세션, tier 변경) 는 이미 위 계측으로 모두 추적됨. 추가로 platform-side 로그를 앱이 생성할 필요 없음.
+
+**참고**: VRAM 제약으로 로컬 빌드 생략. Client-logger는 pure TypeScript + console API, Edit은 모두 기존 동작 유지하면서 로깅만 추가. 런타임 리스크 없음.
+
 ## 커밋
 - `fda712e` feat: pricing metadata layout + API error observability
 - `32c6c6a` feat: share OG metadata + account/admin noindex
@@ -205,7 +254,8 @@ Writing Tools(abstract/journal/proposal) 요청의 `catch { /* silent */ }` → 
 - `4346201` fix: i18n FunnelPlot asymmetry interpretation
 - `569fbbd` docs: update milestone 10 commit list
 - `df2bb11` feat: structured JSON-line logger + instrument 9 API routes
-- (next commit) feat: thread logger into lib functions + kill silent catches
+- `d4465ce` feat: thread logger into lib functions + kill silent catches
+- (next commit) feat: client-side logger + instrument all write/save/upload ops
 
 ## ⚠️ 인계
 Milestone 09의 푸시 대기 상태와 함께 이 커밋도 local-only로 쌓임. 사용자가 VS Code Source Control 또는 taeshin11 크리덴셜 터미널에서 `git push origin master`로 일괄 푸시하면 Vercel 자동 배포.
