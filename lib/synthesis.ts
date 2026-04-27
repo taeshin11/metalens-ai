@@ -9,12 +9,21 @@ export interface SynthesisResult {
   remaining?: number;
 }
 
-export function buildPrompt(articles: PubMedArticle[], pointCount: number = FREE_POINTS, mode: 'meta-analysis' | 'gap-finder' = 'meta-analysis'): string {
+export function buildPrompt(
+  articles: PubMedArticle[],
+  pointCount: number = FREE_POINTS,
+  mode: 'meta-analysis' | 'gap-finder' = 'meta-analysis',
+  opts: { useFullText?: boolean } = {},
+): string {
   const template = mode === 'gap-finder' ? GAP_FINDER_PROMPT : META_ANALYSIS_PROMPT;
   const systemPrompt = template.replace(/{pointCount}/g, String(pointCount));
 
-  const MAX_TOTAL_CHARS = 30000;
+  // Hybrid char budget: when full_text is mixed in we let the prompt grow,
+  // but each individual paper still gets a per-entry cap so one giant PMC
+  // article doesn't crowd out everything else.
+  const MAX_TOTAL_CHARS = opts.useFullText ? 60000 : 30000;
   const MAX_ABSTRACT_CHARS = 1500;
+  const MAX_FULLTEXT_CHARS = 4000;
   let totalChars = 0;
   const selectedArticles: typeof articles = [];
 
@@ -22,16 +31,29 @@ export function buildPrompt(articles: PubMedArticle[], pointCount: number = FREE
     const truncatedAbstract = a.abstract.length > MAX_ABSTRACT_CHARS
       ? a.abstract.substring(0, MAX_ABSTRACT_CHARS) + '...'
       : a.abstract;
-    const entry = `PMID: ${a.pmid} | ${a.title} | ${a.journal} (${a.year}) | ${truncatedAbstract}`;
-    if (totalChars + entry.length > MAX_TOTAL_CHARS && selectedArticles.length >= 5) break;
-    totalChars += entry.length;
-    selectedArticles.push({ ...a, abstract: truncatedAbstract });
+    const ftBudget = opts.useFullText && a.fullText
+      ? a.fullText.slice(0, MAX_FULLTEXT_CHARS)
+      : '';
+    const entry = `PMID: ${a.pmid} | ${a.title} | ${a.journal} (${a.year}) | ${truncatedAbstract}${ftBudget ? ' | FULLTEXT(' + ftBudget.length + ')' : ''}`;
+    if (totalChars + entry.length + ftBudget.length > MAX_TOTAL_CHARS && selectedArticles.length >= 5) break;
+    totalChars += entry.length + ftBudget.length;
+    selectedArticles.push({ ...a, abstract: truncatedAbstract, fullText: ftBudget || undefined });
   }
 
   const abstractsText = selectedArticles
     .map((a, i) => {
       const typeLabel = a.pubTypes?.length ? `[${a.pubTypes.join(', ')}]` : '';
-      return `[${i + 1}] PMID: ${a.pmid} ${typeLabel}\nTitle: ${a.title}\nJournal: ${a.journal} (${a.year})\nAbstract: ${a.abstract}`;
+      const sourceLabel = a.source === 'papers-db' ? '[CACHED]' : '';
+      const specialtyLabel = a.specialty ? `[${a.specialty}]` : '';
+      const labels = [typeLabel, sourceLabel, specialtyLabel].filter(Boolean).join(' ');
+      const block = `[${i + 1}] PMID: ${a.pmid} ${labels}\nTitle: ${a.title}\nJournal: ${a.journal} (${a.year})\nAbstract: ${a.abstract}`;
+      // Inline full text after abstract only when present and useFullText is on.
+      // The prompt already instructs the model to prioritize numerical data
+      // from full text when available.
+      if (opts.useFullText && a.fullText) {
+        return `${block}\nFullText (truncated): ${a.fullText}`;
+      }
+      return block;
     })
     .join('\n\n---\n\n');
 
@@ -62,8 +84,9 @@ export async function synthesizeWithAI(
   language: string,
   pointCount?: number,
   mode: 'meta-analysis' | 'gap-finder' = 'meta-analysis',
+  opts: { useFullText?: boolean } = {},
 ): Promise<SynthesisResult> {
-  const prompt = buildPrompt(articles, pointCount, mode);
+  const prompt = buildPrompt(articles, pointCount, mode, opts);
   let englishResult = '';
   let remaining: number | undefined;
 

@@ -115,7 +115,16 @@ export default function HomePage() {
       };
       const language = langMap[locale] || 'English';
 
-      const synthesisResult = await synthesizeWithAI(papers, language, tierConfig.pointCount, mode || searchMode);
+      // Pro-tier opt-in: include PMC full text when available. Free-tier
+      // sticks to abstracts to keep prompt cost predictable.
+      const useFullText = tier === 'pro';
+      const synthesisResult = await synthesizeWithAI(
+        papers,
+        language,
+        tierConfig.pointCount,
+        mode || searchMode,
+        { useFullText },
+      );
 
       // Track remaining from server response
       if (synthesisResult.remaining !== undefined) {

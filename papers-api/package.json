@@ -1,0 +1,17 @@
+{
+  "name": "metalens-papers-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Read-only HTTP API over papers.db (HemoChat-curated PubMed cache) for MetaLens hybrid retrieval",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.5.0"
+  }
+}
