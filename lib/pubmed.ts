@@ -1,4 +1,5 @@
 import type { RouteLogger } from './logger';
+import { fetchPapersBatch, isPapersDbEnabled } from './papers-db';
 
 const BASE_URL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils';
 
@@ -11,6 +12,14 @@ export interface PubMedArticle {
   year: string;
   doi?: string;
   pubTypes: string[]; // e.g. "Review", "Guideline", "Meta-Analysis", "Randomized Controlled Trial"
+  /** Truncated full text from papers.db when available (PMC-linked papers only). */
+  fullText?: string;
+  /** Whether fullText was truncated for transport size control. */
+  fullTextTruncated?: boolean;
+  /** Specialty tag from papers.db curation (oncology, cardiology, etc.). */
+  specialty?: string;
+  /** Where this article's body came from. */
+  source?: 'papers-db' | 'pubmed';
 }
 
 async function fetchWithRetry(url: string, step: string, retries = 2, log?: RouteLogger): Promise<Response> {
@@ -148,19 +157,79 @@ export async function searchPubMed(keywords: string, maxResults = 20, log?: Rout
 
 export async function fetchAbstracts(pmids: string[], log?: RouteLogger): Promise<PubMedArticle[]> {
   if (pmids.length === 0) return [];
-  const url = `${BASE_URL}/efetch.fcgi?db=pubmed&id=${pmids.join(',')}&retmode=xml`;
-  log?.stage('pubmed_efetch_start', { pmidCount: pmids.length });
-  const res = await fetchWithRetry(url, 'efetch', 2, log);
-  const xml = await res.text();
-  log?.stage('pubmed_efetch_done', { xmlBytes: xml.length });
 
-  const articles = parseArticlesFromXml(xml);
-  log?.stage('pubmed_xml_parsed', {
-    requestedPmids: pmids.length,
-    parsedArticles: articles.length,
-    droppedNoAbstract: pmids.length - articles.length,
+  // Stage A — try papers.db first (when configured) for full text + abstract.
+  // PubMed's MeSH-tuned esearch already gave us the PMID ranking; here we
+  // only need bodies, so paper-by-PMID lookup beats efetch when the cache
+  // has the paper.
+  let dbHits: PubMedArticle[] = [];
+  let missingFromDb = pmids;
+
+  if (isPapersDbEnabled()) {
+    const batch = await fetchPapersBatch(pmids, { includeFullText: true, fullTextLimit: 4000 }, log);
+    if (batch) {
+      dbHits = batch.papers
+        .filter((p) => p.abstract && p.abstract.length > 0)
+        .map((p) => ({
+          pmid: p.pmid,
+          title: p.title,
+          abstract: p.abstract,
+          authors: p.authors,
+          journal: p.journal,
+          year: p.year,
+          doi: undefined, // papers.db schema does not currently store DOI separately
+          pubTypes: [], // papers.db has no pubType column; PubMed rerank below if we fall through
+          fullText: p.fullText,
+          fullTextTruncated: p.fullTextTruncated,
+          specialty: p.specialty || undefined,
+          source: 'papers-db' as const,
+        }));
+      const dbHitIds = new Set(dbHits.map((a) => a.pmid));
+      missingFromDb = pmids.filter((id) => !dbHitIds.has(id));
+      log?.stage('papers_db_lookup_resolved', {
+        requested: pmids.length,
+        dbHits: dbHits.length,
+        missingForPubmed: missingFromDb.length,
+        fullTextCount: dbHits.filter((a) => a.fullText).length,
+      });
+    } else {
+      log?.warn('papers_db_unavailable_falling_back', { pmidCount: pmids.length });
+    }
+  }
+
+  // Stage B — fetch the rest (or everything if papers.db disabled/failed) from PubMed.
+  let pubmedHits: PubMedArticle[] = [];
+  if (missingFromDb.length > 0) {
+    const url = `${BASE_URL}/efetch.fcgi?db=pubmed&id=${missingFromDb.join(',')}&retmode=xml`;
+    log?.stage('pubmed_efetch_start', { pmidCount: missingFromDb.length });
+    const res = await fetchWithRetry(url, 'efetch', 2, log);
+    const xml = await res.text();
+    log?.stage('pubmed_efetch_done', { xmlBytes: xml.length });
+
+    const parsed = parseArticlesFromXml(xml);
+    pubmedHits = parsed.map((a) => ({ ...a, source: 'pubmed' as const }));
+    log?.stage('pubmed_xml_parsed', {
+      requestedPmids: missingFromDb.length,
+      parsedArticles: pubmedHits.length,
+      droppedNoAbstract: missingFromDb.length - pubmedHits.length,
+    });
+  }
+
+  // Preserve the original PMID order from esearch (relevance-sorted).
+  const byPmid = new Map<string, PubMedArticle>();
+  for (const a of dbHits) byPmid.set(a.pmid, a);
+  for (const a of pubmedHits) if (!byPmid.has(a.pmid)) byPmid.set(a.pmid, a);
+  const ordered = pmids.map((id) => byPmid.get(id)).filter((a): a is PubMedArticle => !!a);
+
+  log?.stage('fetch_abstracts_done', {
+    requested: pmids.length,
+    dbHits: dbHits.length,
+    pubmedHits: pubmedHits.length,
+    finalCount: ordered.length,
+    fullTextCount: ordered.filter((a) => a.fullText).length,
   });
-  return articles;
+
+  return ordered;
 }
 
 function parseArticlesFromXml(xml: string): PubMedArticle[] {

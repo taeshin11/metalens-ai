@@ -5,7 +5,7 @@
 > MUST update the relevant section in the same commit. See
 > [§ Maintenance Rules](#maintenance-rules) at the bottom.
 
-**Last synced**: 2026-04-19 (matches HEAD of `master`)
+**Last synced**: 2026-04-27 (matches HEAD of `master`)
 
 ---
 
@@ -426,6 +426,44 @@ hreflang map in `app/[locale]/layout.tsx:17-26` (ko→ko-KR, ja→ja-JP, zh→zh
 | Robots | `app/robots.ts` — disallow `/api/`, `/admin/` |
 | OG Images | `app/opengraph-image.tsx` (`ImageResponse` dynamic) |
 | Verification | Google ✅, Naver ✅, Bing/Yandex/Baidu (env-gated) |
+| **Hybrid retrieval** | papers-api (sibling Node service over papers.db) — see §16 |
+
+---
+
+## 16. Hybrid Retrieval (papers.db + PubMed)
+
+### 16.1 Architecture
+- **Search ranking** — still PubMed esearch (MeSH-tuned, 4 fallback strategies in `lib/pubmed.ts`)
+- **Body fetch** — `lib/pubmed.ts:fetchAbstracts` consults papers.db first via `lib/papers-db.ts`, then PubMed efetch for missing PMIDs
+- **AI synthesis** — Pro tier sends `useFullText=true` so `buildPrompt` (`lib/synthesis.ts`) includes truncated PMC full text inline; Free tier stays abstract-only for cost predictability
+
+### 16.2 papers-api server (`papers-api/`)
+- Node 20+ HTTP server, `better-sqlite3`, readonly + WAL on `D:/HemoChat/data/papers.db` (~9M papers, 707K with full text, 44 specialty tags)
+- Endpoints:
+  - `GET /healthz` (unauth)
+  - `GET /stats` — total paper count
+  - `POST /papers/batch` — `{ pmids, includeFullText, fullTextLimit }` → `{ papers, missing }`
+  - `GET /search?q=...&specialty=...&limit=20` — FTS5 search (BM25 ranking)
+- Auth: shared `X-API-Key` header
+- Logs: JSON-line, same shape as `lib/logger.ts`
+- Excluded from Vercel deploys via `.vercelignore`
+- Tunneling for production: Cloudflare Tunnel / Tailscale Funnel / ngrok (see `papers-api/README.md`)
+
+### 16.3 MetaLens client (`lib/papers-db.ts`)
+- Activates only when both `PAPERS_API_URL` and `PAPERS_API_KEY` env vars are set
+- `isPapersDbEnabled()`, `fetchPapersBatch(pmids, opts, log)` exported
+- Per-request 8s timeout; returns `null` on failure (never blocks PubMed fallback)
+- All stages logged via the `RouteLogger` thread
+
+### 16.4 PubMedArticle additions (`lib/pubmed.ts`)
+- New optional fields: `fullText`, `fullTextTruncated`, `specialty`, `source: 'papers-db' | 'pubmed'`
+- Article order preserved from PubMed esearch ranking (relevance-sorted)
+
+### 16.5 Tier behavior
+- **Free**: useFullText=false (abstracts only) — no cost change
+- **Pro**: useFullText=true — Gemini receives PMC full-text excerpts when paper is in papers.db; ~5× input tokens but materially better number extraction for meta-analysis
+
+---
 
 ---
 
@@ -442,6 +480,7 @@ hreflang map in `app/[locale]/layout.tsx:17-26` (ko→ko-KR, ja→ja-JP, zh→zh
 6. **Adding a new locale** — update §12 locale list.
 7. **Adding a new client write/save/upload point** — add to §14.
 8. **Bumping `Last synced`** date at the top of this file.
+9. **Touching hybrid retrieval / papers-api** — update §16.
 
 **Review checklist for PRs**:
 - [ ] Did this PR touch `components/*.tsx`, `app/[locale]/**/page.tsx`, `app/api/**/route.ts`, `messages/*.json`, or `lib/{logger,client-logger,pubmed,auth,rate-limit,payments,usage-tracker}.ts`?

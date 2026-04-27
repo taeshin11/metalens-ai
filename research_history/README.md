@@ -19,7 +19,8 @@ research_history/
   milestone_08_i18n_quality.md — i18n 완성 & 품질 개선 (2026-04-16)
   milestone_09_perf_optimization.md — 프로덕션 최적화 & 정리 (2026-04-17)
   milestone_10_seo_observability.md — Pricing 메타데이터 & API 관측성 (2026-04-18~19)
-  incident_2026-04-20_deployment_not_found.md — 프로덕션 배포 실종 (2026-04-20) ← 현재
+  incident_2026-04-20_deployment_not_found.md — 프로덕션 배포 실종 → 복구 (2026-04-20 ~ 04-27)
+  milestone_11_hybrid_retrieval.md — papers.db 하이브리드 검색 (2026-04-27) ← 현재
 ```
 
 ## 마일스톤 요약
@@ -37,3 +38,4 @@ research_history/
 | 08 | i18n 완성 & 품질 개선 | 2026-04-16 | 6개 언어 48키 번역, 에러 바운더리, BETA_END 통합 |
 | 09 | 프로덕션 최적화 & 정리 | 2026-04-17 | next.config 튜닝, viewport export, Share 링크 i18n 버그 수정 |
 | 10 | Pricing 메타데이터 & API 관측성 | 2026-04-18 | pricing layout metadata (8 locale), API catch 로깅 7개 라우트 |
+| 11 | papers.db 하이브리드 검색 | 2026-04-27 | papers-api 서브프로젝트, 9M PubMed 캐시 + full text를 PubMed esearch와 결합 |
