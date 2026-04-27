@@ -61,7 +61,25 @@ Address: 76.76.21.21  # Vercel anycast IP — DNS 정상
 ## 상태
 - 발견: 2026-04-20
 - 진단 완료
-- **복구 대기**: 사용자의 Vercel 대시보드 확인 필요
+- **복구 완료: 2026-04-27**
+
+## 복구 절차 (실제 수행, 2026-04-27)
+
+근본 원인 = **도메인이 다른 Vercel 계정에 묶여 있었음**:
+- 프로젝트 `metalens-ai`: SpinAlceo Team (`spinaiceo-9226s-projects`) — 껍데기만 남고 배포·env vars·도메인 모두 0
+- 도메인 `metalens-ai.com`: **taeshin11 personal 계정** (`taeshinkim11@gmail.com`) — `serviceType: external`, Gabia DNS, `verified: true`
+- DNS는 Gabia에서 관리 중이며 A 레코드가 Vercel anycast(76.76.21.21)를 가리키고 있었으나, 도메인이 다른 Vercel 팀에 묶여있어 SpinAlceo 프로젝트와 매칭 안 됨
+
+복구 단계:
+1. `vercel link` — 로컬 `D:/MetaLens` 를 SpinAlceo `metalens-ai` 프로젝트에 연결
+2. `.env.local` 14개 키 중 13개를 production env vars로 등록 (`NEXT_PUBLIC_SHEETS_WEBHOOK`은 값 비어있어 스킵, `VERCEL_TOKEN`은 CLI 인증용이라 제외)
+3. `vercel --prod --yes` — 로컬 14 커밋 (milestone 09 + 10 전체 + FEATURES.md) 그대로 배포 → `dpl_Du7sFqufqRf7a5Jhg4HNshv2y3L9` READY, alias `metalens-ai.vercel.app` 활성화
+4. **도메인 이전**: `.env.local`의 `VERCEL_TOKEN`이 taeshinkim11 personal 계정 토큰임을 확인 → personal에서 도메인 DELETE → SpinAlceo Team 프로젝트에 ADD → 자동으로 최신 production 배포에 바인딩
+5. 검증: 두 도메인 모두 200 + i18n 미들웨어 작동 확인
+
+**복원된 14 커밋**: 8a3cb3f → 33a68fb (milestone 09 perf + milestone 10 i18n/SEO/observability/client logger + FEATURES.md + 인시던트 기록)
+
+**메모리 갱신**: `project_account_ownership.md`의 "Vercel→SpinAlceo Team" 정보는 반쪽만 맞음. 실제로는 **프로젝트=SpinAlceo, 도메인은 personal에 있었음** → 이제 도메인도 SpinAlceo로 통합 완료.
 
 ## 교훈
 - **Deploy healthcheck 누락**: Vercel 프로젝트 상태를 외부에서 감지할 수단 없었음. 향후 UptimeRobot / Vercel 자체 모니터링 / cron ping 등 고려.
