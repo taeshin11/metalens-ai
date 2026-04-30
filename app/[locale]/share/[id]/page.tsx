@@ -37,6 +37,7 @@ export default function SharePage() {
         return r.json();
       })
       .then(d => { if (d) setData(d); })
+      .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
   }, [id]);
 

@@ -77,7 +77,7 @@ export function poolStudies(studies: ExtractedData[], effectType: string): Poole
   // Cochran's Q and I²
   const Q = processed.reduce((s, p) => s + p.weight * Math.pow(p.y - pooledY, 2), 0);
   const df = valid.length - 1;
-  const iSquared = df > 0 ? Math.max(0, ((Q - df) / Q) * 100) : 0;
+  const iSquared = df > 0 && Q > 0 ? Math.max(0, ((Q - df) / Q) * 100) : 0;
 
   const totalN = valid.reduce((s, v) => s + (v.sampleSize || 0), 0);
 

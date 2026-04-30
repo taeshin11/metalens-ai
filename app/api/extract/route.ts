@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { ADMIN_EMAILS } from '@/lib/admin';
+import { checkRateLimit } from '@/lib/rate-limit';
+import type { Tier } from '@/lib/constants';
 import { createLogger, maskId } from '@/lib/logger';
 
 // Data extraction uses its own 60s budget, separate from synthesis rate limits
@@ -68,6 +70,16 @@ export async function POST(request: NextRequest) {
     if (!session && !isAdmin) {
       log.done(401, { reason: 'login_required' });
       return NextResponse.json({ error: 'Login required for data extraction' }, { status: 401 });
+    }
+
+    if (!isAdmin) {
+      const tier: Tier = session?.tier || 'free';
+      const identifier = session?.email || request.headers.get('x-forwarded-for') || 'anon';
+      const rl = await checkRateLimit(identifier, tier, log);
+      if (!rl.allowed) {
+        log.done(429, { reason: 'rate_limited' });
+        return NextResponse.json({ error: 'Rate limit reached' }, { status: 429 });
+      }
     }
 
     const { articles } = await request.json();
