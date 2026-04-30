@@ -51,6 +51,8 @@
     "forClinicians": "Clinicians",
     "historyTitle": "Recent Searches",
     "historyClear": "Clear History",
+    "historyCached": "Instant",
+    "trySuggestions": "Try searching individual terms:",
     "step": "Step",
     "betaBannerTitle": "Beta Special Offer",
     "betaBannerMsg": "Login now and enjoy unlimited analyses free until April 15!",
@@ -453,6 +455,7 @@
   "pricing": {
     "title": "Simple, Transparent Pricing",
     "subtitle": "Start free, upgrade when you need more. All plans include access to 40M+ PubMed papers.",
+    "valueAnchor": "~$0.02 per analysis — expert-equivalent reviews would cost $500+",
     "monthly": "Monthly",
     "yearly": "Yearly",
     "save": "Save 17%",
@@ -511,7 +514,8 @@
     "successDesc": "Refreshing your session... You will see your new tier shortly."
   },
   "errors": {
-    "noResults": "No papers found for these keywords. Try different or broader terms.",
+    "noResults": "No papers found for these keywords.",
+    "noResultsTip": "Try broader medical terms, generic drug names, or fewer keywords.",
     "apiError": "Something went wrong. Please try again.",
     "rateLimit": "You've reached the daily limit. Upgrade to Pro for more analyses.",
     "networkError": "Network error. Please check your connection and try again.",

@@ -190,6 +190,7 @@ export default function PricingPage() {
           <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse" />
           {t('betaBadge')}
         </div>
+        <p className="text-sm text-[var(--color-text-muted)] mt-2">{t('valueAnchor')}</p>
         <div className="flex justify-center mt-6">
           <div className="inline-flex items-center gap-3 bg-[var(--color-bg-secondary)] rounded-full p-1.5">
             <button onClick={() => setBilling('monthly')} className={`px-5 py-2 text-sm font-medium rounded-full transition-all ${billing === 'monthly' ? 'bg-white text-[var(--color-text-primary)] shadow-sm' : 'text-[var(--color-text-muted)]'}`}>

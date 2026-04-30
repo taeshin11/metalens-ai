@@ -51,6 +51,7 @@
     "forClinicians": "Médicos",
     "historyTitle": "Búsquedas Recientes",
     "historyClear": "Borrar Historial",
+    "historyCached": "Instantáneo",
     "step": "Paso",
     "betaBannerTitle": "Oferta Especial Beta",
     "betaBannerMsg": "¡Inicia sesión ahora y disfruta de análisis ilimitados gratis hasta el 15 de abril!",
@@ -349,6 +350,7 @@
   "pricing": {
     "title": "Precios simples y transparentes",
     "subtitle": "Empieza gratis, mejora cuando lo necesites. Todos los planes incluyen acceso a más de 40M de artículos de PubMed.",
+    "valueAnchor": "~$0.02 por análisis — una revisión experta costaría $500+",
     "monthly": "Mensual",
     "yearly": "Anual",
     "save": "Ahorra 17%",
@@ -407,7 +409,8 @@
     "successDesc": "Actualizando tu sesión... Pronto verás tu nuevo nivel."
   },
   "errors": {
-    "noResults": "No se encontraron artículos para estas palabras clave. Prueba con términos diferentes o más amplios.",
+    "noResults": "No se encontraron publicaciones para estas palabras clave.",
+    "noResultsTip": "Intente con términos médicos más amplios, nombres genéricos o menos palabras clave.",
     "apiError": "Algo salió mal. Por favor, inténtalo de nuevo.",
     "rateLimit": "Has alcanzado el límite diario. Mejora a Pro para más análisis.",
     "networkError": "Error de red. Por favor, verifica tu conexión e inténtalo de nuevo.",

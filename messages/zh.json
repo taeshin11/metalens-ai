@@ -51,6 +51,8 @@
     "forClinicians": "临床医生",
     "historyTitle": "最近搜索",
     "historyClear": "清除历史",
+    "historyCached": "即时",
+    "trySuggestions": "尝试搜索单个关键词：",
     "step": "步骤",
     "betaBannerTitle": "Beta特别优惠",
     "betaBannerMsg": "立即登录，4月15日前免费无限使用！",
@@ -349,6 +351,7 @@
   "pricing": {
     "title": "简单透明的定价",
     "subtitle": "免费开始，按需升级。所有套餐均可访问4000万+篇PubMed论文。",
+    "valueAnchor": "每次分析约$0.02 — 专家级审查需$500+",
     "monthly": "月付",
     "yearly": "年付",
     "save": "节省17%",
@@ -407,7 +410,8 @@
     "successDesc": "正在刷新您的会话...新套餐即将生效。"
   },
   "errors": {
-    "noResults": "未找到与这些关键词相关的论文。请尝试不同或更宽泛的搜索词。",
+    "noResults": "未找到与这些关键词相关的论文。",
+    "noResultsTip": "尝试更广泛的医学术语、通用药名或减少关键词数量。",
     "apiError": "出了点问题，请重试。",
     "rateLimit": "您已达到每日限额。升级至Pro获取更多分析次数。",
     "networkError": "网络错误，请检查您的连接后重试。",

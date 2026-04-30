@@ -51,6 +51,8 @@
     "forClinicians": "Kliniker",
     "historyTitle": "Letzte Suchen",
     "historyClear": "Verlauf löschen",
+    "historyCached": "Sofort",
+    "trySuggestions": "Versuchen Sie einzelne Begriffe zu suchen:",
     "step": "Schritt",
     "betaBannerTitle": "Beta-Sonderangebot",
     "betaBannerMsg": "Jetzt einloggen und bis zum 15. April unbegrenzte Analysen kostenlos nutzen!",
@@ -349,6 +351,7 @@
   "pricing": {
     "title": "Einfache, transparente Preise",
     "subtitle": "Starten Sie kostenlos, upgraden Sie bei Bedarf. Alle Tarife beinhalten Zugang zu über 40 Mio. PubMed-Artikeln.",
+    "valueAnchor": "~$0,02 pro Analyse — Expertengutachten kosten $500+",
     "monthly": "Monatlich",
     "yearly": "Jährlich",
     "save": "17% sparen",
@@ -407,7 +410,8 @@
     "successDesc": "Sitzung wird aktualisiert... Ihre neue Stufe wird in Kürze angezeigt."
   },
   "errors": {
-    "noResults": "Für diese Schlüsselwörter wurden keine Artikel gefunden. Versuchen Sie andere oder allgemeinere Begriffe.",
+    "noResults": "Keine Publikationen für diese Suchbegriffe gefunden.",
+    "noResultsTip": "Versuchen Sie breitere medizinische Begriffe, Wirkstoffnamen oder weniger Suchbegriffe.",
     "apiError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
     "rateLimit": "Sie haben das Tageslimit erreicht. Upgraden Sie auf Pro für mehr Analysen.",
     "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
