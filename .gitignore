@@ -50,3 +50,7 @@ FEATURES.txt
 
 # claude code runtime artifacts
 /.claude/scheduled_tasks.lock
+
+# karpathy loop eval caches
+scripts/.eval-cache/
+scripts/.karpathy-results/
