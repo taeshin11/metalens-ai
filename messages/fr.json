@@ -51,6 +51,8 @@
     "forClinicians": "Cliniciens",
     "historyTitle": "Recherches Récentes",
     "historyClear": "Effacer l'Historique",
+    "historyCached": "Instantané",
+    "trySuggestions": "Essayez de rechercher des termes individuels :",
     "step": "Étape",
     "betaBannerTitle": "Offre Spéciale Bêta",
     "betaBannerMsg": "Connectez-vous maintenant et profitez d'analyses illimitées gratuites jusqu'au 15 avril !",
@@ -305,6 +307,7 @@
   "pricing": {
     "title": "Des tarifs simples et transparents",
     "subtitle": "Commencez gratuitement, passez à un plan supérieur quand vous le souhaitez. Tous les plans incluent l'accès à plus de 40M d'articles PubMed.",
+    "valueAnchor": "~0,02 $ par analyse — un avis d'expert coûterait 500 $+",
     "monthly": "Mensuel",
     "yearly": "Annuel",
     "save": "Économisez 17%",
@@ -363,7 +366,8 @@
     "successDesc": "Actualisation de votre session... Votre nouveau niveau sera bientôt visible."
   },
   "errors": {
-    "noResults": "Aucun article trouvé pour ces mots-clés. Essayez des termes différents ou plus généraux.",
+    "noResults": "Aucune publication trouvée pour ces mots-clés.",
+    "noResultsTip": "Essayez des termes médicaux plus larges, des noms génériques ou moins de mots-clés.",
     "apiError": "Un problème est survenu. Veuillez réessayer.",
     "rateLimit": "Vous avez atteint la limite quotidienne. Passez à Pro pour plus d'analyses.",
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",

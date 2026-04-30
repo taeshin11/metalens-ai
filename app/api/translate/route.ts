@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createLogger } from '@/lib/logger';
+import { callGeminiWithFallback } from '@/lib/gemini';
 
 export const maxDuration = 60;
 
@@ -33,58 +34,17 @@ Examples:
 
 Input: ${keywords}`;
 
-    const geminiKey = process.env.GEMINI_API_KEY;
-    if (!geminiKey) {
-      log.warn('gemini_key_missing_fallback_passthrough');
-      log.done(200, { reason: 'no_api_key', passthrough: true });
-      return NextResponse.json({ translated: keywords });
-    }
+    const translated = await callGeminiWithFallback({
+      prompt,
+      temperature: 0,
+      maxOutputTokens: 200,
+      log,
+    });
 
-    // Try primary model
-    const primaryModel = 'gemini-2.5-flash';
-    log.stage('gemini_primary_start', { model: primaryModel });
-    try {
-      const { GoogleGenAI } = await import('@google/genai');
-      const ai = new GoogleGenAI({ apiKey: geminiKey });
-      const response = await ai.models.generateContent({
-        model: primaryModel,
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        config: { temperature: 0, maxOutputTokens: 200 },
-      });
-      const translated = response.text?.trim().replace(/^["']|["']$/g, '');
-      if (translated) {
-        log.stage('gemini_primary_done', { model: primaryModel, bytes: translated.length });
-        log.done(200, { model: primaryModel });
-        return NextResponse.json({ translated });
-      }
-      log.warn('gemini_primary_empty', { model: primaryModel });
-    } catch (err) {
-      log.warn('gemini_primary_failed', {
-        model: primaryModel,
-        errMessage: err instanceof Error ? err.message : String(err).slice(0, 200),
-      });
-    }
-
-    // Try fallback model
-    const fallbackModel = 'gemini-2.0-flash-lite';
-    log.stage('gemini_fallback_start', { model: fallbackModel });
-    try {
-      const { GoogleGenAI } = await import('@google/genai');
-      const ai = new GoogleGenAI({ apiKey: geminiKey });
-      const response = await ai.models.generateContent({
-        model: fallbackModel,
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
-        config: { temperature: 0, maxOutputTokens: 200 },
-      });
-      const translated = response.text?.trim().replace(/^["']|["']$/g, '');
-      if (translated) {
-        log.stage('gemini_fallback_done', { model: fallbackModel, bytes: translated.length });
-        log.done(200, { model: fallbackModel });
-        return NextResponse.json({ translated });
-      }
-      log.warn('gemini_fallback_empty', { model: fallbackModel });
-    } catch (err) {
-      log.error('gemini_fallback_failed', err, { model: fallbackModel });
+    if (translated) {
+      const cleaned = translated.replace(/^["']|["']$/g, '');
+      log.done(200, { bytes: cleaned.length });
+      return NextResponse.json({ translated: cleaned });
     }
 
     log.done(200, { passthrough: true, reason: 'all_models_failed' });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createLogger, RouteLogger } from '@/lib/logger';
+import { createLogger } from '@/lib/logger';
+import { callGeminiWithFallback } from '@/lib/gemini';
 
 export const maxDuration = 60;
 
@@ -36,7 +37,13 @@ EXAMPLE OUTPUT FORMAT:
 
 Write ONLY the numbered lines. Nothing else.`;
 
-    const translated = await translate(text, systemPrompt, log);
+    const translated = await callGeminiWithFallback({
+      prompt: text,
+      systemInstruction: systemPrompt,
+      temperature: 0.1,
+      maxOutputTokens: 4000,
+      log,
+    });
 
     if (!translated) {
       log.done(502, { reason: 'all_models_failed', language });
@@ -50,59 +57,4 @@ Write ONLY the numbered lines. Nothing else.`;
     log.done(502, { reason: 'unexpected_error' });
     return NextResponse.json({ error: 'Translation failed' }, { status: 502 });
   }
-}
-
-async function translate(text: string, systemPrompt: string, log: RouteLogger): Promise<string | null> {
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (!geminiKey) {
-    log.error('gemini_key_missing');
-    return null;
-  }
-
-  // Try primary model
-  const primaryModel = 'gemini-2.5-flash';
-  log.stage('gemini_primary_start', { model: primaryModel });
-  try {
-    const { GoogleGenAI } = await import('@google/genai');
-    const ai = new GoogleGenAI({ apiKey: geminiKey });
-    const response = await ai.models.generateContent({
-      model: primaryModel,
-      contents: [{ role: 'user', parts: [{ text }] }],
-      config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 4000 },
-    });
-    const result = response.text?.trim();
-    if (result) {
-      log.stage('gemini_primary_done', { model: primaryModel, bytes: result.length });
-      return result;
-    }
-    log.warn('gemini_primary_empty', { model: primaryModel });
-  } catch (err) {
-    log.warn('gemini_primary_failed', {
-      model: primaryModel,
-      errMessage: err instanceof Error ? err.message : String(err).slice(0, 200),
-    });
-  }
-
-  // Try fallback model
-  const fallbackModel = 'gemini-2.0-flash-lite';
-  log.stage('gemini_fallback_start', { model: fallbackModel });
-  try {
-    const { GoogleGenAI } = await import('@google/genai');
-    const ai = new GoogleGenAI({ apiKey: geminiKey });
-    const response = await ai.models.generateContent({
-      model: fallbackModel,
-      contents: [{ role: 'user', parts: [{ text }] }],
-      config: { systemInstruction: systemPrompt, temperature: 0.1, maxOutputTokens: 4000 },
-    });
-    const result = response.text?.trim();
-    if (result) {
-      log.stage('gemini_fallback_done', { model: fallbackModel, bytes: result.length });
-      return result;
-    }
-    log.warn('gemini_fallback_empty', { model: fallbackModel });
-  } catch (err) {
-    log.error('gemini_fallback_failed', err, { model: fallbackModel });
-  }
-
-  return null;
 }

@@ -313,7 +313,10 @@ export default function HomePage() {
             className="w-full max-w-3xl mx-auto mt-8"
           >
             <div className="bg-white rounded-2xl p-8 shadow-sm border border-red-200 text-center">
-              <p className="text-red-500 text-lg mb-4">{error}</p>
+              <p className="text-red-500 text-lg mb-2">{error}</p>
+              {error === tErr('noResults') && (
+                <p className="text-sm text-[var(--color-text-muted)] mb-4">{tErr('noResultsTip')}</p>
+              )}
               <div className="flex items-center justify-center gap-3">
                 <button
                   onClick={handleNewSearch}
@@ -321,8 +324,23 @@ export default function HomePage() {
                 >
                   ← {tErr('tryAgain')}
                 </button>
-                {/* Upgrade link hidden during beta */}
               </div>
+              {error === tErr('noResults') && keywords && (
+                <div className="mt-5 pt-5 border-t border-[var(--color-border)]">
+                  <p className="text-xs text-[var(--color-text-muted)] mb-3">{t('trySuggestions')}</p>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {keywords.split(/[,\s]+/).filter(Boolean).slice(0, 3).map((kw) => (
+                      <button
+                        key={kw}
+                        onClick={() => handleAnalyze(kw.trim())}
+                        className="px-3 py-1.5 text-xs text-[var(--color-primary-dark)] bg-[var(--color-primary)]/8 border border-[var(--color-primary)]/20 rounded-full hover:bg-[var(--color-primary)]/15 transition-colors"
+                      >
+                        {kw.trim()}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         </div>
@@ -397,6 +415,11 @@ export default function HomePage() {
                         <span>📄 {h.paperCount} papers</span>
                         <span>{h.mode === 'gap-finder' ? '🔍 Gap' : '📊 Meta'}</span>
                         <span>{new Date(h.timestamp).toLocaleDateString()}</span>
+                        {h.resultId && (
+                          <span className="px-1.5 py-0.5 bg-[var(--color-success)]/10 text-[var(--color-success)] rounded font-medium">
+                            {t('historyCached')}
+                          </span>
+                        )}
                       </div>
                     </button>
                   ))}
