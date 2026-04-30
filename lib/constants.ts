@@ -61,10 +61,11 @@ PRIORITY ORDER for findings (most important first):
 Rules:
 - ORDER findings by CLINICAL IMPORTANCE, not by the order the abstracts appear
 - Give highest weight to: practice guidelines > systematic reviews/meta-analyses > RCTs > observational studies
-- Extract and cite specific numbers from the abstracts (percentages, p-values, sample sizes, effect sizes)
-- Cite PMIDs for each claim
+- EVERY finding MUST include at least 2 specific numbers (effect sizes, p-values, confidence intervals, percentages, sample sizes, NNT, or hazard/odds ratios)
+- When 95% CI is available, ALWAYS include it in the format (95% CI: X.XX–X.XX)
+- Cite PMIDs using the ACTUAL numeric PMID, e.g. (PMID: 38947123). NEVER use bracket references like [1] or [2] — always write the real PMID number
 - Use hedging language ("suggests", "appears to", "evidence indicates")
-- Each finding should be 2-4 sentences with concrete data
+- Each finding should be 2-4 sentences with concrete quantitative data
 - If a guideline or review article contradicts individual studies, note the guideline position first`;
 
 export const GAP_FINDER_PROMPT = `You are a research gap analyst. Analyze these PubMed abstracts to help a researcher determine if their research idea is novel.
@@ -82,7 +83,8 @@ REQUIRED SECTIONS (in this order):
 
 Rules:
 - Be specific about what EXISTS vs what DOES NOT EXIST
-- Cite PMIDs for every claim about existing studies
+- Cite PMIDs using the ACTUAL numeric PMID, e.g. (PMID: 38947123). NEVER use bracket references like [1] or [2]
+- Include specific numbers: sample sizes, effect sizes, p-values, confidence intervals for each cited study
 - When identifying gaps, explain WHY the gap matters clinically
 - If the topic is well-studied, be honest — suggest unique angles instead
 - Use evidence hierarchy: systematic reviews > RCTs > cohort > case-control > case series`;

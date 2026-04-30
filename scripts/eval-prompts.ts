@@ -14,51 +14,12 @@ import { TEST_CASES, scoreOutput, type ScoreBreakdown } from './eval-fixtures';
 import * as fs from 'fs';
 import * as path from 'path';
 
+// Read prompts from the same source as production
+import { META_ANALYSIS_PROMPT, GAP_FINDER_PROMPT } from '../lib/constants';
+
 const CACHE_DIR = path.join(__dirname, '.eval-cache');
 const PUBMED_ESEARCH = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi';
 const PUBMED_EFETCH = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi';
-
-const META_ANALYSIS_PROMPT = `Synthesize these PubMed abstracts into exactly {pointCount} key findings.
-
-Format each finding as: **N. Title** — detailed conclusion with specific data, statistics, and (PMIDs).
-
-PRIORITY ORDER for findings (most important first):
-1) Established guidelines or consensus recommendations — if any abstracts are from practice guidelines, systematic reviews, or consensus statements, their conclusions should come FIRST as they represent the highest level of evidence
-2) Key treatment/intervention recommendation — what does the overall evidence suggest as the standard approach?
-3) Main comparative finding between the subjects — include effect sizes, odds ratios, or percentages
-4) Key quantitative outcomes — specific rates, p-values, confidence intervals, or NNT
-5) Important exception or subgroup where the opposite may be true — specify the population or condition
-6) Safety concerns or adverse effects — if relevant
-7) Limitations of current evidence — gaps, heterogeneity, bias risks
-
-Rules:
-- ORDER findings by CLINICAL IMPORTANCE, not by the order the abstracts appear
-- Give highest weight to: practice guidelines > systematic reviews/meta-analyses > RCTs > observational studies
-- Extract and cite specific numbers from the abstracts (percentages, p-values, sample sizes, effect sizes)
-- Cite PMIDs for each claim
-- Use hedging language ("suggests", "appears to", "evidence indicates")
-- Each finding should be 2-4 sentences with concrete data
-- If a guideline or review article contradicts individual studies, note the guideline position first`;
-
-const GAP_FINDER_PROMPT = `You are a research gap analyst. Analyze these PubMed abstracts to help a researcher determine if their research idea is novel.
-
-Your output should have exactly {pointCount} sections, formatted as **N. Section Title** — content.
-
-REQUIRED SECTIONS (in this order):
-1) **Existing Research Landscape** — What study designs exist on this topic? (RCTs, cohort, case-control, meta-analyses, reviews, case reports). List study types with counts and key PMIDs.
-2) **Key Findings So Far** — What is already established/known? Summarize the consensus from the literature with specific data.
-3) **Research Gaps Identified** — What has NOT been studied? What study designs are MISSING? What populations, outcomes, or comparisons are unexplored? This is the most important section.
-4) **Suggested Research Directions** — Based on the gaps, propose 2-3 specific study ideas. Include: study design (RCT, prospective cohort, etc.), target population, primary outcome, estimated sample size if inferrable.
-5) **Novelty Assessment** — If the researcher were to conduct a new study on this topic, how novel would it be? Rate as: "Highly Novel" (no similar studies), "Moderately Novel" (few studies, different design needed), or "Low Novelty" (well-studied area, need unique angle).
-6) **Similar Existing Studies** — List the most directly relevant existing studies with PMIDs, designs, and sample sizes.
-7) **Recommended Next Steps** — What should the researcher do next?
-
-Rules:
-- Be specific about what EXISTS vs what DOES NOT EXIST
-- Cite PMIDs for every claim about existing studies
-- When identifying gaps, explain WHY the gap matters clinically
-- If the topic is well-studied, be honest — suggest unique angles instead
-- Use evidence hierarchy: systematic reviews > RCTs > cohort > case-control > case series`;
 
 async function searchPubMed(keywords: string): Promise<string[]> {
   const url = `${PUBMED_ESEARCH}?db=pubmed&retmode=json&retmax=10&sort=relevance&term=${encodeURIComponent(keywords)}`;
@@ -95,6 +56,12 @@ function parseAbstracts(xml: string): { pmid: string; title: string; abstract: s
   return articles;
 }
 
+const MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash-lite'];
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 5000;
+
+function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)); }
+
 async function callGemini(prompt: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new Error('GEMINI_API_KEY not set');
@@ -102,17 +69,36 @@ async function callGemini(prompt: string): Promise<string> {
   const { GoogleGenAI } = await import('@google/genai');
   const ai = new GoogleGenAI({ apiKey });
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    config: {
-      systemInstruction: 'You are a medical research analyst. Output ONLY your final structured answer.',
-      temperature: 0.2,
-      maxOutputTokens: 8000,
-    },
-  });
-
-  return response.text?.trim() ?? '';
+  for (const model of MODELS) {
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const response = await ai.models.generateContent({
+          model,
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          config: {
+            systemInstruction: 'You are a medical research analyst. Output ONLY your final structured answer.',
+            temperature: 0.2,
+            maxOutputTokens: 8000,
+          },
+        });
+        const text = response.text?.trim() ?? '';
+        if (text) return text;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg.includes('503') && attempt < MAX_RETRIES) {
+          console.log(`    [retry ${attempt}/${MAX_RETRIES}] ${model} 503, waiting ${RETRY_DELAY_MS / 1000}s...`);
+          await sleep(RETRY_DELAY_MS);
+          continue;
+        }
+        if (model === MODELS[0]) {
+          console.log(`    [fallback] ${model} failed, trying ${MODELS[1]}...`);
+          break;
+        }
+        throw err;
+      }
+    }
+  }
+  throw new Error('All models and retries exhausted');
 }
 
 function getCachePath(id: string): string {
