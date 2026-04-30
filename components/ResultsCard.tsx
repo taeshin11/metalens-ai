@@ -154,9 +154,9 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
 
   const tabs = [
     { key: 'summary' as const, label: t('tabAISummary'), icon: '✦', minTier: 0 },
-    { key: 'data' as const, label: t('tabData'), icon: '📊', minTier: 0 },
-    { key: 'meta' as const, label: t('tabMeta'), icon: '🔬', minTier: 0 },
-    { key: 'tools' as const, label: t('tabTools'), icon: '✍️', minTier: 0 },
+    { key: 'data' as const, label: t('tabData'), icon: '📊', minTier: 1 },
+    { key: 'meta' as const, label: t('tabMeta'), icon: '🔬', minTier: 1 },
+    { key: 'tools' as const, label: t('tabTools'), icon: '✍️', minTier: 1 },
   ];
 
   const handleGenerateTools = async (tool: 'abstract' | 'journal' | 'proposal') => {
@@ -492,7 +492,9 @@ Output the proposal with each section header in bold. Write in formal academic l
             >
               <span>{tab.icon}</span>
               <span className="hidden sm:inline">{tab.label}</span>
-              {/* Tier badges hidden during beta */}
+              {tab.minTier > userTierNum && (
+                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded bg-[var(--color-primary)]/10 text-[var(--color-primary-dark)]">PRO</span>
+              )}
             </button>
           );
         })}

@@ -405,8 +405,11 @@ function BlogPostContent({ locale, post }: { locale: string; post: BlogContent }
     headline: post.title,
     description: post.description,
     datePublished: post.date,
-    author: { '@type': 'Organization', name: 'SPINAI' },
-    publisher: { '@type': 'Organization', name: 'SPINAI' },
+    dateModified: post.date,
+    author: { '@type': 'Organization', name: 'SPINAI', url: 'https://metalens-ai.com' },
+    publisher: { '@type': 'Organization', name: 'SPINAI', url: 'https://metalens-ai.com' },
+    mainEntityOfPage: `https://metalens-ai.com/${locale}/blog`,
+    image: 'https://metalens-ai.com/opengraph-image',
   };
 
   return (

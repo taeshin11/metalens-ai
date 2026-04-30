@@ -114,6 +114,9 @@ function CompareContent({ locale, drugs, data }: { locale: string; drugs: string
       { '@type': 'Drug', name: data.drug1 },
       { '@type': 'Drug', name: data.drug2 },
     ],
+    lastReviewed: '2026-04-30',
+    reviewedBy: { '@type': 'Organization', name: 'SPINAI' },
+    mainEntityOfPage: `https://metalens-ai.com/${locale}/compare/${drugs}`,
   };
 
   const otherComparisons = Object.entries(comparisons)

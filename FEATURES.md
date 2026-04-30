@@ -5,7 +5,7 @@
 > MUST update the relevant section in the same commit. See
 > [§ Maintenance Rules](#maintenance-rules) at the bottom.
 
-**Last synced**: 2026-04-27 (matches HEAD of `master`)
+**Last synced**: 2026-04-30 (matches HEAD of `master`)
 
 ---
 
@@ -339,7 +339,11 @@ All API routes emit structured JSON-line logs (see §13). Every request gets a `
 | **free** | 3 (lifetime) | 3 | gemini-2.5-flash | $0 | Search · Summary · Consensus · Citation · Share · PDF export · 1 trial/feature for Pro |
 | **pro** | 200/day | 10 | gemini-2.5-flash | $4.99/mo ($39.99/yr) | All free + Data tab · Meta tab (Forest/Funnel) · Tools tab unlocked |
 
-Admin bypass: `ADMIN_EMAILS` in `lib/admin.ts` → all gates off.
+Admin bypass: `ADMIN_EMAILS` in `lib/admin.ts` (env-overridable via `ADMIN_EMAILS` comma-separated) → all gates off.
+
+Tab bar shows **PRO** badge on gated tabs for free-tier users (`ResultsCard.tsx`).
+
+`/api/extract` is rate-limited (shared counter with `/api/synthesize`).
 
 **Beta exception**: Until `BETA_END`=2026-04-16, logged-in users get unlimited (both tiers).
 
