@@ -67,7 +67,7 @@ const PROVIDERS: ProviderDef[] = [
   {
     name: 'openrouter',
     envKey: 'OPENROUTER_API_KEY',
-    models: ['deepseek/deepseek-chat:free', 'qwen/qwen3-30b-a3b:free'],
+    models: ['openai/gpt-oss-120b:free', 'minimax/minimax-m2.5:free', 'qwen/qwen3-next-80b-a3b-instruct:free'],
     call: (p, s, m, k, t, mt) => callOpenAICompatible('https://openrouter.ai/api/v1/chat/completions', p, s, m, k, t, mt),
   },
   {
