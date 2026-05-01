@@ -1,7 +1,84 @@
 import type { RouteLogger } from './logger';
 
-const PRIMARY_MODEL = 'gemini-2.5-flash';
-const FALLBACK_MODEL = 'gemini-2.0-flash-lite';
+// ── Provider configs ─────────────────────────────────────────
+// Each provider is tried in order. Skipped if env key is not set.
+
+interface ProviderDef {
+  name: string;
+  envKey: string;
+  models: string[];
+  call: (prompt: string, system: string, model: string, apiKey: string, temp: number, maxTokens: number) => Promise<string>;
+}
+
+async function callGeminiModel(prompt: string, system: string, model: string, apiKey: string, temp: number, maxTokens: number): Promise<string> {
+  const { GoogleGenAI } = await import('@google/genai');
+  const ai = new GoogleGenAI({ apiKey });
+  const response = await ai.models.generateContent({
+    model,
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    config: {
+      ...(system && { systemInstruction: system }),
+      temperature: temp,
+      maxOutputTokens: maxTokens,
+    },
+  });
+  return response.text?.trim() ?? '';
+}
+
+async function callOpenAICompatible(
+  endpoint: string,
+  prompt: string, system: string, model: string, apiKey: string, temp: number, maxTokens: number,
+): Promise<string> {
+  const messages: { role: string; content: string }[] = [];
+  if (system) messages.push({ role: 'system', content: system });
+  messages.push({ role: 'user', content: prompt });
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ model, messages, temperature: temp, max_tokens: maxTokens }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`${res.status}: ${body.slice(0, 200)}`);
+  }
+
+  const json = await res.json() as { choices?: { message?: { content?: string } }[] };
+  return json.choices?.[0]?.message?.content?.trim() ?? '';
+}
+
+const PROVIDERS: ProviderDef[] = [
+  {
+    name: 'gemini',
+    envKey: 'GEMINI_API_KEY',
+    models: ['gemini-2.5-flash'],
+    call: callGeminiModel,
+  },
+  {
+    name: 'groq',
+    envKey: 'GROQ_API_KEY',
+    models: ['llama-3.3-70b-versatile'],
+    call: (p, s, m, k, t, mt) => callOpenAICompatible('https://api.groq.com/openai/v1/chat/completions', p, s, m, k, t, mt),
+  },
+  {
+    name: 'openrouter',
+    envKey: 'OPENROUTER_API_KEY',
+    models: ['deepseek/deepseek-chat:free', 'qwen/qwen3-30b-a3b:free'],
+    call: (p, s, m, k, t, mt) => callOpenAICompatible('https://openrouter.ai/api/v1/chat/completions', p, s, m, k, t, mt),
+  },
+  {
+    name: 'gemini-lite',
+    envKey: 'GEMINI_API_KEY',
+    models: ['gemini-2.0-flash-lite'],
+    call: callGeminiModel,
+  },
+];
+
+// ── Public API ───────────────────────────────────────────────
 
 export interface GeminiCallOptions {
   prompt: string;
@@ -13,48 +90,37 @@ export interface GeminiCallOptions {
 }
 
 export async function callGeminiWithFallback(opts: GeminiCallOptions): Promise<string | null> {
-  const geminiKey = process.env.GEMINI_API_KEY;
-  if (!geminiKey) {
-    opts.log?.error('gemini_key_missing');
-    return null;
-  }
+  const temp = opts.temperature ?? 0.2;
+  const maxTokens = opts.maxOutputTokens ?? 8000;
+  const system = opts.systemInstruction ?? '';
 
-  const models = [opts.model || PRIMARY_MODEL, FALLBACK_MODEL];
+  for (const provider of PROVIDERS) {
+    const apiKey = process.env[provider.envKey];
+    if (!apiKey) continue;
 
-  for (let i = 0; i < models.length; i++) {
-    const model = models[i];
-    const label = i === 0 ? 'primary' : 'fallback';
-    opts.log?.stage(`gemini_${label}_start`, { model });
+    const models = provider.name === 'gemini' && opts.model
+      ? [opts.model]
+      : provider.models;
 
-    try {
-      const { GoogleGenAI } = await import('@google/genai');
-      const ai = new GoogleGenAI({ apiKey: geminiKey });
-      const response = await ai.models.generateContent({
-        model,
-        contents: [{ role: 'user', parts: [{ text: opts.prompt }] }],
-        config: {
-          ...(opts.systemInstruction && { systemInstruction: opts.systemInstruction }),
-          temperature: opts.temperature ?? 0.2,
-          maxOutputTokens: opts.maxOutputTokens ?? 8000,
-        },
-      });
-      const result = response.text?.trim() ?? '';
-      if (result) {
-        opts.log?.stage(`gemini_${label}_done`, { model, bytes: result.length });
-        return result;
-      }
-      opts.log?.warn(`gemini_${label}_empty`, { model });
-    } catch (err) {
-      if (i === 0) {
-        opts.log?.warn(`gemini_${label}_failed`, {
+    for (const model of models) {
+      opts.log?.stage(`${provider.name}_start`, { model });
+
+      try {
+        const result = await provider.call(opts.prompt, system, model, apiKey, temp, maxTokens);
+        if (result) {
+          opts.log?.stage(`${provider.name}_done`, { model, bytes: result.length });
+          return result;
+        }
+        opts.log?.warn(`${provider.name}_empty`, { model });
+      } catch (err) {
+        opts.log?.warn(`${provider.name}_failed`, {
           model,
           errMessage: err instanceof Error ? err.message : String(err).slice(0, 200),
         });
-      } else {
-        opts.log?.error(`gemini_${label}_failed`, err, { model });
       }
     }
   }
 
+  opts.log?.error('all_providers_exhausted');
   return null;
 }
