@@ -431,7 +431,22 @@
     "pain": "鎮痛",
     "hypertension": "高血圧",
     "gerd": "逆流性食道炎",
-    "depression": "うつ病"
+    "depression": "うつ病",
+    "cholesterol": "高コレステロール",
+    "anticoagulation": "抗凝固療法",
+    "antiplatelet": "抗血小板療法",
+    "neuropathy": "神経障害性疼痛",
+    "psychosis": "精神病",
+    "adhd": "ADHD",
+    "anxiety": "不安障害",
+    "copd": "COPD",
+    "ibd": "炎症性腸疾患",
+    "infection": "感染症",
+    "cancer": "がん",
+    "acne": "ニキビ",
+    "fungal": "真菌感染症",
+    "thyroid": "甲状腺機能低下症",
+    "osteoporosis": "骨粗鬆症"
   },
   "blog": {
     "title": "ブログ",
@@ -464,7 +479,8 @@
     "post10Excerpt": "システマティックレビューとメタ分析が何であるか、どう異なるか、各アプローチが適切な状況を明確に比較。",
     "backToBlog": "ブログに戻る",
     "tryCTA": "AI搭載メタ分析を体験しませんか？",
-    "tryBtn": "MetaLens AIを無料で試す"
+    "tryBtn": "MetaLens AIを無料で試す",
+    "relatedComparisons": "関連する薬物比較"
   },
   "kakao": {
     "title": "カカオトークではログインが制限されています",

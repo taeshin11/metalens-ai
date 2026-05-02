@@ -3,52 +3,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { SITE_URL } from '@/lib/constants';
-
-type ComparisonData = {
-  drug1: string;
-  drug2: string;
-  conditionKey: string;
-  keywords: string;
-};
-
-const comparisons: Record<string, ComparisonData> = {
-  'pranlukast-vs-montelukast': {
-    drug1: 'Pranlukast',
-    drug2: 'Montelukast',
-    conditionKey: 'asthma',
-    keywords: 'pranlukast, montelukast, asthma, efficacy, safety',
-  },
-  'metformin-vs-insulin': {
-    drug1: 'Metformin',
-    drug2: 'Insulin',
-    conditionKey: 'diabetes',
-    keywords: 'metformin, insulin, type 2 diabetes, glycemic control, efficacy',
-  },
-  'ibuprofen-vs-acetaminophen': {
-    drug1: 'Ibuprofen',
-    drug2: 'Acetaminophen',
-    conditionKey: 'pain',
-    keywords: 'ibuprofen, acetaminophen, pain, analgesic, efficacy, safety',
-  },
-  'lisinopril-vs-losartan': {
-    drug1: 'Lisinopril',
-    drug2: 'Losartan',
-    conditionKey: 'hypertension',
-    keywords: 'lisinopril, losartan, hypertension, blood pressure, efficacy',
-  },
-  'omeprazole-vs-pantoprazole': {
-    drug1: 'Omeprazole',
-    drug2: 'Pantoprazole',
-    conditionKey: 'gerd',
-    keywords: 'omeprazole, pantoprazole, GERD, acid reflux, proton pump inhibitor',
-  },
-  'sertraline-vs-fluoxetine': {
-    drug1: 'Sertraline',
-    drug2: 'Fluoxetine',
-    conditionKey: 'depression',
-    keywords: 'sertraline, fluoxetine, depression, SSRI, efficacy, side effects',
-  },
-};
+import { COMPARISONS, type ComparisonData } from '@/lib/comparisons';
 
 function parseSlug(slug: string): ComparisonData | null {
   const match = slug.match(/^(.+)-vs-(.+)$/);
@@ -64,7 +19,7 @@ function parseSlug(slug: string): ComparisonData | null {
 }
 
 function getComparison(slug: string): ComparisonData | null {
-  return comparisons[slug] || parseSlug(slug);
+  return COMPARISONS[slug] || parseSlug(slug);
 }
 
 export async function generateMetadata({
@@ -119,9 +74,12 @@ function CompareContent({ locale, drugs, data }: { locale: string; drugs: string
     mainEntityOfPage: `https://metalens-ai.com/${locale}/compare/${drugs}`,
   };
 
-  const otherComparisons = Object.entries(comparisons)
-    .filter(([slug]) => slug !== drugs)
+  const otherComparisons = Object.entries(COMPARISONS)
+    .filter(([slug, comp]) => slug !== drugs && comp.conditionKey === data.conditionKey)
     .slice(0, 4);
+  const moreComparisons = otherComparisons.length < 4
+    ? [...otherComparisons, ...Object.entries(COMPARISONS).filter(([slug]) => slug !== drugs && !otherComparisons.some(([s]) => s === slug)).slice(0, 4 - otherComparisons.length)]
+    : otherComparisons;
 
   return (
     <div className="max-w-[800px] mx-auto px-4 sm:px-6 py-16">
@@ -199,7 +157,7 @@ function CompareContent({ locale, drugs, data }: { locale: string; drugs: string
             {t('otherTitle')}
           </h3>
           <div className="grid sm:grid-cols-2 gap-3">
-            {otherComparisons.map(([slug, comp]) => (
+            {moreComparisons.map(([slug, comp]) => (
               <Link
                 key={slug}
                 href={`/${locale}/compare/${slug}`}

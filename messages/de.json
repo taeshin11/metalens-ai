@@ -431,7 +431,22 @@
     "pain": "Schmerzlinderung",
     "hypertension": "Bluthochdruck",
     "gerd": "GERD",
-    "depression": "Depression"
+    "depression": "Depression",
+    "cholesterol": "Hoher Cholesterinspiegel",
+    "anticoagulation": "Antikoagulation",
+    "antiplatelet": "Thrombozytenaggregationshemmung",
+    "neuropathy": "Neuropathischer Schmerz",
+    "psychosis": "Psychose",
+    "adhd": "ADHS",
+    "anxiety": "Angststörung",
+    "copd": "COPD",
+    "ibd": "Chronisch-entzündliche Darmerkrankung",
+    "infection": "Infektion",
+    "cancer": "Krebs",
+    "acne": "Akne",
+    "fungal": "Pilzinfektion",
+    "thyroid": "Hypothyreose",
+    "osteoporosis": "Osteoporose"
   },
   "blog": {
     "title": "Blog",
@@ -464,7 +479,8 @@
     "post10Excerpt": "Ein klarer Vergleich von systematischen Reviews und Meta-Analysen — was sie sind, wie sie sich unterscheiden und wann welcher Ansatz geeignet ist.",
     "backToBlog": "Zurück zum Blog",
     "tryCTA": "Bereit für KI-gestützte Meta-Analyse?",
-    "tryBtn": "MetaLens AI kostenlos testen"
+    "tryBtn": "MetaLens AI kostenlos testen",
+    "relatedComparisons": "Verwandte Arzneimittelvergleiche"
   },
   "kakao": {
     "title": "Login ist in KakaoTalk eingeschränkt",
