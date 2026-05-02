@@ -486,7 +486,22 @@
     "pain": "통증 완화",
     "hypertension": "고혈압",
     "gerd": "위식도역류질환",
-    "depression": "우울증"
+    "depression": "우울증",
+    "cholesterol": "고콜레스테롤",
+    "anticoagulation": "항응고 치료",
+    "antiplatelet": "항혈소판 치료",
+    "neuropathy": "신경병증성 통증",
+    "psychosis": "정신병",
+    "adhd": "ADHD",
+    "anxiety": "불안장애",
+    "copd": "만성폐쇄성폐질환",
+    "ibd": "염증성 장질환",
+    "infection": "감염증",
+    "cancer": "암",
+    "acne": "여드름",
+    "fungal": "진균 감염",
+    "thyroid": "갑상선기능저하증",
+    "osteoporosis": "골다공증"
   },
   "blog": {
     "title": "블로그",
@@ -519,7 +534,8 @@
     "post10Excerpt": "체계적 문헌고찰과 메타분석이 무엇인지, 어떻게 다른지, 각 접근법이 언제 적합한지 명확하게 비교합니다.",
     "backToBlog": "블로그로 돌아가기",
     "tryCTA": "AI 기반 메타분석을 체험해 보세요!",
-    "tryBtn": "MetaLens AI 무료 사용"
+    "tryBtn": "MetaLens AI 무료 사용",
+    "relatedComparisons": "관련 약물 비교"
   },
   "kakao": {
     "title": "카카오톡에서는 로그인이 제한됩니다",

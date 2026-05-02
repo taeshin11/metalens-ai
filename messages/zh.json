@@ -431,7 +431,22 @@
     "pain": "疼痛缓解",
     "hypertension": "高血压",
     "gerd": "胃食管反流病",
-    "depression": "抑郁症"
+    "depression": "抑郁症",
+    "cholesterol": "高胆固醇",
+    "anticoagulation": "抗凝治疗",
+    "antiplatelet": "抗血小板治疗",
+    "neuropathy": "神经性疼痛",
+    "psychosis": "精神病",
+    "adhd": "注意力缺陷多动障碍",
+    "anxiety": "焦虑症",
+    "copd": "慢性阻塞性肺疾病",
+    "ibd": "炎症性肠病",
+    "infection": "感染",
+    "cancer": "癌症",
+    "acne": "痤疮",
+    "fungal": "真菌感染",
+    "thyroid": "甲状腺功能减退",
+    "osteoporosis": "骨质疏松症"
   },
   "blog": {
     "title": "博客",
@@ -464,7 +479,8 @@
     "post10Excerpt": "系统综述和荟萃分析是什么、有何区别，以及各方法在何种情况下适用的清晰比较。",
     "backToBlog": "返回博客",
     "tryCTA": "准备体验AI驱动的荟萃分析吗？",
-    "tryBtn": "免费试用MetaLens AI"
+    "tryBtn": "免费试用MetaLens AI",
+    "relatedComparisons": "相关药物比较"
   },
   "kakao": {
     "title": "KakaoTalk中登录受限",

@@ -387,7 +387,22 @@
     "pain": "Soulagement de la Douleur",
     "hypertension": "Hypertension",
     "gerd": "RGO",
-    "depression": "Dépression"
+    "depression": "Dépression",
+    "cholesterol": "Hypercholestérolémie",
+    "anticoagulation": "Anticoagulation",
+    "antiplatelet": "Antiplaquettaire",
+    "neuropathy": "Douleur neuropathique",
+    "psychosis": "Psychose",
+    "adhd": "TDAH",
+    "anxiety": "Anxiété",
+    "copd": "BPCO",
+    "ibd": "Maladie inflammatoire intestinale",
+    "infection": "Infection",
+    "cancer": "Cancer",
+    "acne": "Acné",
+    "fungal": "Infection fongique",
+    "thyroid": "Hypothyroïdie",
+    "osteoporosis": "Ostéoporose"
   },
   "notFound": {
     "title": "Page non trouvée",
@@ -464,7 +479,8 @@
     "post10Excerpt": "Une comparaison claire des revues systématiques et méta-analyses — ce qu'elles sont, comment elles diffèrent et quand chaque approche est appropriée.",
     "backToBlog": "Retour au blog",
     "tryCTA": "Prêt à essayer la méta-analyse par IA ?",
-    "tryBtn": "Essayer MetaLens AI Gratuitement"
+    "tryBtn": "Essayer MetaLens AI Gratuitement",
+    "relatedComparisons": "Comparaisons de médicaments connexes"
   },
   "kakao": {
     "title": "La connexion est restreinte dans KakaoTalk",

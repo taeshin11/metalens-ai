@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { COMPARISONS } from '@/lib/comparisons';
 import { koreanBlogPosts } from '@/lib/blog-content-ko';
 import { japaneseBlogPosts } from '@/lib/blog-content-ja';
 import { chineseBlogPosts } from '@/lib/blog-content-zh';
@@ -469,6 +470,26 @@ function BlogPostContent({ locale, post }: { locale: string; post: BlogContent }
           >
             {t('tryBtn')}
           </Link>
+        </div>
+
+        {/* Internal linking: related drug comparisons */}
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            {t('relatedComparisons')}
+          </h3>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {Object.entries(COMPARISONS).slice(0, 4).map(([slug, comp]) => (
+              <Link
+                key={slug}
+                href={`/${locale}/compare/${slug}`}
+                className="block p-4 bg-white rounded-xl border border-[var(--color-border)] hover:border-[var(--color-primary-light)] hover:shadow-sm transition-all"
+              >
+                <p className="text-sm font-medium text-[var(--color-primary-dark)]">
+                  {comp.drug1} vs {comp.drug2}
+                </p>
+              </Link>
+            ))}
+          </div>
         </div>
       </article>
     </div>

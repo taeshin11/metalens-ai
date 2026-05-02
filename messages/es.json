@@ -431,7 +431,22 @@
     "pain": "Alivio del Dolor",
     "hypertension": "Hipertensión",
     "gerd": "ERGE",
-    "depression": "Depresión"
+    "depression": "Depresión",
+    "cholesterol": "Colesterol alto",
+    "anticoagulation": "Anticoagulación",
+    "antiplatelet": "Antiplaquetario",
+    "neuropathy": "Dolor neuropático",
+    "psychosis": "Psicosis",
+    "adhd": "TDAH",
+    "anxiety": "Ansiedad",
+    "copd": "EPOC",
+    "ibd": "Enfermedad inflamatoria intestinal",
+    "infection": "Infección",
+    "cancer": "Cáncer",
+    "acne": "Acné",
+    "fungal": "Infección fúngica",
+    "thyroid": "Hipotiroidismo",
+    "osteoporosis": "Osteoporosis"
   },
   "blog": {
     "title": "Blog",
@@ -464,7 +479,8 @@
     "post10Excerpt": "Una comparación clara de revisiones sistemáticas y meta-análisis: qué son, en qué difieren y cuándo es apropiado cada enfoque.",
     "backToBlog": "Volver al blog",
     "tryCTA": "¿Listo para probar el meta-análisis con IA?",
-    "tryBtn": "Prueba MetaLens AI Gratis"
+    "tryBtn": "Prueba MetaLens AI Gratis",
+    "relatedComparisons": "Comparaciones de medicamentos relacionadas"
   },
   "kakao": {
     "title": "El inicio de sesión está restringido en KakaoTalk",

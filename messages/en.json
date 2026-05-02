@@ -357,7 +357,8 @@
     "post10Excerpt": "A clear comparison of systematic reviews and meta-analyses — what they are, how they differ, and when each approach is appropriate.",
     "backToBlog": "Back to Blog",
     "tryCTA": "Ready to try AI-powered meta-analysis?",
-    "tryBtn": "Try MetaLens AI Free"
+    "tryBtn": "Try MetaLens AI Free",
+    "relatedComparisons": "Related Drug Comparisons"
   },
   "compare": {
     "comparingFor": "Comparing treatments for",
@@ -373,7 +374,22 @@
     "pain": "Pain Relief",
     "hypertension": "Hypertension",
     "gerd": "GERD",
-    "depression": "Depression"
+    "depression": "Depression",
+    "cholesterol": "High Cholesterol",
+    "anticoagulation": "Anticoagulation",
+    "antiplatelet": "Antiplatelet Therapy",
+    "neuropathy": "Neuropathic Pain",
+    "psychosis": "Psychosis",
+    "adhd": "ADHD",
+    "anxiety": "Anxiety",
+    "copd": "COPD",
+    "ibd": "Inflammatory Bowel Disease",
+    "infection": "Infection",
+    "cancer": "Cancer",
+    "acne": "Acne",
+    "fungal": "Fungal Infection",
+    "thyroid": "Hypothyroidism",
+    "osteoporosis": "Osteoporosis"
   },
   "notFound": {
     "title": "Page Not Found",
