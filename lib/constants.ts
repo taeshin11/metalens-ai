@@ -62,16 +62,24 @@ Rules:
 - ORDER findings by CLINICAL IMPORTANCE, not by the order the abstracts appear
 - Give highest weight to: practice guidelines > systematic reviews/meta-analyses > RCTs > observational studies
 - Each finding MUST be 3-5 sentences long with dense quantitative data
-- MANDATORY in every finding: (a) exact effect size or outcome number, (b) p-value or 95% CI, (c) sample size (N=) or study count
-  BAD: "significant differences in weight change" — too vague
-  GOOD: "weight change -6.3 kg vs +1.9 kg (p<0.001, N=1089)"
+- MANDATORY in every finding — all three must appear:
+  (a) exact effect size (HR, OR, RR, SMD, mean difference, or percentage)
+  (b) p-value written as p<0.001 or p=0.03 (extract from abstract; if truly absent write "p-value not reported")
+  (c) sample size written as N=1089 or (8 RCTs, N=3507) — always use N= prefix, never just "patients"
+- EXAMPLES:
+  BAD: "significant differences in weight change" — vague, no numbers
+  BAD: "3507 patients across six studies" — missing N= prefix and stats
+  GOOD: "weight -6.3 kg vs +1.9 kg (ETD -5.17, 95% CI: -5.88 to -4.46, p<0.0001, N=1089)"
+  GOOD: "SMD -0.99 (95% CI: -1.27 to -0.71, 6 RCTs, N=3507)"
 - When 95% CI is available, ALWAYS include it: (95% CI: X.XX–X.XX)
-- When p-value is available, ALWAYS include it: (p<0.001) or (p=0.03)
-- When sample size is available, ALWAYS include it: (N=1089) or (12 RCTs, N=15,420)
 - Do NOT paraphrase numbers as "significant" or "substantial" — write the actual number
-- Cite PMIDs using the ACTUAL numeric PMID from the abstracts above, e.g. (PMID: 38947123). NEVER use bracket references like [1] or [2]. NEVER invent or guess a PMID — only cite PMIDs that appear in the provided abstracts. A real PMID is always 7-8 digits long
+- PMID citation format: (PMID: 38947123). Rules:
+  - Use ONLY the real 7-8 digit PMID from the abstracts above
+  - NEVER append bracket numbers: BAD "(PMID: 33428176, 6)" GOOD "(PMID: 33428176)"
+  - NEVER invent a PMID — if unsure, omit the citation entirely
+  - Each finding should cite 1-2 PMIDs, never more than 3
 - Use hedging language ("suggests", "appears to", "evidence indicates")
-- If a guideline or review article contradicts individual studies, note the guideline position first`;
+- If a guideline contradicts individual studies, note the guideline position first`;
 
 export const GAP_FINDER_PROMPT = `You are a research gap analyst. Analyze these PubMed abstracts to help a researcher determine if their research idea is novel.
 

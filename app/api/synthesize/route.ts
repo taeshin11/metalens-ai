@@ -116,7 +116,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
     }
 
-    // Post-processing: strip fake PMIDs from final output
+    // Post-processing: clean PMID citations
+    // Strip bracket ref contamination: (PMID: 33428176, 6) → (PMID: 33428176)
+    bestResult = bestResult.replace(/\(PMID[:\s]*(\d{7,8}),?\s*\d{1,3}\)/gi, '(PMID: $1)');
+    // Strip fake PMIDs
     if ((bestQuality.fakePmids as number) > 0) {
       bestResult = bestResult.replace(/\(PMID[:\s]*\d{1,5}(?!\d)\)/gi, '[citation needed]');
       log.warn('fake_pmids_stripped', { count: bestQuality.fakePmids });
