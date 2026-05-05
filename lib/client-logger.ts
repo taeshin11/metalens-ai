@@ -55,6 +55,13 @@ function serializeError(err: unknown): LogContext {
   return { errMessage: String(err).slice(0, 500) };
 }
 
+function syncToServer(entry: Record<string, unknown>) {
+  if (typeof navigator === 'undefined' || !navigator.sendBeacon) return;
+  try {
+    navigator.sendBeacon('/api/log', JSON.stringify(entry));
+  } catch { /* never break client */ }
+}
+
 function emit(level: LogLevel, msg: string, component: string, ctx?: LogContext) {
   const entry = {
     ts: new Date().toISOString(),
@@ -62,13 +69,20 @@ function emit(level: LogLevel, msg: string, component: string, ctx?: LogContext)
     side: 'client',
     component,
     sid: getSessionId(),
+    url: typeof window !== 'undefined' ? window.location.pathname : '',
     msg,
     ...(ctx || {}),
   };
   const line = JSON.stringify(entry);
-  if (level === 'error') console.error(line);
-  else if (level === 'warn') console.warn(line);
-  else console.log(line);
+  if (level === 'error') {
+    console.error(line);
+    syncToServer(entry);
+  } else if (level === 'warn') {
+    console.warn(line);
+    syncToServer(entry);
+  } else {
+    console.log(line);
+  }
 }
 
 export const clog = {

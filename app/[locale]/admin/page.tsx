@@ -65,9 +65,19 @@ export default function AdminDashboard() {
   const [logSearch, setLogSearch] = useState('');
   const [expandedLog, setExpandedLog] = useState<string | null>(null);
   const [logsTotal, setLogsTotal] = useState(0);
+  const [logSource, setLogSource] = useState<'server' | 'client'>('server');
+  const [clientLogs, setClientLogs] = useState<Record<string, unknown>[]>([]);
 
   const fetchLogs = async () => {
     try {
+      if (logSource === 'client') {
+        const res = await fetch('/api/admin/logs?source=client&limit=100');
+        if (res.ok) {
+          const data = await res.json();
+          setClientLogs(data.logs);
+        }
+        return;
+      }
       const params = new URLSearchParams({ limit: '100', level: logFilter });
       if (logSearch) params.set('search', logSearch);
       const res = await fetch(`/api/admin/logs?${params}`);
@@ -110,7 +120,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (user && isAdmin(user.email)) fetchLogs();
-  }, [logFilter]);
+  }, [logFilter, logSource]);
 
   if (loading) {
     return (
@@ -342,9 +352,13 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6">
             <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
               <h2 className="text-lg font-semibold text-[var(--color-text-primary)]" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                Error Logs ({logsTotal} traces)
+                Error Logs {logSource === 'server' ? `(${logsTotal} traces)` : `(${clientLogs.length} client)`}
               </h2>
               <div className="flex items-center gap-2">
+                <div className="inline-flex items-center bg-[var(--color-bg-secondary)] rounded-lg p-0.5 mr-2">
+                  <button onClick={() => setLogSource('server')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${logSource === 'server' ? 'bg-white shadow-sm text-[var(--color-text-primary)]' : 'text-[var(--color-text-muted)]'}`}>Server</button>
+                  <button onClick={() => setLogSource('client')} className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${logSource === 'client' ? 'bg-white shadow-sm text-[var(--color-text-primary)]' : 'text-[var(--color-text-muted)]'}`}>Client</button>
+                </div>
                 <select
                   value={logFilter}
                   onChange={e => setLogFilter(e.target.value as 'all' | 'error' | 'warn')}
@@ -371,7 +385,32 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {logs.length === 0 ? (
+            {logSource === 'client' ? (
+              clientLogs.length === 0 ? (
+                <p className="text-sm text-[var(--color-text-muted)] text-center py-8">No client errors found</p>
+              ) : (
+                <div className="space-y-1 max-h-[600px] overflow-y-auto">
+                  {clientLogs.map((entry, i) => (
+                    <div key={i} className={`px-3 py-2 text-[11px] font-mono rounded border ${
+                      entry.level === 'error' ? 'border-red-200 bg-red-50/50' : 'border-yellow-200 bg-yellow-50/50'
+                    }`}>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${entry.level === 'error' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                          {String(entry.level).toUpperCase()}
+                        </span>
+                        <span className="text-[var(--color-text-secondary)]">{String(entry.component || '')}</span>
+                        <span className="text-[var(--color-text-primary)] font-medium">{String(entry.msg || '')}</span>
+                        {entry.url ? <span className="text-[var(--color-text-muted)]">{String(entry.url)}</span> : null}
+                        <span className="text-[var(--color-text-muted)] ml-auto">{String(entry.ts || '').split('T')[1]?.split('.')[0]}</span>
+                      </div>
+                      {entry.errMessage ? (
+                        <div className="mt-1 text-red-600 break-all">{String(entry.errMessage)}</div>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
+              )
+            ) : logs.length === 0 ? (
               <p className="text-sm text-[var(--color-text-muted)] text-center py-8">No error traces found</p>
             ) : (
               <div className="space-y-2 max-h-[600px] overflow-y-auto">

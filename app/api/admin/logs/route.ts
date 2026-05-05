@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import { isAdmin } from '@/lib/admin';
-import { queryTraces, clearTraces } from '@/lib/log-store';
+import { queryTraces, clearTraces, queryClientLogs } from '@/lib/log-store';
 
 export async function GET(request: NextRequest) {
   const session = await getSession();
@@ -10,6 +10,14 @@ export async function GET(request: NextRequest) {
   }
 
   const url = new URL(request.url);
+  const source = url.searchParams.get('source') || 'server';
+
+  if (source === 'client') {
+    const limit = parseInt(url.searchParams.get('limit') || '50', 10);
+    const clientLogs = await queryClientLogs(limit);
+    return NextResponse.json({ logs: clientLogs, total: clientLogs.length });
+  }
+
   const limit = parseInt(url.searchParams.get('limit') || '50', 10);
   const offset = parseInt(url.searchParams.get('offset') || '0', 10);
   const route = url.searchParams.get('route') || undefined;
