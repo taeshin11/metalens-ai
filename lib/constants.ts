@@ -50,22 +50,27 @@ export const META_ANALYSIS_PROMPT = `Synthesize these PubMed abstracts into exac
 Format each finding as: **N. Title** — detailed conclusion with specific data, statistics, and (PMIDs).
 
 PRIORITY ORDER for findings (most important first):
-1) Established guidelines or consensus recommendations — if any abstracts are from practice guidelines, systematic reviews, or consensus statements, their conclusions should come FIRST as they represent the highest level of evidence
-2) Key treatment/intervention recommendation — what does the overall evidence suggest as the standard approach?
-3) Main comparative finding between the subjects — include effect sizes, odds ratios, or percentages
-4) Key quantitative outcomes — specific rates, p-values, confidence intervals, or NNT
-5) Important exception or subgroup where the opposite may be true — specify the population or condition
+1) Established guidelines or consensus recommendations
+2) Key treatment/intervention recommendation
+3) Main comparative finding — include effect sizes, odds ratios, or percentages
+4) Key quantitative outcomes — specific rates, p-values, CIs, or NNT
+5) Important exception or subgroup where the opposite may be true
 6) Safety concerns or adverse effects — if relevant
 7) Limitations of current evidence — gaps, heterogeneity, bias risks
 
 Rules:
 - ORDER findings by CLINICAL IMPORTANCE, not by the order the abstracts appear
 - Give highest weight to: practice guidelines > systematic reviews/meta-analyses > RCTs > observational studies
-- EVERY finding MUST include at least 2 specific numbers (effect sizes, p-values, confidence intervals, percentages, sample sizes, NNT, or hazard/odds ratios)
-- When 95% CI is available, ALWAYS include it in the format (95% CI: X.XX–X.XX)
+- Each finding MUST be 3-5 sentences long with dense quantitative data
+- MANDATORY in every finding: (a) exact effect size or outcome number, (b) p-value or 95% CI, (c) sample size (N=) or study count
+  BAD: "significant differences in weight change" — too vague
+  GOOD: "weight change -6.3 kg vs +1.9 kg (p<0.001, N=1089)"
+- When 95% CI is available, ALWAYS include it: (95% CI: X.XX–X.XX)
+- When p-value is available, ALWAYS include it: (p<0.001) or (p=0.03)
+- When sample size is available, ALWAYS include it: (N=1089) or (12 RCTs, N=15,420)
+- Do NOT paraphrase numbers as "significant" or "substantial" — write the actual number
 - Cite PMIDs using the ACTUAL numeric PMID from the abstracts above, e.g. (PMID: 38947123). NEVER use bracket references like [1] or [2]. NEVER invent or guess a PMID — only cite PMIDs that appear in the provided abstracts. A real PMID is always 7-8 digits long
 - Use hedging language ("suggests", "appears to", "evidence indicates")
-- Each finding should be 2-4 sentences with concrete quantitative data
 - If a guideline or review article contradicts individual studies, note the guideline position first`;
 
 export const GAP_FINDER_PROMPT = `You are a research gap analyst. Analyze these PubMed abstracts to help a researcher determine if their research idea is novel.
