@@ -23,9 +23,17 @@ const PUBMED_EFETCH = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
 
 async function searchPubMed(keywords: string): Promise<string[]> {
   const url = `${PUBMED_ESEARCH}?db=pubmed&retmode=json&retmax=10&sort=relevance&term=${encodeURIComponent(keywords)}`;
-  const res = await fetch(url);
-  const json = await res.json() as { esearchresult?: { idlist?: string[] } };
-  return json.esearchresult?.idlist || [];
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) { await sleep(2000); continue; }
+      const json = await res.json() as { esearchresult?: { idlist?: string[] } };
+      const ids = json.esearchresult?.idlist || [];
+      if (ids.length > 0) return ids;
+      if (attempt < 3) { console.log(`    [pubmed retry ${attempt}] 0 results, waiting...`); await sleep(2000); }
+    } catch { if (attempt < 3) await sleep(2000); }
+  }
+  return [];
 }
 
 async function fetchAbstracts(pmids: string[]): Promise<string> {
@@ -163,7 +171,9 @@ async function main() {
 
   const results: { id: string; score: ScoreBreakdown }[] = [];
 
-  for (const tc of TEST_CASES) {
+  for (let i = 0; i < TEST_CASES.length; i++) {
+    const tc = TEST_CASES[i];
+    if (i > 0 && !useCache) await sleep(1500);
     console.log(`[${tc.id}] (${tc.mode})`);
     try {
       const { score } = await runTestCase(tc, useCache);
