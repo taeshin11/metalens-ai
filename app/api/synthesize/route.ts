@@ -81,12 +81,13 @@ export async function POST(request: NextRequest) {
       }
 
       const boldHeaders = (result.match(/\*\*\d+\./g) || []).length;
-      const pmidCount = (result.match(/PMID[:\s]*\d{7,8}/gi) || []).length;
+      const realPmids = (result.match(/PMID[:\s]*\d{7,8}/gi) || []).length;
+      const fakePmids = (result.match(/PMID[:\s]*\d{1,5}(?!\d)/gi) || []).length;
       const numberCount = (result.match(/\d+\.?\d*%/g) || []).length;
       const lineCount = result.split('\n').filter(l => l.trim()).length;
-      const quality = { boldHeaders, pmidCount, numberCount, lineCount, resultChars: result.length };
+      const quality = { boldHeaders, realPmids, fakePmids, numberCount, lineCount, resultChars: result.length };
 
-      const score = boldHeaders * 10 + pmidCount * 5 + numberCount * 3 + Math.min(lineCount, 20) * 2 + Math.min(result.length / 100, 20);
+      const score = boldHeaders * 10 + realPmids * 5 + numberCount * 3 + Math.min(lineCount, 20) * 2 + Math.min(result.length / 100, 20) - fakePmids * 20;
 
       log.stage('synthesis_scored', { attempt, score: Math.round(score), ...quality });
 
@@ -96,8 +97,12 @@ export async function POST(request: NextRequest) {
         bestQuality = quality;
       }
 
-      const isGarbage = boldHeaders < 1 || result.length < 100;
+      const isGarbage = boldHeaders < 1 || result.length < 100 || fakePmids > 0;
       if (!isGarbage) break;
+
+      if (fakePmids > 0) {
+        log.warn('synthesis_fake_pmids_detected', { attempt, fakePmids, realPmids });
+      }
 
       log.warn('synthesis_garbage_detected', { attempt, ...quality });
       if (attempt < MAX_ATTEMPTS) {
@@ -111,11 +116,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
     }
 
+    // Post-processing: strip fake PMIDs from final output
+    if ((bestQuality.fakePmids as number) > 0) {
+      bestResult = bestResult.replace(/\(PMID[:\s]*\d{1,5}(?!\d)\)/gi, '[citation needed]');
+      log.warn('fake_pmids_stripped', { count: bestQuality.fakePmids });
+    }
+
     const flags: string[] = [];
     if ((bestQuality.boldHeaders as number) < 2) flags.push('low_headers');
-    if ((bestQuality.pmidCount as number) < 2) flags.push('low_pmids');
+    if ((bestQuality.realPmids as number) < 2) flags.push('low_pmids');
     if (bestResult.length < 200) flags.push('short_result');
     if ((bestQuality.numberCount as number) < 1) flags.push('no_numbers');
+    if ((bestQuality.fakePmids as number) > 0) flags.push('had_fake_pmids');
 
     if (flags.length >= 3) {
       degraded = true;
