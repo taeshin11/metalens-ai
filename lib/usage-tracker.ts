@@ -24,7 +24,7 @@ interface DailyStats {
 // Cost per 1M tokens (USD)
 const MODEL_COSTS: Record<string, { input: number; output: number }> = {
   'gemini-2.5-flash': { input: 0.15, output: 0.60 },
-  'gemini-2.0-flash-lite': { input: 0.075, output: 0.30 },
+  'gemini-2.5-flash-lite': { input: 0.075, output: 0.30 },
 };
 
 const usageLog: UsageEntry[] = [];

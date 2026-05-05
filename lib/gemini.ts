@@ -73,7 +73,7 @@ const PROVIDERS: ProviderDef[] = [
   {
     name: 'gemini-lite',
     envKey: 'GEMINI_API_KEY',
-    models: ['gemini-2.0-flash-lite'],
+    models: ['gemini-2.5-flash-lite'],
     call: callGeminiModel,
   },
 ];
