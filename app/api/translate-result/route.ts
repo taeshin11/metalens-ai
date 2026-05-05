@@ -37,29 +37,52 @@ EXAMPLE OUTPUT FORMAT:
 
 Write ONLY the numbered lines. Nothing else.`;
 
-    const translated = await callGeminiWithFallback({
-      prompt: text,
-      systemInstruction: systemPrompt,
-      temperature: 0.1,
-      maxOutputTokens: 4000,
-      log,
-    });
+    let bestTranslation = '';
+    const MAX_ATTEMPTS = 2;
 
-    if (!translated) {
-      log.done(502, { reason: 'all_models_failed', language });
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      log.stage('translation_attempt', { attempt, language });
+
+      const translated = await callGeminiWithFallback({
+        prompt: text,
+        systemInstruction: systemPrompt,
+        temperature: 0.1,
+        maxOutputTokens: 4000,
+        log,
+      });
+
+      if (!translated) {
+        log.warn('translation_attempt_null', { attempt, language });
+        continue;
+      }
+
+      const numberedLines = (translated.match(/^\d+\./gm) || []).length;
+      const charRatio = text.length > 0 ? +(translated.length / text.length).toFixed(2) : 0;
+      const hasNumbers = /\d+\.?\d*%/.test(translated);
+      const isEnglishEcho = language !== 'English' && /^[a-zA-Z0-9\s.,;:'"()\-*#%]+$/.test(translated.slice(0, 200));
+
+      log.stage('translation_scored', { attempt, language, numberedLines, charRatio, hasNumbers, isEnglishEcho, chars: translated.length });
+
+      bestTranslation = translated;
+
+      if (isEnglishEcho) {
+        log.warn('translation_garbage_english_echo', { attempt, language });
+        if (attempt < MAX_ATTEMPTS) continue;
+      }
+      if (translated.length < 20) {
+        log.warn('translation_garbage_too_short', { attempt, language, chars: translated.length });
+        if (attempt < MAX_ATTEMPTS) continue;
+      }
+      break;
+    }
+
+    if (!bestTranslation) {
+      log.done(502, { reason: 'all_attempts_failed', language });
       return NextResponse.json({ error: 'Translation failed' }, { status: 502 });
     }
 
-    const numberedLines = (translated.match(/^\d+\./gm) || []).length;
-    const charRatio = text.length > 0 ? +(translated.length / text.length).toFixed(2) : 0;
-    const hasNumbers = /\d+\.?\d*%/.test(translated);
-
-    log.stage('translation_quality', {
-      language, inputChars: text.length, outputChars: translated.length,
-      charRatio, numberedLines, hasNumbers,
-    });
-    log.done(200, { language, bytes: translated.length, numberedLines, charRatio });
-    return NextResponse.json({ translated });
+    log.done(200, { language, bytes: bestTranslation.length });
+    return NextResponse.json({ translated: bestTranslation });
   } catch (err) {
     log.error('translate_result_handler_crashed', err);
     log.done(502, { reason: 'unexpected_error' });

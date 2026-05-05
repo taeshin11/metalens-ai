@@ -57,42 +57,78 @@ export async function POST(request: NextRequest) {
     log.stage('body_parsed', { promptLen: prompt.length });
 
     const tierModel = TIER_CONFIG[tier].model;
-    const result = await callGeminiWithFallback({
-      prompt,
-      systemInstruction: SYSTEM_MSG,
-      temperature: 0.2,
-      maxOutputTokens: 8000,
-      model: tierModel,
-      log,
-    });
+    const MAX_ATTEMPTS = 2;
+    let bestResult = '';
+    let bestScore = -1;
+    let bestQuality: Record<string, unknown> = {};
+    let degraded = false;
 
-    if (!result) {
-      log.error('synthesize_returned_null');
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      log.stage('synthesis_attempt', { attempt, model: tierModel });
+
+      const result = await callGeminiWithFallback({
+        prompt,
+        systemInstruction: SYSTEM_MSG,
+        temperature: 0.2,
+        maxOutputTokens: 8000,
+        model: tierModel,
+        log,
+      });
+
+      if (!result) {
+        log.warn('synthesis_attempt_null', { attempt });
+        continue;
+      }
+
+      const boldHeaders = (result.match(/\*\*\d+\./g) || []).length;
+      const pmidCount = (result.match(/PMID[:\s]*\d{7,8}/gi) || []).length;
+      const numberCount = (result.match(/\d+\.?\d*%/g) || []).length;
+      const lineCount = result.split('\n').filter(l => l.trim()).length;
+      const quality = { boldHeaders, pmidCount, numberCount, lineCount, resultChars: result.length };
+
+      const score = boldHeaders * 10 + pmidCount * 5 + numberCount * 3 + Math.min(lineCount, 20) * 2 + Math.min(result.length / 100, 20);
+
+      log.stage('synthesis_scored', { attempt, score: Math.round(score), ...quality });
+
+      if (score > bestScore) {
+        bestResult = result;
+        bestScore = score;
+        bestQuality = quality;
+      }
+
+      const isGarbage = boldHeaders < 1 || result.length < 100;
+      if (!isGarbage) break;
+
+      log.warn('synthesis_garbage_detected', { attempt, ...quality });
+      if (attempt < MAX_ATTEMPTS) {
+        log.stage('synthesis_retrying', { attempt, reason: 'quality_below_threshold' });
+      }
+    }
+
+    if (!bestResult) {
+      log.error('synthesize_all_attempts_failed', undefined, { attempts: MAX_ATTEMPTS });
       log.done(502, { reason: 'ai_failed' });
       return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
     }
 
-    const boldHeaders = (result.match(/\*\*\d+\./g) || []).length;
-    const pmidCount = (result.match(/PMID[:\s]*\d{7,8}/gi) || []).length;
-    const numberCount = (result.match(/\d+\.?\d*%/g) || []).length;
-    const lineCount = result.split('\n').filter(l => l.trim()).length;
-    const quality = { boldHeaders, pmidCount, numberCount, lineCount, resultChars: result.length };
-
     const flags: string[] = [];
-    if (boldHeaders < 2) flags.push('low_headers');
-    if (pmidCount < 2) flags.push('low_pmids');
-    if (result.length < 200) flags.push('short_result');
-    if (numberCount < 1) flags.push('no_numbers');
+    if ((bestQuality.boldHeaders as number) < 2) flags.push('low_headers');
+    if ((bestQuality.pmidCount as number) < 2) flags.push('low_pmids');
+    if (bestResult.length < 200) flags.push('short_result');
+    if ((bestQuality.numberCount as number) < 1) flags.push('no_numbers');
 
-    if (flags.length > 0) {
-      log.warn('result_quality_degraded', { ...quality, flags });
+    if (flags.length >= 3) {
+      degraded = true;
+      log.warn('result_quality_degraded', { ...bestQuality, flags, degraded: true });
+    } else if (flags.length > 0) {
+      log.warn('result_quality_partial', { ...bestQuality, flags });
     }
-    log.stage('result_quality', quality);
+    log.stage('result_quality', bestQuality);
     log.stage('tracking_usage', { tier, model: tierModel });
     trackUsage(identifier, tier, tierModel);
 
-    log.done(200, { tier, resultBytes: result.length, remaining, boldHeaders, pmidCount });
-    return NextResponse.json({ result, remaining });
+    log.done(200, { tier, resultBytes: bestResult.length, remaining, score: Math.round(bestScore), degraded });
+    return NextResponse.json({ result: bestResult, remaining, degraded });
   } catch (err) {
     log.error('synthesize_handler_crashed', err);
     log.done(502, { reason: 'unexpected_error' });
