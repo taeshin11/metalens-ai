@@ -6,6 +6,17 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { TIER_CONFIG } from '@/lib/constants';
 
+interface LogTrace {
+  reqId: string;
+  route: string;
+  startedAt: string;
+  totalMs: number;
+  status: number;
+  hasError: boolean;
+  hasWarning: boolean;
+  entries: { ts: string; level: string; msg: string; [key: string]: unknown }[];
+}
+
 interface AdminStats {
   overview: {
     totalCalls: number;
@@ -49,6 +60,24 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [error, setError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [logs, setLogs] = useState<LogTrace[]>([]);
+  const [logFilter, setLogFilter] = useState<'all' | 'error' | 'warn'>('all');
+  const [logSearch, setLogSearch] = useState('');
+  const [expandedLog, setExpandedLog] = useState<string | null>(null);
+  const [logsTotal, setLogsTotal] = useState(0);
+
+  const fetchLogs = async () => {
+    try {
+      const params = new URLSearchParams({ limit: '100', level: logFilter });
+      if (logSearch) params.set('search', logSearch);
+      const res = await fetch(`/api/admin/logs?${params}`);
+      if (res.ok) {
+        const data = await res.json();
+        setLogs(data.traces);
+        setLogsTotal(data.total);
+      }
+    } catch { /* ignore */ }
+  };
 
   const fetchStats = async () => {
     setRefreshing(true);
@@ -75,8 +104,13 @@ export default function AdminDashboard() {
     }
     if (user && isAdmin(user.email)) {
       fetchStats();
+      fetchLogs();
     }
   }, [user, loading, router, locale]);
+
+  useEffect(() => {
+    if (user && isAdmin(user.email)) fetchLogs();
+  }, [logFilter]);
 
   if (loading) {
     return (
@@ -304,6 +338,102 @@ export default function AdminDashboard() {
               )}
             </div>
           </div>
+          {/* Error Log Viewer */}
+          <div className="bg-white rounded-2xl border border-[var(--color-border)] p-6">
+            <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+              <h2 className="text-lg font-semibold text-[var(--color-text-primary)]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                Error Logs ({logsTotal} traces)
+              </h2>
+              <div className="flex items-center gap-2">
+                <select
+                  value={logFilter}
+                  onChange={e => setLogFilter(e.target.value as 'all' | 'error' | 'warn')}
+                  className="px-3 py-1.5 text-xs border border-[var(--color-border)] rounded-lg bg-white"
+                >
+                  <option value="all">All</option>
+                  <option value="error">Errors Only</option>
+                  <option value="warn">Warnings+</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="Search logs..."
+                  value={logSearch}
+                  onChange={e => setLogSearch(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && fetchLogs()}
+                  className="px-3 py-1.5 text-xs border border-[var(--color-border)] rounded-lg w-40"
+                />
+                <button
+                  onClick={fetchLogs}
+                  className="px-3 py-1.5 text-xs font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)]"
+                >
+                  Search
+                </button>
+              </div>
+            </div>
+
+            {logs.length === 0 ? (
+              <p className="text-sm text-[var(--color-text-muted)] text-center py-8">No error traces found</p>
+            ) : (
+              <div className="space-y-2 max-h-[600px] overflow-y-auto">
+                {logs.map(trace => (
+                  <div
+                    key={trace.reqId}
+                    className={`border rounded-xl overflow-hidden ${trace.hasError ? 'border-red-200 bg-red-50/50' : 'border-yellow-200 bg-yellow-50/50'}`}
+                  >
+                    <button
+                      onClick={() => setExpandedLog(expandedLog === trace.reqId ? null : trace.reqId)}
+                      className="w-full text-left px-4 py-3 flex items-center justify-between hover:bg-white/50"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className={`px-2 py-0.5 text-[10px] font-bold rounded ${trace.hasError ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                          {trace.hasError ? 'ERR' : 'WARN'}
+                        </span>
+                        <span className="text-xs font-mono text-[var(--color-text-secondary)] truncate">{trace.route}</span>
+                        <span className="text-[10px] text-[var(--color-text-muted)]">{trace.totalMs}ms</span>
+                        <span className={`text-[10px] font-mono ${trace.status >= 400 ? 'text-red-500' : 'text-[var(--color-text-muted)]'}`}>{trace.status}</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <span className="text-[10px] text-[var(--color-text-muted)]">{new Date(trace.startedAt).toLocaleString()}</span>
+                        <span className="text-xs">{expandedLog === trace.reqId ? '▲' : '▼'}</span>
+                      </div>
+                    </button>
+
+                    {expandedLog === trace.reqId && (
+                      <div className="border-t border-[var(--color-border)] bg-white px-4 py-3">
+                        <div className="text-[10px] font-mono text-[var(--color-text-muted)] mb-2">reqId: {trace.reqId}</div>
+                        <div className="space-y-1">
+                          {trace.entries.map((entry, i) => (
+                            <div
+                              key={i}
+                              className={`flex gap-2 text-[11px] font-mono py-0.5 ${
+                                entry.level === 'error' ? 'text-red-600 bg-red-50 px-2 rounded' :
+                                entry.level === 'warn' ? 'text-yellow-700 bg-yellow-50 px-2 rounded' :
+                                'text-[var(--color-text-secondary)]'
+                              }`}
+                            >
+                              <span className="text-[var(--color-text-muted)] flex-shrink-0 w-20">{entry.ts.split('T')[1]?.split('.')[0]}</span>
+                              <span className="flex-shrink-0 w-10 text-center">{entry.level}</span>
+                              <span className="flex-1 break-all">
+                                {entry.msg}
+                                {Object.keys(entry).filter(k => !['ts', 'level', 'route', 'reqId', 'msg'].includes(k)).length > 0 && (
+                                  <span className="text-[var(--color-text-muted)] ml-2">
+                                    {JSON.stringify(
+                                      Object.fromEntries(Object.entries(entry).filter(([k]) => !['ts', 'level', 'route', 'reqId', 'msg'].includes(k)))
+                                    )}
+                                  </span>
+                                )}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
       )}
     </div>
