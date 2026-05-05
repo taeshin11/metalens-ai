@@ -82,23 +82,45 @@ export default function HomePage() {
       sessionStorage.setItem('guestSearchCount', String(count + 1));
     }
 
+    const flowStart = performance.now();
+    const flowId = `flow_${Date.now()}`;
+    clog.info('analyze_start', 'HomePage', {
+      flowId, keywords: kw, mode: mode || searchMode, locale, tier,
+      hasFilters: !!filters, isGuest: !user,
+    });
+
     setKeywords(kw);
     setStage('searching');
     setError('');
     setResult(null);
 
-    // Smooth scroll to loading area
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       document.getElementById('loading-area')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
+    });
 
     try {
-      // Translate non-English keywords to English for PubMed search
+      // Step 1: Translate keywords
+      const t1 = performance.now();
       const englishKeywords = await translateForPubMed(kw);
+      clog.info('step_translate', 'HomePage', {
+        flowId, ms: Math.round(performance.now() - t1),
+        original: kw, translated: englishKeywords,
+        wasTranslated: kw !== englishKeywords,
+      });
+
+      // Step 2: Search PubMed
+      const t2 = performance.now();
       const query = filters ? buildPubMedQuery(englishKeywords, filters) : englishKeywords;
       const papers = await searchAndFetch(query, 50);
+      clog.info('step_pubmed', 'HomePage', {
+        flowId, ms: Math.round(performance.now() - t2),
+        query, paperCount: papers.length,
+        journals: [...new Set(papers.map(p => p.journal))].length,
+        yearRange: papers.length ? `${papers[papers.length - 1]?.year}-${papers[0]?.year}` : '',
+      });
 
       if (papers.length === 0) {
+        clog.warn('step_pubmed_empty', 'HomePage', { flowId, query, ms: Math.round(performance.now() - flowStart) });
         setStage('error');
         setError(tErr('noResults'));
         return;
@@ -106,33 +128,42 @@ export default function HomePage() {
 
       setArticles(papers);
       collectData(kw, papers.length);
-
       setStage('synthesizing');
 
+      // Step 3: AI Synthesis
+      const t3 = performance.now();
       const langMap: Record<string, string> = {
         en: 'English', ko: 'Korean', ja: 'Japanese', zh: 'Chinese',
         es: 'Spanish', pt: 'Portuguese', de: 'German', fr: 'French',
       };
       const language = langMap[locale] || 'English';
-
-      // Pro-tier opt-in: include PMC full text when available. Free-tier
-      // sticks to abstracts to keep prompt cost predictable.
       const useFullText = tier === 'pro';
       const synthesisResult = await synthesizeWithAI(
-        papers,
-        language,
-        tierConfig.pointCount,
-        mode || searchMode,
-        { useFullText },
+        papers, language, tierConfig.pointCount,
+        mode || searchMode, { useFullText },
       );
+      clog.info('step_synthesis', 'HomePage', {
+        flowId, ms: Math.round(performance.now() - t3),
+        englishBytes: synthesisResult.english.length,
+        translatedBytes: synthesisResult.translated?.length || 0,
+        hasTranslation: !!synthesisResult.translated,
+        remaining: synthesisResult.remaining,
+        pointCount: tierConfig.pointCount,
+      });
 
-      // Track remaining from server response
       if (synthesisResult.remaining !== undefined) {
         setRemaining(synthesisResult.remaining);
       }
 
       setResult(synthesisResult);
       setStage('done');
+
+      // Step 4: Log overall flow completion
+      clog.info('analyze_done', 'HomePage', {
+        flowId, totalMs: Math.round(performance.now() - flowStart),
+        paperCount: papers.length, tier, mode: mode || searchMode,
+        resultBytes: synthesisResult.english.length,
+      });
 
       // Save to history + cache results
       const resultId = String(Date.now());
@@ -144,25 +175,23 @@ export default function HomePage() {
         const resultJson = JSON.stringify({ result: synthesisResult, articles: papers });
         localStorage.setItem('metalens_history', historyJson);
         localStorage.setItem(`metalens_result_${resultId}`, resultJson);
-        // Keep only the 20 most recent cached results
         const oldEntry = history.find(h => h.keywords === kw);
         if (oldEntry?.resultId) localStorage.removeItem(`metalens_result_${oldEntry.resultId}`);
         clog.info('history_save_done', 'HomePage', {
-          entries: updated.length,
-          historyBytes: historyJson.length,
-          resultBytes: resultJson.length,
-          evictedOld: !!oldEntry?.resultId,
+          flowId, entries: updated.length,
+          historyBytes: historyJson.length, resultBytes: resultJson.length,
         });
       } catch (err) {
-        // localStorage may be full (QuotaExceededError) or disabled
-        clog.error('history_save_failed', 'HomePage', err, { entries: updated.length });
+        clog.error('history_save_failed', 'HomePage', err, { flowId, entries: updated.length });
       }
     } catch (err) {
+      const totalMs = Math.round(performance.now() - flowStart);
       setStage('error');
-      // Check for rate limit
       if (err instanceof Error && err.message.includes('429')) {
+        clog.warn('analyze_rate_limited', 'HomePage', { flowId, totalMs, tier });
         setError(tErr('rateLimit'));
       } else {
+        clog.error('analyze_failed', 'HomePage', err, { flowId, totalMs, tier, keywords: kw });
         setError(tErr('apiError'));
       }
     }

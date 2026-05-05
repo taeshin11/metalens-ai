@@ -23,7 +23,7 @@ export interface ExtractionResult {
 export async function extractDataFromArticles(
   articles: PubMedArticle[],
 ): Promise<ExtractionResult> {
-  // Send ALL articles to the dedicated extraction API (batched internally)
+  const t0 = performance.now();
   const response = await fetch('/api/extract', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -37,7 +37,12 @@ export async function extractDataFromArticles(
   });
 
   if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
+    const err = await response.json().catch(() => ({ error: `HTTP ${response.status}` }));
+    console.error(JSON.stringify({
+      ts: new Date().toISOString(), level: 'error', route: 'lib/data-extraction',
+      msg: 'extract_api_failed', status: response.status, error: err.error,
+      articleCount: articles.length,
+    }));
     throw new Error(err.error || 'Data extraction failed');
   }
 
@@ -87,6 +92,14 @@ export async function extractDataFromArticles(
       poolType = diffMode;
     }
   }
+
+  const ms = Math.round(performance.now() - t0);
+  console.log(JSON.stringify({
+    ts: new Date().toISOString(), level: 'info', route: 'lib/data-extraction',
+    msg: 'extraction_complete', ms, articleCount: articles.length,
+    extractedCount: data.length, poolable, commonEffectType: poolable ? poolType : null,
+    withEffectCount: withEffect.length, nullEffectCount: data.filter(d => d.effectSize === null).length,
+  }));
 
   return {
     data,

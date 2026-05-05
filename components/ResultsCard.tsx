@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from './AuthProvider';
 import { PubMedArticle } from '@/lib/pubmed';
@@ -106,14 +106,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   const [citationCopied, setCitationCopied] = useState(false);
   const [shareState, setShareState] = useState<'idle' | 'loading' | 'copied'>('idle');
 
-  // Auto-extract data when switching to data/meta tab
-  useEffect(() => {
-    if ((activeTab === 'data' || activeTab === 'meta') && !extraction && !extracting) {
-      handleExtract();
-    }
-  }, [activeTab]);
-
-  const handleExtract = async () => {
+  const handleExtract = useCallback(async () => {
     setExtracting(true);
     setExtractError('');
     setExtractElapsed(0);
@@ -124,40 +117,49 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
       setExtractElapsed(Math.floor((Date.now() - startTime) / 1000));
     }, 1000);
 
-    const stepMessages = [0, 1, 2, 3, 4]; // indices into t('extractSteps') array
     let stepIdx = 0;
     const stepTimer = setInterval(() => {
-      stepIdx = Math.min(stepIdx + 1, stepMessages.length - 1);
+      stepIdx = Math.min(stepIdx + 1, 4);
       setExtractStep(stepIdx);
     }, 7000);
 
     try {
-      const result = await extractDataFromArticles(articles);
-      setExtraction(result);
+      const extractResult = await extractDataFromArticles(articles);
+      setExtraction(extractResult);
+      clog.info('extraction_done', 'ResultsCard', {
+        dataCount: extractResult.data.length, poolable: extractResult.poolable,
+        ms: Date.now() - startTime,
+      });
 
-      // Auto-pool if possible
-      if (result.poolable && result.commonEffectType) {
-        const poolResult = poolStudies(result.data, result.commonEffectType);
+      if (extractResult.poolable && extractResult.commonEffectType) {
+        const poolResult = poolStudies(extractResult.data, extractResult.commonEffectType);
         setPooled(poolResult);
       }
-    } catch {
+    } catch (err) {
+      clog.error('extraction_failed', 'ResultsCard', err, { articleCount: articles.length, ms: Date.now() - startTime });
       setExtractError('extraction_failed');
     } finally {
       clearInterval(elapsedTimer);
       clearInterval(stepTimer);
       setExtracting(false);
     }
-  };
+  }, [articles]);
 
-  const tierOrder: Record<string, number> = { free: 0, pro: 1 };
-  const userTierNum = tierOrder[tier] || 0;
+  // Auto-extract data when switching to data/meta tab
+  useEffect(() => {
+    if ((activeTab === 'data' || activeTab === 'meta') && !extraction && !extracting) {
+      handleExtract();
+    }
+  }, [activeTab, extraction, extracting, handleExtract]);
 
-  const tabs = [
+  const userTierNum = tier === 'pro' ? 1 : 0;
+
+  const tabs = useMemo(() => [
     { key: 'summary' as const, label: t('tabAISummary'), icon: '✦', minTier: 0 },
     { key: 'data' as const, label: t('tabData'), icon: '📊', minTier: 1 },
     { key: 'meta' as const, label: t('tabMeta'), icon: '🔬', minTier: 1 },
     { key: 'tools' as const, label: t('tabTools'), icon: '✍️', minTier: 1 },
-  ];
+  ], [t]);
 
   const handleGenerateTools = async (tool: 'abstract' | 'journal' | 'proposal') => {
     const t0 = performance.now();

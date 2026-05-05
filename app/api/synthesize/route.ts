@@ -72,10 +72,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'AI synthesis failed. Please try again.' }, { status: 502 });
     }
 
+    const boldHeaders = (result.match(/\*\*\d+\./g) || []).length;
+    const pmidCount = (result.match(/PMID[:\s]*\d{7,8}/gi) || []).length;
+    const numberCount = (result.match(/\d+\.?\d*%/g) || []).length;
+    const lineCount = result.split('\n').filter(l => l.trim()).length;
+
+    log.stage('result_quality', {
+      boldHeaders, pmidCount, numberCount, lineCount,
+      resultChars: result.length,
+    });
     log.stage('tracking_usage', { tier, model: tierModel });
     trackUsage(identifier, tier, tierModel);
 
-    log.done(200, { tier, resultBytes: result.length, remaining });
+    log.done(200, { tier, resultBytes: result.length, remaining, boldHeaders, pmidCount });
     return NextResponse.json({ result, remaining });
   } catch (err) {
     log.error('synthesize_handler_crashed', err);
