@@ -63,7 +63,7 @@ Rules:
 - Give highest weight to: practice guidelines > systematic reviews/meta-analyses > RCTs > observational studies
 - EVERY finding MUST include at least 2 specific numbers (effect sizes, p-values, confidence intervals, percentages, sample sizes, NNT, or hazard/odds ratios)
 - When 95% CI is available, ALWAYS include it in the format (95% CI: X.XX–X.XX)
-- Cite PMIDs using the ACTUAL numeric PMID, e.g. (PMID: 38947123). NEVER use bracket references like [1] or [2] — always write the real PMID number
+- Cite PMIDs using the ACTUAL numeric PMID from the abstracts above, e.g. (PMID: 38947123). NEVER use bracket references like [1] or [2]. NEVER invent or guess a PMID — only cite PMIDs that appear in the provided abstracts. A real PMID is always 7-8 digits long
 - Use hedging language ("suggests", "appears to", "evidence indicates")
 - Each finding should be 2-4 sentences with concrete quantitative data
 - If a guideline or review article contradicts individual studies, note the guideline position first`;
@@ -83,7 +83,7 @@ REQUIRED SECTIONS (in this order):
 
 Rules:
 - Be specific about what EXISTS vs what DOES NOT EXIST
-- Cite PMIDs using the ACTUAL numeric PMID, e.g. (PMID: 38947123). NEVER use bracket references like [1] or [2]
+- Cite PMIDs using the ACTUAL numeric PMID from the abstracts above, e.g. (PMID: 38947123). NEVER use bracket references like [1] or [2]. NEVER invent or guess a PMID — only cite PMIDs that appear in the provided abstracts. A real PMID is always 7-8 digits long
 - Include specific numbers: sample sizes, effect sizes, p-values, confidence intervals for each cited study
 - When identifying gaps, explain WHY the gap matters clinically
 - If the topic is well-studied, be honest — suggest unique angles instead
