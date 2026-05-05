@@ -502,6 +502,14 @@ Output the proposal with each section header in bold. Write in formal academic l
         })}
       </div>
 
+      {/* Degraded quality warning */}
+      {result.degraded && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 text-xs text-yellow-800 flex items-center gap-2">
+          <span className="text-yellow-500 text-base">&#9888;</span>
+          {t('degradedWarning')}
+        </div>
+      )}
+
       {/* Tab Content: Summary */}
       {activeTab === 'summary' && (
         <>

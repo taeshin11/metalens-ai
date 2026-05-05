@@ -181,6 +181,7 @@
     "tabData": "Data Table",
     "tabMeta": "Meta-Analysis",
     "tabTools": "Writing Tools",
+    "degradedWarning": "AI quality may be reduced for this query. Results were automatically retried but may contain fewer citations or details than usual.",
     "keywords": "Keywords",
     "shareBtn": "Share Results",
     "shareCopied": "Link copied!",

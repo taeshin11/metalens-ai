@@ -7,6 +7,7 @@ export interface SynthesisResult {
   translated: string | null;
   language: string;
   remaining?: number;
+  degraded?: boolean;
 }
 
 export function buildPrompt(
@@ -100,10 +101,12 @@ export async function synthesizeWithAI(
     throw new Error('429: Daily limit reached');
   }
 
+  let degraded = false;
   if (synthesisResponse.ok) {
     const data = await synthesisResponse.json();
     if (data.result && data.result.trim()) englishResult = data.result;
     if (data.remaining !== undefined) remaining = data.remaining;
+    if (data.degraded) degraded = true;
   }
 
   if (!englishResult) {
@@ -122,7 +125,7 @@ export async function synthesizeWithAI(
       if (translateResponse.ok) {
         const { translated } = await translateResponse.json();
         if (translated) {
-          return { english: englishResult, translated, language, remaining };
+          return { english: englishResult, translated, language, remaining, degraded };
         }
       }
     } catch (err) {
@@ -134,5 +137,5 @@ export async function synthesizeWithAI(
     }
   }
 
-  return { english: englishResult, translated: null, language, remaining };
+  return { english: englishResult, translated: null, language, remaining, degraded };
 }
