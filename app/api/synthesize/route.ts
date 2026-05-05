@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     log.stage('body_parsed', { promptLen: prompt.length });
 
     const tierModel = TIER_CONFIG[tier].model;
-    const MAX_ATTEMPTS = 2;
+    const MAX_ATTEMPTS = 3;
     let bestResult = '';
     let bestScore = -1;
     let bestQuality: Record<string, unknown> = {};
@@ -97,14 +97,24 @@ export async function POST(request: NextRequest) {
         bestQuality = quality;
       }
 
+      const ciCount = (result.match(/95%\s*CI/gi) || []).length;
+      const pValCount = (result.match(/p\s*[<=<]\s*0\.\d+/gi) || []).length;
+      const nCount = (result.match(/N\s*[=:]\s*[\d,]+/gi) || []).length;
+      const dataDense = ciCount >= 2 || (pValCount >= 2 && nCount >= 2);
+
       const isGarbage = boldHeaders < 1 || result.length < 100 || fakePmids > 0;
-      if (!isGarbage) break;
+      const isWeak = !dataDense && result.length < 2000;
+
+      if (!isGarbage && !isWeak) break;
 
       if (fakePmids > 0) {
         log.warn('synthesis_fake_pmids_detected', { attempt, fakePmids, realPmids });
       }
+      if (isWeak && !isGarbage) {
+        log.warn('synthesis_weak_data_density', { attempt, ciCount, pValCount, nCount, chars: result.length });
+      }
 
-      log.warn('synthesis_garbage_detected', { attempt, ...quality });
+      log.warn('synthesis_retry_reason', { attempt, isGarbage, isWeak, ...quality, ciCount, pValCount, nCount });
       if (attempt < MAX_ATTEMPTS) {
         log.stage('synthesis_retrying', { attempt, reason: 'quality_below_threshold' });
       }

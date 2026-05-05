@@ -59,7 +59,15 @@ Write ONLY the numbered lines in ${language}. Nothing else.`;
       const numberedLines = (translated.match(/^\d+\./gm) || []).length;
       const charRatio = text.length > 0 ? +(translated.length / text.length).toFixed(2) : 0;
       const hasNumbers = /\d+\.?\d*%/.test(translated);
-      const isEnglishEcho = language !== 'English' && /^[a-zA-Z0-9\s.,;:'"()\-*#%]+$/.test(translated.slice(0, 200));
+      // CJK languages: ASCII-only = English echo. Latin-script languages: check for English stopwords.
+      const cjkLangs = ['Korean', 'Japanese', 'Chinese'];
+      const isCJK = cjkLangs.includes(language);
+      const isEnglishEcho = language !== 'English' && (
+        isCJK
+          ? /^[a-zA-Z0-9\s.,;:'"()\-*#%<>=\/]+$/.test(translated.replace(/\n/g, '').slice(0, 200))
+          : /\b(the|and|with|for|that|this|from|have|were|was|are|been|which)\b/gi.test(translated.slice(0, 300)) &&
+            (translated.slice(0, 300).match(/\b(the|and|with|for|that|this)\b/gi) || []).length >= 5
+      );
 
       log.stage('translation_scored', { attempt, language, numberedLines, charRatio, hasNumbers, isEnglishEcho, chars: translated.length });
 
