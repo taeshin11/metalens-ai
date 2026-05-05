@@ -43,10 +43,16 @@ Input: ${keywords}`;
 
     if (translated) {
       const cleaned = translated.replace(/^["']|["']$/g, '');
-      log.done(200, { bytes: cleaned.length });
+      const termCount = cleaned.split(',').length;
+      log.done(200, {
+        bytes: cleaned.length, termCount,
+        inputKeywords: keywords, outputKeywords: cleaned,
+        wasChanged: keywords !== cleaned,
+      });
       return NextResponse.json({ translated: cleaned });
     }
 
+    log.warn('translate_all_failed_passthrough', { keywords });
     log.done(200, { passthrough: true, reason: 'all_models_failed' });
     return NextResponse.json({ translated: keywords });
   } catch (err) {

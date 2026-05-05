@@ -93,6 +93,16 @@ export async function callGeminiWithFallback(opts: GeminiCallOptions): Promise<s
   const temp = opts.temperature ?? 0.2;
   const maxTokens = opts.maxOutputTokens ?? 8000;
   const system = opts.systemInstruction ?? '';
+  const totalStart = Date.now();
+  let attemptCount = 0;
+
+  opts.log?.stage('ai_call_begin', {
+    promptChars: opts.prompt.length,
+    systemChars: system.length,
+    temperature: temp,
+    maxTokens,
+    preferredModel: opts.model || 'default',
+  });
 
   for (const provider of PROVIDERS) {
     const apiKey = process.env[provider.envKey];
@@ -103,24 +113,38 @@ export async function callGeminiWithFallback(opts: GeminiCallOptions): Promise<s
       : provider.models;
 
     for (const model of models) {
-      opts.log?.stage(`${provider.name}_start`, { model });
+      attemptCount++;
+      const callStart = Date.now();
+      opts.log?.stage(`${provider.name}_start`, { model, attempt: attemptCount });
 
       try {
         const result = await provider.call(opts.prompt, system, model, apiKey, temp, maxTokens);
+        const callMs = Date.now() - callStart;
+
         if (result) {
-          opts.log?.stage(`${provider.name}_done`, { model, bytes: result.length });
+          opts.log?.stage(`${provider.name}_done`, {
+            model, bytes: result.length, callMs,
+            totalMs: Date.now() - totalStart,
+            attempts: attemptCount,
+            lines: result.split('\n').length,
+            hasPMIDs: /PMID/i.test(result),
+            hasNumbers: /\d+\.?\d*%/.test(result),
+          });
           return result;
         }
-        opts.log?.warn(`${provider.name}_empty`, { model });
+        opts.log?.warn(`${provider.name}_empty`, { model, callMs });
       } catch (err) {
+        const callMs = Date.now() - callStart;
         opts.log?.warn(`${provider.name}_failed`, {
-          model,
+          model, callMs, attempt: attemptCount,
           errMessage: err instanceof Error ? err.message : String(err).slice(0, 200),
         });
       }
     }
   }
 
-  opts.log?.error('all_providers_exhausted');
+  opts.log?.error('all_providers_exhausted', undefined, {
+    totalMs: Date.now() - totalStart, attempts: attemptCount,
+  });
   return null;
 }

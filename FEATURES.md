@@ -5,7 +5,7 @@
 > MUST update the relevant section in the same commit. See
 > [§ Maintenance Rules](#maintenance-rules) at the bottom.
 
-**Last synced**: 2026-04-30 (matches HEAD of `master`)
+**Last synced**: 2026-05-05 (matches HEAD of `master`)
 
 ---
 

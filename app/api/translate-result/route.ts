@@ -50,7 +50,15 @@ Write ONLY the numbered lines. Nothing else.`;
       return NextResponse.json({ error: 'Translation failed' }, { status: 502 });
     }
 
-    log.done(200, { language, bytes: translated.length });
+    const numberedLines = (translated.match(/^\d+\./gm) || []).length;
+    const charRatio = text.length > 0 ? +(translated.length / text.length).toFixed(2) : 0;
+    const hasNumbers = /\d+\.?\d*%/.test(translated);
+
+    log.stage('translation_quality', {
+      language, inputChars: text.length, outputChars: translated.length,
+      charRatio, numberedLines, hasNumbers,
+    });
+    log.done(200, { language, bytes: translated.length, numberedLines, charRatio });
     return NextResponse.json({ translated });
   } catch (err) {
     log.error('translate_result_handler_crashed', err);

@@ -125,8 +125,12 @@ export async function synthesizeWithAI(
           return { english: englishResult, translated, language, remaining };
         }
       }
-    } catch {
-      // Translation failed — return English only
+    } catch (err) {
+      console.error(JSON.stringify({
+        ts: new Date().toISOString(), level: 'warn', route: 'lib/synthesis',
+        msg: 'translation_failed', language,
+        errMessage: err instanceof Error ? err.message : String(err).slice(0, 200),
+      }));
     }
   }
 
