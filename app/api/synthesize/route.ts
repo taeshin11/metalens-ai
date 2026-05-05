@@ -76,11 +76,18 @@ export async function POST(request: NextRequest) {
     const pmidCount = (result.match(/PMID[:\s]*\d{7,8}/gi) || []).length;
     const numberCount = (result.match(/\d+\.?\d*%/g) || []).length;
     const lineCount = result.split('\n').filter(l => l.trim()).length;
+    const quality = { boldHeaders, pmidCount, numberCount, lineCount, resultChars: result.length };
 
-    log.stage('result_quality', {
-      boldHeaders, pmidCount, numberCount, lineCount,
-      resultChars: result.length,
-    });
+    const flags: string[] = [];
+    if (boldHeaders < 2) flags.push('low_headers');
+    if (pmidCount < 2) flags.push('low_pmids');
+    if (result.length < 200) flags.push('short_result');
+    if (numberCount < 1) flags.push('no_numbers');
+
+    if (flags.length > 0) {
+      log.warn('result_quality_degraded', { ...quality, flags });
+    }
+    log.stage('result_quality', quality);
     log.stage('tracking_usage', { tier, model: tierModel });
     trackUsage(identifier, tier, tierModel);
 

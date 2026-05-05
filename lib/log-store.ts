@@ -90,3 +90,28 @@ export async function clearTraces(): Promise<number> {
   await redis.del(LOG_KEY);
   return count;
 }
+
+// ── Client-side error logs ──
+
+const CLIENT_LOG_KEY = 'metalens:client_errors';
+
+export interface ClientLogEntry {
+  ts: string;
+  level: string;
+  component: string;
+  msg: string;
+  sid: string;
+  url?: string;
+  [key: string]: unknown;
+}
+
+export async function queryClientLogs(limit = 50): Promise<ClientLogEntry[]> {
+  const raw = await redis.zrange(CLIENT_LOG_KEY, '+inf', '-inf', {
+    byScore: true, rev: true, count: limit, offset: 0,
+  }) as string[];
+
+  return raw.map(r => {
+    try { return JSON.parse(r) as ClientLogEntry; }
+    catch { return null; }
+  }).filter((e): e is ClientLogEntry => e !== null);
+}

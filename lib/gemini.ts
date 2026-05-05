@@ -104,6 +104,8 @@ export async function callGeminiWithFallback(opts: GeminiCallOptions): Promise<s
     preferredModel: opts.model || 'default',
   });
 
+  const TIMEOUT_MS = 55_000;
+
   for (const provider of PROVIDERS) {
     const apiKey = process.env[provider.envKey];
     if (!apiKey) continue;
@@ -115,7 +117,17 @@ export async function callGeminiWithFallback(opts: GeminiCallOptions): Promise<s
     for (const model of models) {
       attemptCount++;
       const callStart = Date.now();
-      opts.log?.stage(`${provider.name}_start`, { model, attempt: attemptCount });
+      const elapsedMs = callStart - totalStart;
+      const remainingMs = TIMEOUT_MS - elapsedMs;
+
+      if (remainingMs < 3_000) {
+        opts.log?.warn('timeout_approaching', {
+          model, attempt: attemptCount, elapsedMs, remainingMs,
+        });
+        break;
+      }
+
+      opts.log?.stage(`${provider.name}_start`, { model, attempt: attemptCount, remainingMs });
 
       try {
         const result = await provider.call(opts.prompt, system, model, apiKey, temp, maxTokens);
