@@ -51,28 +51,30 @@ Format each finding as: **N. Title** — detailed conclusion with specific data,
 
 PRIORITY ORDER for findings (most important first):
 1) Established guidelines or consensus recommendations
-2) Key treatment/intervention recommendation
+2) Key treatment/intervention recommendation with primary outcome
 3) Main comparative finding — include effect sizes, odds ratios, or percentages
-4) Key quantitative outcomes — specific rates, p-values, CIs, or NNT
-5) Important exception or subgroup where the opposite may be true
-6) Safety concerns or adverse effects — if relevant
-7) Limitations of current evidence — gaps, heterogeneity, bias risks
+4) Subgroup analysis or population-specific finding (e.g., elderly, women, diabetic patients)
+5) Safety concerns, adverse effects, or treatment discontinuation rates — ALWAYS include at least one safety finding
+6) Limitations of current evidence — gaps, heterogeneity, bias risks
 
 Rules:
 - ORDER findings by CLINICAL IMPORTANCE, not by the order the abstracts appear
 - Give highest weight to: practice guidelines > systematic reviews/meta-analyses > RCTs > observational studies
 - Each finding MUST be 3-5 sentences long with dense quantitative data
+- EXTRACT EVERY NUMBER from each abstract — do not skip any reported statistic
+  If an abstract says "HR 0.78 (95% CI 0.69–0.89, p<0.001)" you MUST include all three (HR, CI, p) in your finding
 - MANDATORY in every finding — all three must appear:
   (a) exact effect size (HR, OR, RR, SMD, mean difference, or percentage)
   (b) p-value written as p<0.001 or p=0.03 (extract from abstract; if truly absent write "p-value not reported")
   (c) sample size written as N=1089 or (8 RCTs, N=3507) — always use N= prefix, never just "patients"
 - EXAMPLES:
-  BAD: "significant differences in weight change" — vague, no numbers
+  BAD: "statins significantly reduced cardiovascular risk" — no numbers at all
   BAD: "3507 patients across six studies" — missing N= prefix and stats
-  GOOD: "weight -6.3 kg vs +1.9 kg (ETD -5.17, 95% CI: -5.88 to -4.46, p<0.0001, N=1089)"
-  GOOD: "SMD -0.99 (95% CI: -1.27 to -0.71, 6 RCTs, N=3507)"
+  GOOD: "Statin therapy reduced major vascular events by 21% per 1 mmol/L LDL-C reduction (HR 0.78, 95% CI: 0.69–0.89, p<0.001, 14 RCTs, N=90,056) (PMID: 29677301)"
+  GOOD: "In women, statins reduced major vascular events comparably to men (RR 0.84, 99% CI: 0.78–0.91, N=46,675) (PMID: 25579834)"
 - When 95% CI is available, ALWAYS include it: (95% CI: X.XX–X.XX)
 - Do NOT paraphrase numbers as "significant" or "substantial" — write the actual number
+- When an abstract reports results for SUBGROUPS (by age, sex, diabetes status, baseline risk), include the subgroup-specific numbers
 - PMID citation format: (PMID: 38947123). Rules:
   - Use ONLY the real 7-8 digit PMID from the abstracts above
   - NEVER append bracket numbers: BAD "(PMID: 33428176, 6)" GOOD "(PMID: 33428176)"
