@@ -136,6 +136,37 @@ export default function AccountPage() {
         </p>
       </div>
 
+      {/* Subscription Management */}
+      {tier === 'pro' && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)] mb-6">
+          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            {t('manageSubscription')}
+          </h3>
+          <p className="text-sm text-[var(--color-text-muted)] mb-4">{t('manageDesc')}</p>
+          <a
+            href="https://metalens.lemonsqueezy.com/billing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[var(--color-primary)] border-2 border-[var(--color-primary)] rounded-xl hover:bg-[var(--color-primary)]/5 transition-colors"
+          >
+            {t('manageBilling')}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      )}
+
+      {tier === 'free' && (
+        <div className="bg-[var(--color-primary)]/5 rounded-2xl p-6 border border-[var(--color-primary)]/20 mb-6 text-center">
+          <p className="text-sm text-[var(--color-text-secondary)] mb-3">{t('upgradePrompt')}</p>
+          <a
+            href={`/${locale}/pricing`}
+            className="inline-flex items-center px-5 py-2.5 text-sm font-semibold bg-[var(--color-primary)] text-white rounded-xl hover:bg-[var(--color-primary-dark)] transition-colors"
+          >
+            {t('upgradeToPro')}
+          </a>
+        </div>
+      )}
+
       {/* Logout */}
       <div className="text-center">
         <button
