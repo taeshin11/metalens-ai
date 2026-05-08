@@ -41,11 +41,11 @@ const PLANS: { key: 'free' | 'pro'; popular: boolean; features: PlanFeature[] }[
       { key: 'f_lang', included: true },
       { key: 'f_plots', included: false },
       { key: 'f_datatable', included: false },
-      { key: 'f_abstract', included: false, soon: true },
-      { key: 'f_journal', included: false, soon: true },
-      { key: 'f_pdf', included: false, soon: true },
+      { key: 'f_abstract', included: false },
+      { key: 'f_journal', included: false },
+      { key: 'f_pdf', included: false },
       { key: 'f_draft', included: false },
-      { key: 'f_diff', included: false },
+      { key: 'f_diff', included: false, soon: true },
     ],
   },
   {
@@ -58,10 +58,10 @@ const PLANS: { key: 'free' | 'pro'; popular: boolean; features: PlanFeature[] }[
       { key: 'f_lang', included: true },
       { key: 'f_plots', included: true },
       { key: 'f_datatable', included: true },
-      { key: 'f_abstract', included: true, soon: true },
-      { key: 'f_journal', included: true, soon: true },
-      { key: 'f_pdf', included: true, soon: true },
-      { key: 'f_draft', included: true, soon: true },
+      { key: 'f_abstract', included: true },
+      { key: 'f_journal', included: true },
+      { key: 'f_pdf', included: true },
+      { key: 'f_draft', included: true },
       { key: 'f_diff', included: true, soon: true },
     ],
   },
@@ -184,13 +184,9 @@ export default function PricingPage() {
           {t('title')}
         </h1>
         <p className="text-lg text-[var(--color-text-secondary)] max-w-2xl mx-auto">
-          {t('betaSubtitle')}
+          {t('subtitle')}
         </p>
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)]/10 text-[var(--color-primary-dark)] rounded-full text-sm font-medium">
-          <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse" />
-          {t('betaBadge')}
-        </div>
-        <p className="text-sm text-[var(--color-text-muted)] mt-2">{t('valueAnchor')}</p>
+        <p className="text-sm text-[var(--color-text-muted)]">{t('valueAnchor')}</p>
         <div className="flex justify-center mt-6">
           <div className="inline-flex items-center gap-3 bg-[var(--color-bg-secondary)] rounded-full p-1.5">
             <button onClick={() => setBilling('monthly')} className={`px-5 py-2 text-sm font-medium rounded-full transition-all ${billing === 'monthly' ? 'bg-white text-[var(--color-text-primary)] shadow-sm' : 'text-[var(--color-text-muted)]'}`}>
@@ -288,29 +284,6 @@ export default function PricingPage() {
             </motion.div>
           );
         })}
-      </div>
-
-      {/* Waitlist */}
-      <div className="mt-16 max-w-lg mx-auto">
-        <div className="bg-gradient-to-br from-[var(--color-primary)]/5 to-[var(--color-accent)]/5 rounded-3xl p-8 border border-[var(--color-primary)]/20 text-center">
-          <h3 className="text-xl font-bold text-[var(--color-text-primary)] mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-            {t('waitlistTitle')}
-          </h3>
-          <p className="text-sm text-[var(--color-text-secondary)] mb-5">{t('waitlistDesc')}</p>
-          {submitted ? (
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="py-3 px-6 bg-[var(--color-success)]/10 text-[var(--color-success)] rounded-xl font-medium text-sm">
-              {t('waitlistSuccess')}
-            </motion.div>
-          ) : (
-            <form onSubmit={handleNotify} className="flex gap-2">
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t('waitlistPlaceholder')} required
-                className="flex-1 px-4 py-3 text-sm bg-white border-2 border-[var(--color-border)] rounded-xl focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20" />
-              <button type="submit" className="px-6 py-3 bg-[var(--color-primary)] text-white text-sm font-semibold rounded-xl hover:bg-[var(--color-primary-dark)] transition-colors">
-                {t('waitlistButton')}
-              </button>
-            </form>
-          )}
-        </div>
       </div>
 
       {/* Competitor Comparison */}

@@ -213,31 +213,10 @@ export default function HomePage() {
     return () => window.removeEventListener('metalens:home', handler);
   });
 
-  const betaActive = new Date() < BETA_END;
-
   return (
     <>
       <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
       <FeedbackButton />
-
-      {/* Beta Banner */}
-      {betaActive && (
-        <div className="w-full bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] text-white py-3 px-4 text-center">
-          <div className="max-w-[1200px] mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-            <span className="text-sm font-semibold">
-              🎉 {t('betaBannerTitle')} &nbsp;|&nbsp; {user ? t('betaBannerLoggedIn') : t('betaBannerMsg')}
-            </span>
-            {!user && (
-              <button
-                onClick={() => setShowLogin(true)}
-                className="shrink-0 px-4 py-1.5 bg-white text-[var(--color-primary)] text-xs font-bold rounded-full hover:bg-white/90 transition-colors"
-              >
-                {t('betaBannerCta')}
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Hero Section */}
       {stage !== 'done' && (
