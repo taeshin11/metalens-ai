@@ -34,10 +34,13 @@ export default function UserMenu() {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Tier badge */}
-      <span className={`hidden sm:inline text-[10px] px-2 py-0.5 rounded-full font-semibold ${tierColors[tier] || tierColors.free}`}>
+      {/* Tier badge — links to account (Pro) or pricing (Free) */}
+      <Link
+        href={tier === 'pro' ? `/${locale}/account` : `/${locale}/pricing`}
+        className={`hidden sm:inline text-[10px] px-2 py-0.5 rounded-full font-semibold cursor-pointer hover:opacity-80 transition-opacity ${tierColors[tier] || tierColors.free}`}
+      >
         {tierLabel}
-      </span>
+      </Link>
 
       {tier === 'free' && (
         <Link
