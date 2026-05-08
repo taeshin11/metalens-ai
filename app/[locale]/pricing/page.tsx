@@ -45,7 +45,6 @@ const PLANS: { key: 'free' | 'pro'; popular: boolean; features: PlanFeature[] }[
       { key: 'f_journal', included: false },
       { key: 'f_pdf', included: false },
       { key: 'f_draft', included: false },
-      { key: 'f_diff', included: false, soon: true },
     ],
   },
   {
@@ -62,7 +61,6 @@ const PLANS: { key: 'free' | 'pro'; popular: boolean; features: PlanFeature[] }[
       { key: 'f_journal', included: true },
       { key: 'f_pdf', included: true },
       { key: 'f_draft', included: true },
-      { key: 'f_diff', included: true, soon: true },
     ],
   },
 ];
@@ -256,7 +254,14 @@ export default function PricingPage() {
               </div>
               {plan.key === 'free' ? (
                 <a href={`/${locale}`} className="block py-3 text-center text-sm font-semibold text-[var(--color-primary)] border-2 border-[var(--color-primary)] rounded-xl hover:bg-[var(--color-primary)]/5 transition-colors">
-                  {t('startFree')}
+                  {user?.tier === 'pro' ? t('currentPlan') : t('startFree')}
+                </a>
+              ) : user?.tier === 'pro' ? (
+                <a
+                  href={process.env.NEXT_PUBLIC_LEMONSQUEEZY_PORTAL_URL || `/${locale}/account`}
+                  className="block w-full py-3 text-center text-sm font-semibold bg-[var(--color-primary)] text-white rounded-xl hover:bg-[var(--color-primary-dark)] transition-colors"
+                >
+                  {t('manage')}
                 </a>
               ) : (
                 <button
