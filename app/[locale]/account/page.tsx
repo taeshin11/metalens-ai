@@ -19,6 +19,7 @@ export default function AccountPage() {
   const [cancelReason, setCancelReason] = useState('');
   const [cancelling, setCancelling] = useState(false);
   const [cancelDone, setCancelDone] = useState(false);
+  const [cancelEndsAt, setCancelEndsAt] = useState('');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -174,7 +175,12 @@ export default function AccountPage() {
             {cancelDone ? (
               <div className="text-center py-4">
                 <p className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">{t('cancelledTitle')}</p>
-                <p className="text-sm text-[var(--color-text-muted)] mb-4">{t('cancelledDesc')}</p>
+                <p className="text-sm text-[var(--color-text-muted)] mb-2">{t('cancelledDesc')}</p>
+                {cancelEndsAt && (
+                  <p className="text-sm font-medium text-[var(--color-primary-dark)] mb-4">
+                    {t('cancelledEndsAt', { date: new Date(cancelEndsAt).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' }) })}
+                  </p>
+                )}
                 <button
                   onClick={() => { setCancelModal(false); window.location.reload(); }}
                   className="px-6 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-xl"
@@ -208,8 +214,10 @@ export default function AccountPage() {
                       try {
                         const res = await fetch('/api/lemonsqueezy/cancel', { method: 'POST' });
                         if (res.ok) {
+                          const data = await res.json();
+                          setCancelEndsAt(data.endsAt || '');
                           setCancelDone(true);
-                          clog.info('subscription_cancelled', 'AccountPage', { reason: cancelReason });
+                          clog.info('subscription_cancelled', 'AccountPage', { reason: cancelReason, endsAt: data.endsAt });
                         } else {
                           const data = await res.json();
                           alert(data.error || 'Failed to cancel');
