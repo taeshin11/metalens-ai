@@ -6,9 +6,23 @@ import { trackUsage } from '@/lib/usage-tracker';
 import { ADMIN_EMAILS } from '@/lib/admin';
 import { createLogger, maskId } from '@/lib/logger';
 import { callGeminiWithFallback } from '@/lib/gemini';
+import { Redis } from '@upstash/redis';
+import crypto from 'crypto';
 import type { Tier } from '@/lib/constants';
 
 export const maxDuration = 60;
+
+// ── Response cache ──
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+const CACHE_TTL = 24 * 60 * 60; // 24 hours
+
+function cacheKey(prompt: string, tier: string): string {
+  const hash = crypto.createHash('sha256').update(prompt).digest('hex').slice(0, 16);
+  return `synth:${tier}:${hash}`;
+}
 
 // ── Step 1: Extract structured data from each abstract ──
 const EXTRACT_SYSTEM = 'You are a medical data extractor. Output ONLY valid JSON. No markdown, no explanation.';
@@ -105,6 +119,21 @@ export async function POST(request: NextRequest) {
 
     const tierModel = TIER_CONFIG[tier].model;
     const isPro = tier === 'pro' || isAdmin;
+
+    // ── Cache check ──
+    const key = cacheKey(prompt, tier);
+    try {
+      const cached = await redis.get<{ result: string; degraded: boolean; score: number }>(key);
+      if (cached?.result) {
+        log.stage('cache_hit', { key: key.slice(0, 30), score: cached.score, chars: cached.result.length });
+        trackUsage(identifier, tier, 'cache');
+        log.done(200, { tier, resultBytes: cached.result.length, remaining, score: cached.score, pipeline: 'cache' });
+        return NextResponse.json({ result: cached.result, remaining, degraded: cached.degraded });
+      }
+      log.stage('cache_miss', { key: key.slice(0, 30) });
+    } catch {
+      log.warn('cache_check_failed');
+    }
 
     // ════════════════════════════════════════════
     // HARNESS PIPELINE (Pro) vs SINGLE-SHOT (Free)
@@ -304,6 +333,17 @@ export async function POST(request: NextRequest) {
     log.stage('result_quality', quality);
 
     trackUsage(identifier, tier, tierModel);
+
+    // Cache non-degraded results
+    if (!degraded && quality.score >= 50) {
+      try {
+        await redis.set(key, { result: bestResult, degraded, score: quality.score }, { ex: CACHE_TTL });
+        log.stage('cache_set', { key: key.slice(0, 30), ttl: CACHE_TTL, score: quality.score });
+      } catch {
+        log.warn('cache_set_failed');
+      }
+    }
+
     log.done(200, { tier, resultBytes: bestResult.length, remaining, score: quality.score, degraded, pipeline: isPro ? 'harness' : 'single-shot' });
     return NextResponse.json({ result: bestResult, remaining, degraded });
   } catch (err) {
