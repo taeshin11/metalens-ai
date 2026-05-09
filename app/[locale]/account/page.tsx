@@ -15,6 +15,10 @@ export default function AccountPage() {
   const locale = params.locale as string;
   const t = useTranslations('account');
   const [usage, setUsage] = useState<{ remaining: number; limit: number } | null>(null);
+  const [cancelModal, setCancelModal] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelDone, setCancelDone] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -143,15 +147,87 @@ export default function AccountPage() {
             {t('manageSubscription')}
           </h3>
           <p className="text-sm text-[var(--color-text-muted)] mb-4">{t('manageDesc')}</p>
-          <a
-            href="https://metalens.lemonsqueezy.com/billing"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[var(--color-primary)] border-2 border-[var(--color-primary)] rounded-xl hover:bg-[var(--color-primary)]/5 transition-colors"
-          >
-            {t('manageBilling')}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          </a>
+          <div className="flex items-center gap-3 flex-wrap">
+            <a
+              href="https://metalens.lemonsqueezy.com/billing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[var(--color-primary)] border-2 border-[var(--color-primary)] rounded-xl hover:bg-[var(--color-primary)]/5 transition-colors"
+            >
+              {t('manageBilling')}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+            <button
+              onClick={() => setCancelModal(true)}
+              className="px-5 py-2.5 text-sm font-medium text-red-500 border-2 border-red-200 rounded-xl hover:bg-red-50 transition-colors"
+            >
+              {t('cancelSubscription')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Modal */}
+      {cancelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
+            {cancelDone ? (
+              <div className="text-center py-4">
+                <p className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">{t('cancelledTitle')}</p>
+                <p className="text-sm text-[var(--color-text-muted)] mb-4">{t('cancelledDesc')}</p>
+                <button
+                  onClick={() => { setCancelModal(false); window.location.reload(); }}
+                  className="px-6 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-xl"
+                >
+                  {t('close')}
+                </button>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-lg font-bold text-[var(--color-text-primary)] mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+                  {t('cancelTitle')}
+                </h3>
+                <p className="text-sm text-[var(--color-text-muted)] mb-4">{t('cancelConfirm')}</p>
+                <textarea
+                  value={cancelReason}
+                  onChange={e => setCancelReason(e.target.value)}
+                  placeholder={t('cancelReasonPlaceholder')}
+                  className="w-full px-4 py-3 text-sm border-2 border-[var(--color-border)] rounded-xl mb-4 resize-none focus:border-red-300 focus:outline-none"
+                  rows={3}
+                />
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setCancelModal(false)}
+                    className="flex-1 px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] border-2 border-[var(--color-border)] rounded-xl hover:bg-[var(--color-bg-secondary)]"
+                  >
+                    {t('cancelKeep')}
+                  </button>
+                  <button
+                    onClick={async () => {
+                      setCancelling(true);
+                      try {
+                        const res = await fetch('/api/lemonsqueezy/cancel', { method: 'POST' });
+                        if (res.ok) {
+                          setCancelDone(true);
+                          clog.info('subscription_cancelled', 'AccountPage', { reason: cancelReason });
+                        } else {
+                          const data = await res.json();
+                          alert(data.error || 'Failed to cancel');
+                        }
+                      } catch {
+                        alert('Network error');
+                      }
+                      setCancelling(false);
+                    }}
+                    disabled={cancelling}
+                    className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-red-500 rounded-xl hover:bg-red-600 disabled:opacity-50"
+                  >
+                    {cancelling ? '...' : t('cancelConfirmBtn')}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       )}
 
