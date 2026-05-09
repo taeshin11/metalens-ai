@@ -40,15 +40,16 @@ export async function POST() {
     const subId = activeSub.id;
     log.stage('cancelling', { subscriptionId: subId });
 
-    await cancelSubscription(subId);
-    log.stage('subscription_cancelled', { subscriptionId: subId });
+    const { data: cancelled } = await cancelSubscription(subId);
+    const endsAt = cancelled?.data?.attributes?.ends_at;
+    log.stage('subscription_cancelled', { subscriptionId: subId, endsAt });
 
-    // Downgrade tier immediately
-    await setUserTier(session.clerkId, 'free');
-    log.stage('tier_downgraded', { user: maskId(session.email) });
+    // Do NOT downgrade tier now — user keeps Pro until period ends.
+    // LemonSqueezy will send subscription_expired webhook at endsAt,
+    // which triggers automatic downgrade to free in webhook/route.ts.
 
-    log.done(200, { subscriptionId: subId });
-    return NextResponse.json({ ok: true, message: 'Subscription cancelled' });
+    log.done(200, { subscriptionId: subId, endsAt });
+    return NextResponse.json({ ok: true, endsAt });
   } catch (err) {
     log.error('cancel_failed', err);
     log.done(500, { reason: 'cancel_error' });
