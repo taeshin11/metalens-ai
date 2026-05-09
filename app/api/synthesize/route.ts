@@ -115,6 +115,7 @@ export async function POST(request: NextRequest) {
 
     if (isPro) {
       // ── Pro: 3-step harness pipeline ──
+      const pipelineStart = performance.now();
       log.stage('harness_start', { mode: '3-step' });
 
       // Step 1: Extract structured data
@@ -129,16 +130,27 @@ export async function POST(request: NextRequest) {
         log,
       });
 
-      if (!extractResult) {
-        log.warn('step1_extract_failed_fallback_single_shot');
-        // Fallback to single-shot
+      // Validate Step 1 output
+      let extractValid = false;
+      if (extractResult) {
+        try {
+          const jsonMatch = extractResult.match(/\[[\s\S]*\]/);
+          if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            extractValid = Array.isArray(parsed) && parsed.length > 0 && parsed.every((o: any) => o.pmid);
+          }
+        } catch { /* invalid JSON */ }
+      }
+
+      if (!extractValid) {
+        log.warn('step1_extract_invalid', { hadResult: !!extractResult, chars: extractResult?.length || 0 });
         bestResult = await singleShot(prompt, tierModel, log);
       } else {
-        log.stage('step1_extract_done', { chars: extractResult.length });
+        log.stage('step1_extract_done', { chars: extractResult!.length });
 
         // Step 2: Synthesize from structured data
         log.stage('step2_synthesize_start');
-        const synthPrompt = buildSynthPrompt(extractResult, prompt);
+        const synthPrompt = buildSynthPrompt(extractResult!, prompt);
         const synthResult = await callGeminiWithFallback({
           prompt: synthPrompt,
           systemInstruction: SYNTH_SYSTEM,
@@ -154,23 +166,33 @@ export async function POST(request: NextRequest) {
         } else {
           log.stage('step2_synthesize_done', { chars: synthResult.length });
 
-          // Step 3: Self-validation (only if time budget allows)
-          const elapsed = log.id; // just use as proxy — real check below
-          log.stage('step3_validate_start');
-          const validated = await callGeminiWithFallback({
-            prompt: VALIDATE_PROMPT + synthResult,
-            systemInstruction: SYNTH_SYSTEM,
-            temperature: 0.1,
-            maxOutputTokens: 8000,
-            model: tierModel,
-            log,
-          });
+          // Step 3: Self-validation — conditional on quality + time budget
+          const step2Quality = scoreResult(synthResult);
+          const elapsedMs = performance.now() - pipelineStart;
 
-          bestResult = validated || synthResult;
-          log.stage('step3_validate_done', {
-            chars: bestResult.length,
-            changed: validated !== synthResult,
-          });
+          if (step2Quality.score >= 75 && step2Quality.flags.length <= 1) {
+            log.stage('step3_validate_skipped', { reason: 'high_confidence', score: step2Quality.score, elapsedMs: Math.round(elapsedMs) });
+            bestResult = synthResult;
+          } else if (elapsedMs > 45_000) {
+            log.warn('step3_validate_skipped_timeout', { elapsedMs: Math.round(elapsedMs), score: step2Quality.score });
+            bestResult = synthResult;
+          } else {
+            log.stage('step3_validate_start', { score: step2Quality.score, elapsedMs: Math.round(elapsedMs) });
+            const validated = await callGeminiWithFallback({
+              prompt: VALIDATE_PROMPT + synthResult,
+              systemInstruction: SYNTH_SYSTEM,
+              temperature: 0.1,
+              maxOutputTokens: 8000,
+              model: tierModel,
+              log,
+            });
+
+            bestResult = validated || synthResult;
+            log.stage('step3_validate_done', {
+              chars: bestResult.length,
+              changed: validated !== synthResult,
+            });
+          }
         }
       }
 

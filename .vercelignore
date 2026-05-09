@@ -2,3 +2,6 @@ papers-api/
 research_history/
 memory/
 .claude/
+data/
+scripts/
+*.db
