@@ -54,3 +54,4 @@ FEATURES.txt
 # karpathy loop eval caches
 scripts/.eval-cache/
 scripts/.karpathy-results/
+data/

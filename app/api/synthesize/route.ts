@@ -118,9 +118,12 @@ export async function POST(request: NextRequest) {
       const pipelineStart = performance.now();
       log.stage('harness_start', { mode: '3-step' });
 
-      // Step 1: Extract structured data
-      log.stage('step1_extract_start');
+      // Step 1: Extract structured data from abstracts
       const abstracts = prompt.split('--- ABSTRACTS ---')[1] || '';
+      log.stage('step1_extract_start', { abstractChars: abstracts.length });
+      const abstractCount = (abstracts.match(/PMID[:\s]*\d{7,8}/gi) || []).length;
+      log.stage('step1_input', { abstractCount, abstractChars: abstracts.length, model: tierModel });
+
       const extractResult = await callGeminiWithFallback({
         prompt: EXTRACT_PROMPT + abstracts,
         systemInstruction: EXTRACT_SYSTEM,
@@ -130,27 +133,52 @@ export async function POST(request: NextRequest) {
         log,
       });
 
-      // Validate Step 1 output
+      const step1Ms = Math.round(performance.now() - pipelineStart);
+
+      // Validate Step 1 JSON output
       let extractValid = false;
+      let extractedPapers = 0;
+      let extractParseError = '';
       if (extractResult) {
         try {
           const jsonMatch = extractResult.match(/\[[\s\S]*\]/);
           if (jsonMatch) {
             const parsed = JSON.parse(jsonMatch[0]);
             extractValid = Array.isArray(parsed) && parsed.length > 0 && parsed.every((o: any) => o.pmid);
+            extractedPapers = parsed.length;
+            if (!extractValid) extractParseError = 'schema_invalid: missing pmid fields';
+          } else {
+            extractParseError = 'no_json_array_found';
           }
-        } catch { /* invalid JSON */ }
+        } catch (e) {
+          extractParseError = `json_parse_error: ${e instanceof Error ? e.message : String(e).slice(0, 100)}`;
+        }
+      } else {
+        extractParseError = 'llm_returned_null';
       }
 
+      log.stage('step1_extract_result', {
+        valid: extractValid,
+        extractedPapers,
+        chars: extractResult?.length || 0,
+        parseError: extractParseError || undefined,
+        ms: step1Ms,
+        inputAbstracts: abstractCount,
+      });
+
       if (!extractValid) {
-        log.warn('step1_extract_invalid', { hadResult: !!extractResult, chars: extractResult?.length || 0 });
+        log.warn('step1_fallback_to_single_shot', { reason: extractParseError, ms: step1Ms });
         bestResult = await singleShot(prompt, tierModel, log);
       } else {
-        log.stage('step1_extract_done', { chars: extractResult!.length });
-
-        // Step 2: Synthesize from structured data
-        log.stage('step2_synthesize_start');
+        // Step 2: Synthesize from structured data + original abstracts
         const synthPrompt = buildSynthPrompt(extractResult!, prompt);
+        log.stage('step2_synthesize_start', {
+          structuredDataChars: extractResult!.length,
+          synthPromptChars: synthPrompt.length,
+          extractedPapers,
+          ms: Math.round(performance.now() - pipelineStart),
+        });
+
         const synthResult = await callGeminiWithFallback({
           prompt: synthPrompt,
           systemInstruction: SYNTH_SYSTEM,
@@ -160,24 +188,52 @@ export async function POST(request: NextRequest) {
           log,
         });
 
+        const step2Ms = Math.round(performance.now() - pipelineStart);
+
         if (!synthResult) {
-          log.warn('step2_synthesize_failed_fallback_single_shot');
+          log.warn('step2_fallback_to_single_shot', { reason: 'llm_returned_null', ms: step2Ms });
           bestResult = await singleShot(prompt, tierModel, log);
         } else {
-          log.stage('step2_synthesize_done', { chars: synthResult.length });
+          const step2Quality = scoreResult(synthResult);
+          log.stage('step2_synthesize_done', {
+            chars: synthResult.length,
+            ms: step2Ms,
+            score: step2Quality.score,
+            headers: step2Quality.boldHeaders,
+            pmids: step2Quality.realPmids,
+            fakePmids: step2Quality.fakePmids,
+            ci: step2Quality.ciCount,
+            pVal: step2Quality.pValCount,
+            n: step2Quality.nCount,
+            flags: step2Quality.flags.length ? step2Quality.flags : ['CLEAN'],
+          });
 
           // Step 3: Self-validation — conditional on quality + time budget
-          const step2Quality = scoreResult(synthResult);
           const elapsedMs = performance.now() - pipelineStart;
 
           if (step2Quality.score >= 75 && step2Quality.flags.length <= 1) {
-            log.stage('step3_validate_skipped', { reason: 'high_confidence', score: step2Quality.score, elapsedMs: Math.round(elapsedMs) });
+            log.stage('step3_skipped', {
+              reason: 'high_confidence',
+              score: step2Quality.score,
+              flags: step2Quality.flags,
+              elapsedMs: Math.round(elapsedMs),
+            });
             bestResult = synthResult;
           } else if (elapsedMs > 45_000) {
-            log.warn('step3_validate_skipped_timeout', { elapsedMs: Math.round(elapsedMs), score: step2Quality.score });
+            log.warn('step3_skipped_timeout', {
+              reason: 'timeout_approaching',
+              score: step2Quality.score,
+              elapsedMs: Math.round(elapsedMs),
+              remainingMs: Math.round(55_000 - elapsedMs),
+            });
             bestResult = synthResult;
           } else {
-            log.stage('step3_validate_start', { score: step2Quality.score, elapsedMs: Math.round(elapsedMs) });
+            log.stage('step3_validate_start', {
+              reason: step2Quality.flags.join(',') || 'low_score',
+              score: step2Quality.score,
+              elapsedMs: Math.round(elapsedMs),
+            });
+
             const validated = await callGeminiWithFallback({
               prompt: VALIDATE_PROMPT + synthResult,
               systemInstruction: SYNTH_SYSTEM,
@@ -187,16 +243,38 @@ export async function POST(request: NextRequest) {
               log,
             });
 
+            const step3Ms = Math.round(performance.now() - pipelineStart);
+            const wasChanged = !!(validated && validated !== synthResult);
             bestResult = validated || synthResult;
-            log.stage('step3_validate_done', {
-              chars: bestResult.length,
-              changed: validated !== synthResult,
-            });
+
+            if (wasChanged) {
+              const beforeScore = step2Quality.score;
+              const afterScore = scoreResult(bestResult).score;
+              log.stage('step3_validate_corrected', {
+                ms: step3Ms,
+                beforeScore,
+                afterScore,
+                delta: afterScore - beforeScore,
+                beforeChars: synthResult.length,
+                afterChars: bestResult.length,
+              });
+            } else {
+              log.stage('step3_validate_unchanged', {
+                ms: step3Ms,
+                score: step2Quality.score,
+                reason: validated ? 'no_errors_found' : 'llm_returned_null',
+              });
+            }
           }
         }
       }
 
-      log.stage('harness_done', { chars: bestResult.length });
+      const totalMs = Math.round(performance.now() - pipelineStart);
+      log.stage('harness_done', {
+        totalMs,
+        chars: bestResult.length,
+        stepsCompleted: bestResult ? (extractValid ? 'extract+synth' : 'single_shot_fallback') : 'failed',
+      });
     } else {
       // ── Free: single-shot with retry ──
       log.stage('single_shot_start');
@@ -237,11 +315,14 @@ export async function POST(request: NextRequest) {
 
 // ── Single-shot with retry (for Free tier) ──
 async function singleShot(prompt: string, model: string, log: any): Promise<string> {
+  const t0 = performance.now();
   const MAX_ATTEMPTS = 2;
   let bestResult = '';
   let bestScore = -1;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    log.stage('single_shot_attempt', { attempt, model });
+
     const result = await callGeminiWithFallback({
       prompt,
       systemInstruction: SYNTH_SYSTEM,
@@ -251,9 +332,26 @@ async function singleShot(prompt: string, model: string, log: any): Promise<stri
       log,
     });
 
-    if (!result) continue;
+    if (!result) {
+      log.warn('single_shot_null', { attempt, ms: Math.round(performance.now() - t0) });
+      continue;
+    }
 
     const q = scoreResult(result);
+    log.stage('single_shot_scored', {
+      attempt,
+      score: q.score,
+      chars: result.length,
+      headers: q.boldHeaders,
+      pmids: q.realPmids,
+      fakePmids: q.fakePmids,
+      ci: q.ciCount,
+      pVal: q.pValCount,
+      n: q.nCount,
+      flags: q.flags.length ? q.flags : ['CLEAN'],
+      ms: Math.round(performance.now() - t0),
+    });
+
     if (q.score > bestScore) {
       bestResult = result;
       bestScore = q.score;
@@ -262,9 +360,10 @@ async function singleShot(prompt: string, model: string, log: any): Promise<stri
     const isGarbage = q.boldHeaders < 1 || result.length < 100 || q.fakePmids > 0;
     if (!isGarbage) break;
 
-    log.warn('single_shot_retry', { attempt, ...q });
+    log.warn('single_shot_garbage', { attempt, reason: q.flags.join(','), score: q.score });
   }
 
+  log.stage('single_shot_done', { bestScore, chars: bestResult.length, ms: Math.round(performance.now() - t0) });
   return bestResult;
 }
 
