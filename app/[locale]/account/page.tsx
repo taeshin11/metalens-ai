@@ -218,6 +218,9 @@ export default function AccountPage() {
                           setCancelEndsAt(data.endsAt || '');
                           setCancelDone(true);
                           clog.info('subscription_cancelled', 'AccountPage', { reason: cancelReason, endsAt: data.endsAt });
+                        } else if (res.status === 404) {
+                          alert(t('cancelNoSub'));
+                          setCancelModal(false);
                         } else {
                           const data = await res.json();
                           alert(data.error || 'Failed to cancel');

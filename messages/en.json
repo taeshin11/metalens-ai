@@ -475,6 +475,7 @@
     "cancelledTitle": "Subscription Cancelled",
     "cancelledDesc": "Your subscription has been scheduled for cancellation. You can continue using Pro until the end of your billing period.",
     "cancelledEndsAt": "Pro access until: {date}",
+    "cancelNoSub": "No active subscription found. Your Pro access was set by an administrator.",
     "close": "Close",
     "signOut": "Sign Out",
     "email": "Email",
