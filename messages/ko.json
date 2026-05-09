@@ -201,7 +201,8 @@
     "howItWorks": "작동 방식",
     "faq": "자주 묻는 질문",
     "blog": "블로그",
-    "pricing": "요금제"
+    "pricing": "요금제",
+    "account": "내 계정"
   },
   "footer": {
     "builtBy": "제작",
@@ -359,7 +360,8 @@
     "forestTitle": "Forest Plot",
     "forestDesc": "통합 결과 시각화",
     "cta": "요금제 보기",
-    "pricing": "월 $4.99부터"
+    "pricing": "요금제",
+    "account": "내 계정"
   },
   "shareButtons": {
     "label": "공유:",
@@ -394,6 +396,11 @@
     "dailyUsage": "일일 사용량",
     "analysesToday": "오늘 분석 횟수",
     "resetsDaily": "매일 자정에 초기화됩니다.",
+    "manageSubscription": "구독 관리",
+    "manageDesc": "청구서 확인, 결제 수단 변경, 구독 취소가 가능합니다.",
+    "manageBilling": "결제 관리",
+    "upgradePrompt": "데이터 추출, 포레스트 플롯, AI 논문 작성 도구 등 Pro 기능을 사용해보세요.",
+    "upgradeToPro": "Pro로 업그레이드",
     "signOut": "로그아웃",
     "email": "이메일",
     "name": "이름",
