@@ -8,6 +8,16 @@ import { TIER_CONFIG } from '@/lib/constants';
 import type { Tier } from '@/lib/constants';
 import { clog } from '@/lib/client-logger';
 
+interface SavedItem {
+  id: string;
+  keywords: string;
+  mode: string;
+  consensusLevel: string | null;
+  consensusScore: number | null;
+  createdAt: number;
+  articles: { pmid: string }[];
+}
+
 export default function AccountPage() {
   const { user, loading, logout } = useAuth();
   const params = useParams();
@@ -15,11 +25,9 @@ export default function AccountPage() {
   const locale = params.locale as string;
   const t = useTranslations('account');
   const [usage, setUsage] = useState<{ remaining: number; limit: number } | null>(null);
-  const [cancelModal, setCancelModal] = useState(false);
-  const [cancelReason, setCancelReason] = useState('');
-  const [cancelling, setCancelling] = useState(false);
-  const [cancelDone, setCancelDone] = useState(false);
-  const [cancelEndsAt, setCancelEndsAt] = useState('');
+  const [savedAnalyses, setSavedAnalyses] = useState<SavedItem[]>([]);
+  const [savedLoading, setSavedLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -32,6 +40,14 @@ export default function AccountPage() {
       const tier = user.tier || 'free';
       const config = TIER_CONFIG[tier];
       setUsage({ remaining: config.dailyLimit, limit: config.dailyLimit });
+      if (tier === 'pro') {
+        setSavedLoading(true);
+        fetch('/api/saved')
+          .then(r => r.ok ? r.json() : null)
+          .then(data => { if (data?.analyses) setSavedAnalyses(data.analyses); })
+          .catch(() => {})
+          .finally(() => setSavedLoading(false));
+      }
     }
   }, [user]);
 
@@ -141,116 +157,74 @@ export default function AccountPage() {
         </p>
       </div>
 
-      {/* Subscription Management */}
+      {/* Saved Analyses (Pro only) */}
       {tier === 'pro' && (
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--color-border)] mb-6">
-          <h3 className="text-lg font-semibold text-[var(--color-text-primary)] mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
-            {t('manageSubscription')}
-          </h3>
-          <p className="text-sm text-[var(--color-text-muted)] mb-4">{t('manageDesc')}</p>
-          <div className="flex items-center gap-3 flex-wrap">
-            <a
-              href="https://metalens.lemonsqueezy.com/billing"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[var(--color-primary)] border-2 border-[var(--color-primary)] rounded-xl hover:bg-[var(--color-primary)]/5 transition-colors"
-            >
-              {t('manageBilling')}
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </a>
-            <button
-              onClick={() => setCancelModal(true)}
-              className="px-5 py-2.5 text-sm font-medium text-red-500 border-2 border-red-200 rounded-xl hover:bg-red-50 transition-colors"
-            >
-              {t('cancelSubscription')}
-            </button>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Saved Analyses
+            </h3>
+            <span className="text-xs text-[var(--color-text-muted)]">{savedAnalyses.length} / 50</span>
           </div>
-        </div>
-      )}
-
-      {/* Cancel Modal */}
-      {cancelModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-xl">
-            {cancelDone ? (
-              <div className="text-center py-4">
-                <p className="text-lg font-semibold text-[var(--color-text-primary)] mb-2">{t('cancelledTitle')}</p>
-                <p className="text-sm text-[var(--color-text-muted)] mb-2">{t('cancelledDesc')}</p>
-                {cancelEndsAt && (
-                  <p className="text-sm font-medium text-[var(--color-primary-dark)] mb-4">
-                    {t('cancelledEndsAt', { date: new Date(cancelEndsAt).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' }) })}
-                  </p>
-                )}
-                <button
-                  onClick={() => { setCancelModal(false); window.location.reload(); }}
-                  className="px-6 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-xl"
-                >
-                  {t('close')}
-                </button>
-              </div>
-            ) : (
-              <>
-                <h3 className="text-lg font-bold text-[var(--color-text-primary)] mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
-                  {t('cancelTitle')}
-                </h3>
-                <p className="text-sm text-[var(--color-text-muted)] mb-4">{t('cancelConfirm')}</p>
-                <textarea
-                  value={cancelReason}
-                  onChange={e => setCancelReason(e.target.value)}
-                  placeholder={t('cancelReasonPlaceholder')}
-                  className="w-full px-4 py-3 text-sm border-2 border-[var(--color-border)] rounded-xl mb-4 resize-none focus:border-red-300 focus:outline-none"
-                  rows={3}
-                />
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setCancelModal(false)}
-                    className="flex-1 px-4 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] border-2 border-[var(--color-border)] rounded-xl hover:bg-[var(--color-bg-secondary)]"
-                  >
-                    {t('cancelKeep')}
-                  </button>
+          {savedLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="w-6 h-6 border-2 border-[var(--color-primary)]/30 border-t-[var(--color-primary)] rounded-full animate-spin" />
+            </div>
+          ) : savedAnalyses.length === 0 ? (
+            <p className="text-sm text-[var(--color-text-muted)] text-center py-6">
+              No saved analyses yet. Use the Save button on any analysis result.
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {savedAnalyses.map(item => (
+                <div key={item.id} className="flex items-center gap-3 p-3 bg-[var(--color-bg-primary)] rounded-xl group">
+                  <div className="flex-1 min-w-0">
+                    <a
+                      href={`/${locale}?q=${encodeURIComponent(item.keywords)}`}
+                      className="text-sm font-medium text-[var(--color-text-primary)] hover:text-[var(--color-primary)] truncate block"
+                    >
+                      {item.keywords}
+                    </a>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--color-bg-secondary)] text-[var(--color-text-muted)]">
+                        {item.mode === 'gap-finder' ? 'Gap Finder' : 'Meta-Analysis'}
+                      </span>
+                      {item.consensusLevel && (
+                        <span className="text-[10px] text-[var(--color-text-muted)]">
+                          {item.consensusLevel} {item.consensusScore}%
+                        </span>
+                      )}
+                      <span className="text-[10px] text-[var(--color-text-muted)]">
+                        {item.articles?.length || 0} papers
+                      </span>
+                      <span className="text-[10px] text-[var(--color-text-muted)]">
+                        {new Date(item.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                  </div>
                   <button
                     onClick={async () => {
-                      setCancelling(true);
+                      setDeletingId(item.id);
                       try {
-                        const res = await fetch('/api/lemonsqueezy/cancel', { method: 'POST' });
-                        if (res.ok) {
-                          const data = await res.json();
-                          setCancelEndsAt(data.endsAt || '');
-                          setCancelDone(true);
-                          clog.info('subscription_cancelled', 'AccountPage', { reason: cancelReason, endsAt: data.endsAt });
-                        } else if (res.status === 404) {
-                          alert(t('cancelNoSub'));
-                          setCancelModal(false);
-                        } else {
-                          const data = await res.json();
-                          alert(data.error || 'Failed to cancel');
-                        }
-                      } catch {
-                        alert('Network error');
-                      }
-                      setCancelling(false);
+                        const res = await fetch(`/api/saved/${item.id}`, { method: 'DELETE' });
+                        if (res.ok) setSavedAnalyses(prev => prev.filter(a => a.id !== item.id));
+                      } catch {}
+                      setDeletingId(null);
                     }}
-                    disabled={cancelling}
-                    className="flex-1 px-4 py-2.5 text-sm font-semibold text-white bg-red-500 rounded-xl hover:bg-red-600 disabled:opacity-50"
+                    disabled={deletingId === item.id}
+                    className="opacity-0 group-hover:opacity-100 p-1 text-[var(--color-text-muted)] hover:text-red-500 transition-all"
+                    title="Delete"
                   >
-                    {cancelling ? '...' : t('cancelConfirmBtn')}
+                    {deletingId === item.id ? (
+                      <span className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin inline-block" />
+                    ) : (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                    )}
                   </button>
                 </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {tier === 'free' && (
-        <div className="bg-[var(--color-primary)]/5 rounded-2xl p-6 border border-[var(--color-primary)]/20 mb-6 text-center">
-          <p className="text-sm text-[var(--color-text-secondary)] mb-3">{t('upgradePrompt')}</p>
-          <a
-            href={`/${locale}/pricing`}
-            className="inline-flex items-center px-5 py-2.5 text-sm font-semibold bg-[var(--color-primary)] text-white rounded-xl hover:bg-[var(--color-primary-dark)] transition-colors"
-          >
-            {t('upgradeToPro')}
-          </a>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

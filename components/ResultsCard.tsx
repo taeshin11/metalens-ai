@@ -105,6 +105,7 @@ export default function ResultsCard({ result, articles, keywords, onNewSearch, m
   const [citationFormat, setCitationFormat] = useState<'apa' | 'mla' | 'vancouver'>('apa');
   const [citationCopied, setCitationCopied] = useState(false);
   const [shareState, setShareState] = useState<'idle' | 'loading' | 'copied'>('idle');
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
   const handleExtract = useCallback(async () => {
     setExtracting(true);
@@ -374,15 +375,16 @@ Output the proposal with each section header in bold. Write in formal academic l
   // ── Consensus Meter ─────────────────────────────────────────
   const computeConsensus = (text: string): { score: number; level: 'strong' | 'moderate' | 'mixed' | 'limited' } => {
     const lower = text.toLowerCase();
-    const agree = (lower.match(/\b(consistently|consistently showed|all studies|majority|strong evidence|significantly|clear evidence|robust|well-established|consensus|confirmed|supports|demonstrates|confirms|guideline recommends)\b/g) || []).length;
-    const disagree = (lower.match(/\b(conflicting|inconsistent|heterogeneous|mixed results|limited evidence|uncertain|inconclusive|insufficient|controversial|debate|varies|no significant|lack of)\b/g) || []).length;
+    const agreeRe = /\b(consistently|all studies|majority|strong evidence|significantly|clear evidence|robust|well-established|consensus|confirmed|supports|demonstrates|confirms|guideline recommends|well-documented|effective|beneficial|superior|clear benefit|compelling|recommended|established|validated|appears to reduce|evidence indicates|suggests? a? ?benefit|associated with improved|significant reduction|significant improvement|well-tolerated|widely used)\b/g;
+    const disagreeRe = /\b(conflicting|inconsistent|heterogeneous|mixed results|limited evidence|uncertain|inconclusive|insufficient|controversial|debate|varies|no significant|lack of|unclear|equivocal|no consensus|contradictory|remains unknown|paucity|not been studied|not powered|remains uncertain|data are scarce|further research|not yet established|citation needed)\b/g;
+    const agree = (lower.match(agreeRe) || []).length;
+    const disagree = (lower.match(disagreeRe) || []).length;
     const total = agree + disagree;
-    if (total === 0) return { score: 50, level: 'limited' };
+    if (total <= 1) return { score: 50, level: 'limited' };
     const score = Math.round((agree / total) * 100);
     if (score >= 70) return { score, level: 'strong' };
     if (score >= 50) return { score, level: 'moderate' };
-    if (total >= 2) return { score, level: 'mixed' };
-    return { score, level: 'limited' };
+    return { score, level: 'mixed' };
   };
 
   const consensus = computeConsensus(result.english);
@@ -421,6 +423,35 @@ Output the proposal with each section header in bold. Write in formal academic l
     } catch (err) {
       clog.error('share_create_failed', 'ResultsCard', err, { ms: Math.round(performance.now() - t0) });
       setShareState('idle');
+    }
+  };
+
+  // ── Save Handler (Pro only) ────────────────────────────────
+  const handleSave = async () => {
+    if (tier !== 'pro' || saveState === 'saving') return;
+    setSaveState('saving');
+    try {
+      const res = await fetch('/api/saved', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          keywords,
+          mode,
+          result,
+          articles: articles.slice(0, 50).map(a => ({
+            pmid: a.pmid, title: a.title, authors: a.authors?.slice(0, 3),
+            journal: a.journal, year: a.year, doi: a.doi,
+          })),
+          consensus: { score: consensus.score, level: consensus.level },
+        }),
+      });
+      if (!res.ok) throw new Error(`save ${res.status}`);
+      setSaveState('saved');
+      clog.info('analysis_saved', 'ResultsCard', { keywords: keywords.slice(0, 40) });
+    } catch (err) {
+      clog.error('analysis_save_failed', 'ResultsCard', err);
+      setSaveState('error');
+      setTimeout(() => setSaveState('idle'), 3000);
     }
   };
 
@@ -467,6 +498,29 @@ Output the proposal with each section header in bold. Write in formal academic l
                 <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>{t('shareBtn')}</>
               )}
             </button>
+            {tier === 'pro' && (
+              <button
+                onClick={handleSave}
+                disabled={saveState === 'saving' || saveState === 'saved'}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                  saveState === 'saved'
+                    ? 'text-[var(--color-success)] bg-[var(--color-success)]/10'
+                    : saveState === 'error'
+                      ? 'text-red-600 bg-red-50'
+                      : 'text-[var(--color-text-secondary)] bg-[var(--color-bg-secondary)] hover:bg-[var(--color-border)]'
+                }`}
+              >
+                {saveState === 'saving' ? (
+                  <><span className="w-3 h-3 border-2 border-current/30 border-t-current rounded-full animate-spin" />Saving...</>
+                ) : saveState === 'saved' ? (
+                  <>&#10003; Saved</>
+                ) : saveState === 'error' ? (
+                  <>Failed</>
+                ) : (
+                  <><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save</>
+                )}
+              </button>
+            )}
             {tier === 'pro' && (
               <button
                 onClick={handleExportPDF}

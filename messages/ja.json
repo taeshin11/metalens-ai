@@ -146,8 +146,7 @@
     "howItWorks": "使い方",
     "faq": "よくある質問",
     "blog": "ブログ",
-    "pricing": "料金プラン",
-    "account": "マイアカウント"
+    "pricing": "料金プラン"
   },
   "footer": {
     "builtBy": "開発",
@@ -305,8 +304,7 @@
     "forestTitle": "Forest Plot",
     "forestDesc": "統合結果を可視化",
     "cta": "プランを見る",
-    "pricing": "料金プラン",
-    "account": "マイアカウント"
+    "pricing": "月額$4.99から"
   },
   "shareButtons": {
     "label": "共有:",
@@ -341,11 +339,6 @@
     "dailyUsage": "本日の使用状況",
     "analysesToday": "本日の分析回数",
     "resetsDaily": "毎日深夜にリセットされます。",
-    "manageSubscription": "サブスクリプション管理",
-    "manageDesc": "請求書の確認、支払い方法の変更、サブスクリプションの解約が可能です。",
-    "manageBilling": "請求管理",
-    "upgradePrompt": "データ抽出、フォレストプロット、AI論文作成ツールなどのPro機能をお試しください。",
-    "upgradeToPro": "Proにアップグレード",
     "signOut": "ログアウト",
     "email": "メール",
     "name": "名前",

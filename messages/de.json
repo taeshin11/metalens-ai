@@ -146,8 +146,7 @@
     "howItWorks": "So funktioniert es",
     "faq": "Häufige Fragen",
     "blog": "Blog",
-    "pricing": "Preise",
-    "account": "Mein Konto"
+    "pricing": "Preise"
   },
   "footer": {
     "builtBy": "Entwickelt von",
@@ -305,8 +304,7 @@
     "forestTitle": "Forest Plot",
     "forestDesc": "Kombinierte Ergebnisse visualisieren",
     "cta": "Pläne ansehen",
-    "pricing": "Preise",
-    "account": "Mein Konto"
+    "pricing": "Ab $4,99/Monat"
   },
   "shareButtons": {
     "label": "Teilen:",
@@ -341,11 +339,6 @@
     "dailyUsage": "Tägliche Nutzung",
     "analysesToday": "Analysen heute",
     "resetsDaily": "Wird täglich um Mitternacht zurückgesetzt.",
-    "manageSubscription": "Abonnement verwalten",
-    "manageDesc": "Rechnungen einsehen, Zahlungsmethode ändern oder Abonnement kündigen.",
-    "manageBilling": "Abrechnung verwalten",
-    "upgradePrompt": "Schalten Sie Pro-Funktionen frei: Datenextraktion, Forest Plots und AI-Schreibtools.",
-    "upgradeToPro": "Auf Pro upgraden",
     "signOut": "Abmelden",
     "email": "E-Mail",
     "name": "Name",

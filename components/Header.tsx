@@ -93,13 +93,6 @@ export default function Header() {
               {link.label}
             </Link>
           ))}
-          <Link
-            href={`/${locale}/account`}
-            onClick={() => setMenuOpen(false)}
-            className="block py-2 text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)]"
-          >
-            {t('account')}
-          </Link>
           <div className="pt-2 border-t border-[var(--color-border)] mt-2">
             <UserMenu />
           </div>

@@ -146,8 +146,7 @@
     "howItWorks": "使用方法",
     "faq": "常见问题",
     "blog": "博客",
-    "pricing": "定价",
-    "account": "我的账户"
+    "pricing": "定价"
   },
   "footer": {
     "builtBy": "开发者",
@@ -305,8 +304,7 @@
     "forestTitle": "Forest Plot",
     "forestDesc": "可视化合并结果",
     "cta": "查看套餐",
-    "pricing": "定价",
-    "account": "我的账户"
+    "pricing": "每月$4.99起"
   },
   "shareButtons": {
     "label": "分享:",
@@ -341,11 +339,6 @@
     "dailyUsage": "每日使用量",
     "analysesToday": "今日分析次数",
     "resetsDaily": "每天午夜重置。",
-    "manageSubscription": "订阅管理",
-    "manageDesc": "查看账单、更改支付方式或取消订阅。",
-    "manageBilling": "账单管理",
-    "upgradePrompt": "解锁数据提取、森林图、AI写作工具等Pro功能。",
-    "upgradeToPro": "升级到Pro",
     "signOut": "退出登录",
     "email": "邮箱",
     "name": "姓名",

@@ -41,16 +41,14 @@ export function buildPrompt(
     selectedArticles.push({ ...a, abstract: truncatedAbstract, fullText: ftBudget || undefined });
   }
 
+  const pmidList = selectedArticles.map((a) => a.pmid).join(', ');
+
   const abstractsText = selectedArticles
     .map((a, i) => {
       const typeLabel = a.pubTypes?.length ? `[${a.pubTypes.join(', ')}]` : '';
-      const sourceLabel = a.source === 'papers-db' ? '[CACHED]' : '';
       const specialtyLabel = a.specialty ? `[${a.specialty}]` : '';
-      const labels = [typeLabel, sourceLabel, specialtyLabel].filter(Boolean).join(' ');
+      const labels = [typeLabel, specialtyLabel].filter(Boolean).join(' ');
       const block = `[${i + 1}] PMID: ${a.pmid} ${labels}\nTitle: ${a.title}\nJournal: ${a.journal} (${a.year})\nAbstract: ${a.abstract}`;
-      // Inline full text after abstract only when present and useFullText is on.
-      // The prompt already instructs the model to prioritize numerical data
-      // from full text when available.
       if (opts.useFullText && a.fullText) {
         return `${block}\nFullText (truncated): ${a.fullText}`;
       }
@@ -58,7 +56,7 @@ export function buildPrompt(
     })
     .join('\n\n---\n\n');
 
-  return `${systemPrompt}\n\n--- ABSTRACTS ---\n\n${abstractsText}`;
+  return `${systemPrompt}\n\nVALID PMIDs (use ONLY these, copy exact digits): ${pmidList}\n\n--- ABSTRACTS ---\n\n${abstractsText}`;
 }
 
 async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number): Promise<Response> {

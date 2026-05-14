@@ -5,7 +5,7 @@
 > MUST update the relevant section in the same commit. See
 > [§ Maintenance Rules](#maintenance-rules) at the bottom.
 
-**Last synced**: 2026-05-05 (matches HEAD of `master`)
+**Last synced**: 2026-05-11 (matches HEAD of `master`)
 
 ---
 
@@ -328,6 +328,8 @@ All API routes emit structured JSON-line logs (see §13). Every request gets a `
 | `/api/lemonsqueezy/checkout` | POST | Create LS checkout URL | auth→variant→url_create |
 | `/api/lemonsqueezy/webhook` | POST | LS subscription events | HMAC verify→event→tier set/reset |
 | `/api/lemonsqueezy/portal` | POST | LS customer portal URL | auth→portal URL |
+| `/api/saved` | GET/POST | Pro: list/save analyses (Redis, max 50) | saved_list/saved_stored |
+| `/api/saved/[id]` | DELETE | Pro: delete saved analysis | saved_deleted |
 | `/api/admin/stats` | GET | Admin dashboard data (admin-gated) | — |
 
 ---
@@ -337,7 +339,7 @@ All API routes emit structured JSON-line logs (see §13). Every request gets a `
 | Tier | Daily Limit | Point Count | Model | Price | Features Unlocked |
 |------|-------------|-------------|-------|-------|-------------------|
 | **free** | 3 (lifetime) | 3 | gemini-2.5-flash | $0 | Search · Summary · Consensus · Citation · Share · PDF export · 1 trial/feature for Pro |
-| **pro** | 200/day | 10 | gemini-2.5-flash | $4.99/mo ($39.99/yr) | All free + Data tab · Meta tab (Forest/Funnel) · Tools tab unlocked |
+| **pro** | 200/day | 10 | gemini-2.5-flash | $4.99/mo ($39.99/yr) | All free + Data tab · Meta tab (Forest/Funnel) · Tools tab · Save analyses (50 max) |
 
 Admin bypass: `ADMIN_EMAILS` in `lib/admin.ts` (env-overridable via `ADMIN_EMAILS` comma-separated) → all gates off.
 
